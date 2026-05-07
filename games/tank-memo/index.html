@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tank Memo</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: radial-gradient(circle at top, #25314d 0%, #101624 60%, #070b12 100%);
+        color: #eee;
+        min-height: 100vh;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      #app {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 2rem 1rem;
+      }
+
+      .screen {
+        width: min(960px, 100%);
+        background: rgba(10, 15, 25, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+      }
+
+      h1,
+      h2,
+      p {
+        margin-top: 0;
+      }
+
+      .difficulty-buttons,
+      .result-actions {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+      }
+
+      button {
+        border: 0;
+        border-radius: 10px;
+        background: #8893f4;
+        color: #101624;
+        font-weight: 700;
+        padding: 0.7rem 1.1rem;
+        cursor: pointer;
+      }
+
+      button:hover {
+        filter: brightness(1.1);
+      }
+
+      .meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .board {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.75rem;
+      }
+
+      .card {
+        aspect-ratio: 4 / 3;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 12px;
+        background: #202942;
+        color: #d4dcff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .card span {
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+
+      .card.revealed,
+      .card.matched {
+        background: linear-gradient(145deg, #2f4867, #1b2f45);
+      }
+
+      .tank {
+        width: 88%;
+        height: 88%;
+      }
+
+      .tank-label {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        font-size: 0.72rem;
+        text-align: center;
+        background: rgba(6, 10, 18, 0.6);
+        padding: 0.2rem;
+      }
+
+      a {
+        color: #a78bfa;
+      }
+
+      @media (max-width: 720px) {
+        .board {
+          gap: 0.55rem;
+        }
+
+        .screen {
+          padding: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
