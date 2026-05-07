@@ -1,3 +1,5 @@
 packages:
   - 'games/*'
   - 'portal'
+allowBuilds:
+  esbuild: true
