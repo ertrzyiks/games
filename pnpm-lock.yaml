@@ -8,13 +8,13 @@ importers:
 
   .: {}
 
-  games/game-1:
+  games/game-2:
     devDependencies:
       vite:
         specifier: ^5.0.0
         version: 5.4.21
 
-  games/game-2:
+  games/tank-memo:
     devDependencies:
       vite:
         specifier: ^5.0.0

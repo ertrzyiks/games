@@ -1,5 +1,5 @@
 const games = [
-  { id: 'game-1', name: 'Game 1', url: '/game-1/' },
+  { id: 'tank-memo', name: 'Tank Memo', url: '/tank-memo/' },
   { id: 'game-2', name: 'Game 2', url: '/game-2/' },
 ]
 

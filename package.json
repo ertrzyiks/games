@@ -4,7 +4,7 @@
   "scripts": {
     "build": "pnpm -r build",
     "dev:portal": "pnpm --filter portal dev",
-    "dev:game-1": "pnpm --filter game-1 dev",
+    "dev:tank-memo": "pnpm --filter tank-memo dev",
     "dev:game-2": "pnpm --filter game-2 dev"
   },
   "engines": {
