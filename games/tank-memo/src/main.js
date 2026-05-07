@@ -35,6 +35,7 @@ const state = {
   timerInterval: null,
   hideTimeout: null,
   finalTimeMs: 0,
+  lastDismissedAt: 0,
 }
 
 function shuffle(items) {
@@ -53,16 +54,30 @@ function formatTime(ms) {
 function tankSvg(tank) {
   return `
     <svg class="tank" viewBox="0 0 100 60" role="img" aria-label="${tank.label}">
-      <rect x="6" y="${tank.hull}" width="88" height="12" rx="4" fill="#c3d087" />
-      <rect x="20" y="${tank.turret}" width="30" height="10" rx="3" fill="#d8e5a5" />
-      <rect x="46" y="${tank.turret + 3}" width="${tank.barrel - 46}" height="3" rx="1.5" fill="#e9efc6" />
-      <circle cx="20" cy="${tank.wheel + 28}" r="4" fill="#27311f" />
-      <circle cx="35" cy="${tank.wheel + 28}" r="4" fill="#27311f" />
-      <circle cx="50" cy="${tank.wheel + 28}" r="4" fill="#27311f" />
-      <circle cx="65" cy="${tank.wheel + 28}" r="4" fill="#27311f" />
-      <circle cx="80" cy="${tank.wheel + 28}" r="4" fill="#27311f" />
+      <rect x="10" y="${tank.hull + 8}" width="80" height="10" rx="5" fill="#1c2418" />
+      <rect x="6" y="${tank.hull}" width="88" height="14" rx="5" fill="#7a8d4f" />
+      <rect x="8" y="${tank.hull + 3}" width="84" height="3" rx="1.5" fill="#a9ba79" opacity="0.75" />
+      <rect x="22" y="${tank.turret}" width="34" height="11" rx="4" fill="#99ad63" />
+      <rect x="28" y="${tank.turret - 4}" width="20" height="5" rx="2" fill="#889b57" />
+      <rect x="50" y="${tank.turret + 4}" width="${tank.barrel - 48}" height="3.5" rx="1.75" fill="#ccd8a7" />
+      <circle cx="21" cy="${tank.wheel + 29}" r="3.4" fill="#2d3925" />
+      <circle cx="35" cy="${tank.wheel + 29}" r="3.4" fill="#2d3925" />
+      <circle cx="49" cy="${tank.wheel + 29}" r="3.4" fill="#2d3925" />
+      <circle cx="63" cy="${tank.wheel + 29}" r="3.4" fill="#2d3925" />
+      <circle cx="77" cy="${tank.wheel + 29}" r="3.4" fill="#2d3925" />
     </svg>
   `
+}
+
+function hideSelectedCards() {
+  if (!state.lockBoard) return
+  if (state.hideTimeout) {
+    clearTimeout(state.hideTimeout)
+    state.hideTimeout = null
+  }
+  state.selected = []
+  state.lockBoard = false
+  render()
 }
 
 function clearPending() {
@@ -149,10 +164,7 @@ function onCardClick(index) {
   state.lockBoard = true
   render()
   state.hideTimeout = setTimeout(() => {
-    state.selected = []
-    state.lockBoard = false
-    state.hideTimeout = null
-    render()
+    hideSelectedCards()
   }, 3000)
 }
 
@@ -206,8 +218,9 @@ function renderBoard() {
             const isRevealed = state.selected.includes(index)
             const isMatched = state.matched.has(index)
             const className = `card${isRevealed ? ' revealed' : ''}${isMatched ? ' matched' : ''}`
+            const disabled = isMatched ? 'disabled' : ''
 
-            return `<button type="button" class="${className}" data-action="card" data-index="${index}">${cardContent(card, isRevealed || isMatched)}</button>`
+            return `<button type="button" class="${className}" data-action="card" data-index="${index}" ${disabled}>${cardContent(card, isRevealed || isMatched)}</button>`
           })
           .join('')}
       </div>
@@ -238,6 +251,10 @@ function render() {
 }
 
 app.addEventListener('click', (event) => {
+  if (performance.now() - state.lastDismissedAt < 250) {
+    return
+  }
+
   const target = event.target.closest('[data-action]')
   if (!target) return
 
@@ -256,6 +273,13 @@ app.addEventListener('click', (event) => {
   if (action === 'retry') {
     resetToHome()
   }
+})
+
+app.addEventListener('pointerdown', (event) => {
+  if (!state.lockBoard || !state.hideTimeout) return
+  event.preventDefault()
+  state.lastDismissedAt = performance.now()
+  hideSelectedCards()
 })
 
 render()
