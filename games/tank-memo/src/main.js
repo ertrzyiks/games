@@ -122,7 +122,7 @@ function onCardClick(index) {
     return
   }
 
-  if (state.selected.includes(index) || state.selected.length >= 2) {
+  if (state.selected.includes(index)) {
     return
   }
 
