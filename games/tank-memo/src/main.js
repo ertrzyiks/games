@@ -116,12 +116,6 @@ function endGame() {
 function onCardClick(index) {
   if (state.lockBoard || state.matched.has(index)) return
 
-  if (state.selected.length === 1 && state.selected[0] === index) {
-    state.selected = []
-    render()
-    return
-  }
-
   if (state.selected.includes(index)) {
     return
   }
