@@ -47,7 +47,7 @@ function shuffle(items) {
 }
 
 function formatTime(ms) {
-  return (ms / 1000).toFixed(2).replace(/\.?0+$/, '')
+  return (ms / 1000).toFixed(2).replace(/(\.\d)0$/, '$1')
 }
 
 function tankSvg(tank) {
