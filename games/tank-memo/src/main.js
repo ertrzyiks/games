@@ -35,6 +35,7 @@ const state = {
   timerInterval: null,
   hideTimeout: null,
   finalTimeMs: 0,
+  skipClickOnce: false,
 }
 
 function shuffle(items) {
@@ -250,6 +251,11 @@ function render() {
 }
 
 app.addEventListener('click', (event) => {
+  if (state.skipClickOnce) {
+    state.skipClickOnce = false
+    return
+  }
+
   const target = event.target.closest('[data-action]')
   if (!target) return
 
@@ -270,8 +276,10 @@ app.addEventListener('click', (event) => {
   }
 })
 
-document.addEventListener('pointerdown', () => {
+app.addEventListener('pointerdown', (event) => {
   if (!state.lockBoard || !state.hideTimeout) return
+  event.preventDefault()
+  state.skipClickOnce = true
   hideSelectedCards()
 })
 

@@ -78,7 +78,7 @@
 
       .card {
         aspect-ratio: 1 / 1;
-        min-height: 7.5rem;
+        min-height: clamp(7rem, 22vw, 9.5rem);
         border: 1px solid rgba(255, 255, 255, 0.16);
         border-radius: 12px;
         background: #202942;
@@ -128,22 +128,16 @@
 
       @media (max-width: 720px) {
         .board {
-          grid-template-columns: repeat(3, minmax(0, 1fr));
+          grid-template-columns: repeat(2, minmax(0, 1fr));
           gap: 0.65rem;
         }
 
         .card {
-          min-height: 5.7rem;
+          min-height: 6rem;
         }
 
         .screen {
           padding: 1rem;
-        }
-      }
-
-      @media (max-width: 520px) {
-        .board {
-          grid-template-columns: repeat(2, minmax(0, 1fr));
         }
       }
     </style>
