@@ -186,7 +186,7 @@ function renderHome() {
         <button type="button" data-action="start" data-difficulty="normal">Normal (12 cards)</button>
         <button type="button" data-action="start" data-difficulty="hard">Hard (16 cards)</button>
       </div>
-      <p style="margin-top:1rem"><a href="/">← Back to portal</a></p>
+      <p style="margin-top:1rem"><a href="/games/">← Back to portal</a></p>
     </section>
   `
 }
