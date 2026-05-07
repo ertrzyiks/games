@@ -1,0 +1,14 @@
+{
+  "name": "games-monorepo",
+  "private": true,
+  "scripts": {
+    "build": "pnpm -r build",
+    "dev:portal": "pnpm --filter portal dev",
+    "dev:game-1": "pnpm --filter game-1 dev",
+    "dev:game-2": "pnpm --filter game-2 dev"
+  },
+  "engines": {
+    "node": ">=18",
+    "pnpm": ">=9"
+  }
+}
