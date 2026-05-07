@@ -35,7 +35,7 @@ const state = {
   timerInterval: null,
   hideTimeout: null,
   finalTimeMs: 0,
-  skipClickOnce: false,
+  lastDismissedAt: 0,
 }
 
 function shuffle(items) {
@@ -218,7 +218,7 @@ function renderBoard() {
             const isRevealed = state.selected.includes(index)
             const isMatched = state.matched.has(index)
             const className = `card${isRevealed ? ' revealed' : ''}${isMatched ? ' matched' : ''}`
-            const disabled = isMatched ? 'disabled aria-disabled="true"' : ''
+            const disabled = isMatched ? 'disabled' : ''
 
             return `<button type="button" class="${className}" data-action="card" data-index="${index}" ${disabled}>${cardContent(card, isRevealed || isMatched)}</button>`
           })
@@ -251,8 +251,7 @@ function render() {
 }
 
 app.addEventListener('click', (event) => {
-  if (state.skipClickOnce) {
-    state.skipClickOnce = false
+  if (performance.now() - state.lastDismissedAt < 250) {
     return
   }
 
@@ -279,7 +278,7 @@ app.addEventListener('click', (event) => {
 app.addEventListener('pointerdown', (event) => {
   if (!state.lockBoard || !state.hideTimeout) return
   event.preventDefault()
-  state.skipClickOnce = true
+  state.lastDismissedAt = performance.now()
   hideSelectedCards()
 })
 
