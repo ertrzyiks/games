@@ -5,7 +5,8 @@
     "build": "pnpm -r build",
     "dev:portal": "pnpm --filter portal dev",
     "dev:tank-memo": "pnpm --filter tank-memo dev",
-    "dev:game-2": "pnpm --filter game-2 dev"
+    "dev:game-2": "pnpm --filter game-2 dev",
+    "dev:starforged": "pnpm --filter starforged dev"
   },
   "engines": {
     "node": ">=18",

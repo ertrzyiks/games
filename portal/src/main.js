@@ -1,6 +1,7 @@
 const games = [
   { id: 'tank-memo', name: 'Tank Memo', url: '/games/tank-memo/' },
   { id: 'game-2', name: 'Game 2', url: '/games/game-2/' },
+  { id: 'starforged', name: 'Starforged', url: '/games/starforged/' },
 ]
 
 const app = document.getElementById('app')

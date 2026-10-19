@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Starforged</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: #0b0d12;
+        color: #e8e8e8;
+        font-family: 'Press Start 2P', monospace;
+        overscroll-behavior: none;
+        touch-action: none;
+        -webkit-user-select: none;
+        user-select: none;
+      }
+
+      #app {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        gap: 0.6rem;
+        padding: 0.5rem;
+      }
+
+      #game-stage {
+        position: relative;
+        width: 100%;
+        max-width: 640px;
+        aspect-ratio: 160 / 144;
+        background: #000;
+        border: 4px solid #3a3f4b;
+        border-radius: 6px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+        overflow: hidden;
+      }
+
+      #game-canvas {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        image-rendering: pixelated;
+        image-rendering: crisp-edges;
+      }
+
+      #touch-controls {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: center;
+        width: 100%;
+        max-width: 640px;
+        padding: 0.4rem 0.6rem;
+        gap: 0.5rem;
+      }
+
+      .dpad {
+        position: relative;
+        width: 120px;
+        height: 120px;
+        justify-self: start;
+      }
+
+      .dpad button {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        background: #2a2d36;
+        border: 2px solid #52586a;
+        color: #cfd3dc;
+        border-radius: 6px;
+        font-family: inherit;
+        font-size: 10px;
+      }
+
+      .dpad .up {
+        top: 0;
+        left: 40px;
+      }
+      .dpad .down {
+        top: 80px;
+        left: 40px;
+      }
+      .dpad .left {
+        top: 40px;
+        left: 0;
+      }
+      .dpad .right {
+        top: 40px;
+        left: 80px;
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 0.8rem;
+        justify-self: end;
+        align-items: center;
+      }
+
+      .action-buttons button {
+        width: 54px;
+        height: 54px;
+        border-radius: 50%;
+        background: #8893f4;
+        border: 2px solid #5a63b8;
+        color: #101624;
+        font-weight: bold;
+        font-family: inherit;
+        font-size: 11px;
+      }
+
+      #touch-controls button:active {
+        filter: brightness(1.3);
+      }
+
+      footer {
+        font-size: 10px;
+        opacity: 0.6;
+        text-align: center;
+      }
+
+      a {
+        color: #a78bfa;
+      }
+
+      @media (min-width: 900px) and (pointer: fine) {
+        #touch-controls {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div id="game-stage">
+        <canvas id="game-canvas"></canvas>
+      </div>
+      <div id="touch-controls">
+        <div class="dpad">
+          <button class="up" data-dir="up">▲</button>
+          <button class="down" data-dir="down">▼</button>
+          <button class="left" data-dir="left">◀</button>
+          <button class="right" data-dir="right">▶</button>
+        </div>
+        <div class="action-buttons">
+          <button data-action="b">B</button>
+          <button data-action="a">A</button>
+        </div>
+      </div>
+      <footer>Arrows/WASD to move · Z/Enter = A · X/Esc = B · <a href="/games/">← Portal</a></footer>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
