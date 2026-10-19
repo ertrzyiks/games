@@ -1,134 +1,128 @@
-# Starforged — Implementation Plan
+# Starforged — Implementation Plan v2 (chapter rebuild)
 
-A Game Boy–era (Pokémon-style) RPG: top-down tile exploration + random/scripted
-turn-based battles. Original space-western setting inspired by the vibe of a
-certain lone armored bounty-hunter and the small green foundling he protects
-— told with entirely original names, characters and lore.
+v1 shipped a working but thin vertical slice: tiny single-screen worlds, no
+quests, no progression gating, and two real bugs (dialogue could
+re-trigger itself forever off a single keypress; the battle menu could go
+fully unresponsive once Moss ran out of Focus or medkits ran out). This
+version fixes the bugs, adds the missing systems, and rebuilds every world
+to be several times bigger with actual quests and a gated story order.
 
-## Premise (original IP, no copyrighted names)
+## What's fixed / added (done, by the coordinator — foundation layer)
 
-- **Hero:** Kade Ironhelm, an armorer-warrior exiled from his forge-clan. He
-  wears a suit of sigil-etched plate he forges and repairs himself.
-- **Companion:** Moss, a tiny green foundling with latent psychic power over
-  "the Current" (this game's stand-in force). Kade is sworn to protect him.
-- **Antagonists:** The Hollow Syndicate, a crime guild hunting Moss to weaponize
-  the Current.
-- **Setting:** "The Drift", a cluster of five remote worlds Kade and Moss travel
-  between aboard a junker starskiff.
-- **Arc:** Rustmoor (intro/tutorial) → Mossfen Reach → Ashvault Station →
-  Skyreach Canopy → The Hollow (finale, confront the Syndicate).
+- **Dialogue re-trigger bug**: `overworldScene.js` and `battleScene.js`
+  both now snapshot `dialogueWasActive` before calling `dialogue.update()`
+  and return early if it was true, so the keypress that closes a textbox
+  can never also be read as this frame's interact/menu input.
+- **Battle menu stuck bug**: `BattleScene._currentOptions()` now filters to
+  only options that are actually affordable (Focus cost, medkit count), so
+  there is never a selectable-but-dead option. Every party member has a
+  guaranteed 0-Focus-cost move (Kade: `strike`, Moss: new `glimmer`).
+- **Quest data model**: `data/gameState.js` now has `state.quests = {}`
+  plus `startQuest(state, id, name)` / `setQuestStage(state, id, stage)`
+  / `completeQuest(state, id)`. A quest is `{ id, name, stage, complete }`.
+  NPC dialogue (as a function of `state`) and triggers read/write this to
+  gate what's said/offered.
+- **World gating**: `state.unlockedWorlds` starts as `['rustmoor']` only.
+  `worlds/registry.js` exports `unlockNextWorld(state, currentWorldId)`,
+  which unlocks whatever world was registered immediately after
+  `currentWorldId` (registration order = import order in `main.js` =
+  the intended chapter order: rustmoor → mossfenReach → ashvaultStation →
+  skyreachCanopy → theHollow). Call it from a boss fight's victory
+  callback.
+- **Boss victory callback**: `OverworldScene.startBattle(enemyIds,
+  callbacks)` now takes an optional second arg `{ onVictory(state),
+  onDefeat(state) }`, forwarded from `ctx.startBattle(enemyIds, callbacks)`
+  inside a trigger's `onEnter`. Use this for every chapter's boss fight:
+  ```js
+  ctx.startBattle(['bossId'], {
+    onVictory: (state) => {
+      unlockNextWorld(state, 'thisWorldId')
+      completeQuest(state, 'thisWorldMainQuest')
+      ctx.showDialogue(['...victory/plot lines...'])
+    },
+  })
+  ```
+- **Ship screen is now a hub**: press B from the overworld → `Travel` /
+  `Quest Log` / `Close`. Quest Log reads `state.quests` directly — nothing
+  else to wire up, just use the quest helpers.
 
-## Tech stack
+These foundation files are done and should NOT be touched by chapter
+agents: `src/engine/*`, `src/scenes/overworldScene.js`,
+`src/scenes/shipScene.js`, `src/scenes/titleScene.js`, `src/battle/*`,
+`src/data/*`, `src/worlds/registry.js`, `src/assets/sprites/registry.js`,
+`src/assets/tiles.js`, `src/ui/*`, `src/main.js`, `package.json`.
 
-Matches the existing monorepo convention (see `games/tank-memo`): a plain
-Vite + vanilla JS package, **no framework**. No external art/audio files —
-all visuals are procedurally generated pixel-grid sprites drawn to
-`<canvas>` (same spirit as tank-memo's inline-SVG sprites, just pixel-art
-instead of vector), scaled with `image-rendering: pixelated` for a crisp
-GB-style look. Sound is a handful of tiny WebAudio-generated bleeps/boops
-(no audio files to fetch). State persists to `localStorage`. Touch controls
-(on-screen d-pad + A/B buttons) are DOM overlays per `Agents.md`'s
-touchscreen requirement.
+## Overall plot (so each chapter's dialogue stays consistent)
 
-## Package layout (`games/starforged/`)
+Kade Ironhelm, an armorer-warrior exiled from his forge-clan, found Moss —
+a foundling with power over "the Current" — fleeing a Hollow Syndicate
+raid and swore to protect him. The Syndicate wants Moss to build a device
+to harness the Current at scale. Across the five worlds of the Drift, the
+Syndicate's presence escalates from rumor to open operation to full
+confrontation:
 
-```
-index.html, vite.config.js, package.json
-src/
-  main.js                 — boot: canvas, input, save, scene manager → Title
-  engine/
-    constants.js          — TILE_SIZE, viewport size, palette tokens
-    canvas.js             — canvas setup + pixel-perfect scaling/resize
-    input.js              — keyboard + touch d-pad/buttons → action states
-    sceneManager.js        — push/pop/replace stack, drives update/draw
-    sprite.js             — draws pixel-grid sprite defs to canvas, anim frames
-    tilemap.js            — tile rendering, collision, camera, encounter zones
-    dialogue.js           — GB-style textbox, typing effect, choices
-    save.js               — localStorage load/save of GameState
-  data/
-    schema.js             — JSDoc shape contracts for World/Map/NPC/Enemy/Move
-    gameState.js          — initial state, flags, party stat helpers
-  assets/
-    palette.js            — shared color palettes per world
-    sprites/*.js          — hero, moss, npc, enemy, tile pixel-grid defs
-  battle/
-    battleScene.js        — turn-based battle loop (player/enemy turns, UI)
-    moves.js              — move definitions (attack/heal/buff/status)
-    enemies.js            — enemy roster + per-world boss defs
-  scenes/
-    titleScene.js, overworldScene.js, menuScene.js, shipScene.js (world select)
-  worlds/
-    rustmoor.js, mossfenReach.js, ashvaultStation.js, skyreachCanopy.js,
-    theHollow.js           — map tiles, NPCs, dialogue, encounter tables,
-                              story triggers for each world
-  ui/
-    hud.js, titleArt.js, transitions.js
-```
+1. **Rustmoor** (ch.1) — Kade's exile, introducing Moss, first sign of
+   Syndicate scouts; a local raider captain is shaking down the canyon
+   settlements. Beating him is what gets Kade's skiff fueled to leave.
+2. **Mossfen Reach** (ch.2) — Moss's homeland. The fenling kin here were
+   already raided once; a corrupted "Bog Warden" (Syndicate-controlled)
+   guards something the Syndicate wants from the reach.
+3. **Ashvault Station** (ch.3) — the Syndicate's industrial foothold:
+   they're building a Current Extractor. Sabotage it; beat the Foreman
+   running the station.
+4. **Skyreach Canopy** (ch.4) — a hidden refuge of Current-sensitive
+   "Skykin." The Syndicate has found it. An elite enforcer leads the
+   assault; beating them buys the refuge time and reveals the Hollow's
+   location.
+5. **The Hollow** (ch.5) — the Syndicate stronghold. Final confrontation
+   with its leader, the Warden, who wants Moss directly. Ending wraps up
+   Kade's redemption arc and the Drift's worlds being safer.
 
-### Core contracts (frozen after Phase 1, everyone codes against these)
+## Per-chapter build spec (applies to each of the 5 world files)
 
-- `Scene`: `{ enter(), exit(), update(dt, input), draw(ctx) }`
-- `World`: `{ id, name, startMap, maps: { [mapId]: MapDef } }`
-- `MapDef`: `{ width, height, tiles: number[][], walkable(tileId), npcs: NPC[], encounterZones: Zone[], warps: Warp[], triggers: Trigger[] }`
-- `NPC`: `{ id, x, y, spriteId, facing, dialogue: string[] | DialogueNode }`
-- `EnemyDef`: `{ id, name, spriteId, maxHp, atk, def, spd, moves: string[], xpReward }`
-- `Move`: `{ id, name, kind, power, focusCost, accuracy }`
-- `GameState` (saved): `{ worldId, mapId, x, y, facing, party, inventory, flags, unlockedWorlds }`
+Each world file should be rebuilt to roughly this shape — several times
+bigger than v1, with real quests, not just flavor NPCs:
 
-## Build phases
+- **4 connected maps**: an outdoor *Approach* (encounter zone, ~18x14), a
+  *Settlement* hub (~14x12, 3-4 NPCs), a *Depths* dungeon/interior
+  (~16x16, maze-like, at least one area gated behind a quest flag/item),
+  and a boss arena (can be the Depths' final room).
+- **5-6 NPCs total**, at least 2 of them quest-givers whose `dialogue`
+  is a function of `state` that branches on `state.quests[id]?.stage` /
+  `.complete` (different lines before/during/after the quest).
+- **2 quests** per world using the `startQuest`/`setQuestStage`/
+  `completeQuest` helpers from `data/gameState.js`:
+  - one "go do a thing in the Depths and come back" quest (fetch/defeat/
+    rescue), paying out e.g. +1 medkit or a small stat item on return;
+  - one plot quest advancing the Syndicate thread for that chapter.
+- **Enemy variety**: 2-3 regular enemy types + 1 named boss. The boss
+  trigger blocks further progress until beaten (one-tile chokepoint, like
+  `theHollow.js` already does well) and its `onVictory` callback calls
+  `unlockNextWorld` + `completeQuest` + a short plot payoff line.
+- Reuse the existing world file's established names/lore/sprites/tiles as
+  a seed — don't throw away working content — but the map footprint and
+  NPC/quest count must grow substantially; a single 12x10 screen is not
+  acceptable anymore.
+- Rustmoor and Skyreach Canopy currently have **no boss at all** — add
+  one; this is the main gate for those two chapters.
 
-**Phase 1 — Foundation + vertical slice (done synchronously, by the
-coordinator, before any parallel work starts).** Engine (canvas, input,
-scenes, tilemap, dialogue, save), data contracts, base sprite/palette set,
-and one fully playable world end-to-end: Rustmoor exploration, an NPC with
-dialogue, a random encounter, a working turn-based battle against one enemy,
-title screen, and localStorage save. This proves the whole loop works and
-gives later agents real, tested APIs instead of guesses. Wired into the
-pnpm workspace + portal.
+### Balance targets (bigger worlds mean more fights before the boss, so
+targets are slightly higher than v1)
 
-**Phase 2 — Parallel content & systems agents** (run concurrently, each
-touching only its own files to avoid merge conflicts):
+| Chapter | Regular enemy HP | Boss HP |
+|---|---|---|
+| 1 Rustmoor | 18-26 | 45-60 |
+| 2 Mossfen Reach | 26-34 | 75-95 |
+| 3 Ashvault Station | 34-44 | 100-125 (buff the existing Foreman if reusing it) |
+| 4 Skyreach Canopy | 46-58 | 140-165 |
+| 5 The Hollow (final) | — | 190-230 (buff the existing Warden — party will be well leveled by here) |
 
-1. **World agent — Mossfen Reach**: swamp world map(s), 2+ NPCs, one unique
-   enemy, one story trigger, dialogue tying into the Moss backstory.
-2. **World agent — Ashvault Station**: derelict mining-station world, same
-   shape as above, introduces a Syndicate mini-boss.
-3. **World agent — Skyreach Canopy + The Hollow finale**: floating-forest
-   world plus the short final world (Syndicate stronghold, final boss,
-   ending screen/credits).
-4. **Battle depth agent**: expands `battle/moves.js` and `battle/enemies.js`
-   with the full move list (attack/guard/Current abilities/items), enemy AI,
-   boss fight wiring for each world's trigger, and balancing (XP/leveling
-   curve).
-5. **Polish agent**: expands sprite/tile variety and animation frames, adds
-   the WebAudio SFX/jingles, builds the ship/world-select screen and HUD,
-   and verifies mobile touch controls + small-screen layout.
+## Status
 
-**Phase 3 — Integration & browser testing (coordinator):** merge all
-branches, run `pnpm dev` (or build+preview), click through the full game in
-a real browser — title → exploration → dialogue → random encounter → battle
-→ world transitions → finale — fixing any seams between agents' work.
-
-**Phase 4 — Commit & push to `main`.**
-
-## Status: Phases 1-3 complete
-
-All five worlds (Rustmoor, Mossfen Reach, Ashvault Station, Skyreach
-Canopy, The Hollow) are built, registered, and reachable from the start
-via a ship/world-select screen (press B from the overworld). Battle
-system has target selection for multi-enemy fights, smarter enemy AI,
-and extra moves (heavySlam/drain/rally). Overworld has an HP HUD and
-light procedural SFX. Verified end-to-end in a real headless-Chromium
-browser: title -> new game -> exploration -> NPC dialogue -> random
-encounter -> battle -> victory -> ship travel to every world -> final
-boss encounter -> save/load across reload. Zero console/runtime errors
-across the full run.
-
-## Done criteria
-
-- All 5 worlds reachable and distinct visually/narratively.
-- Exploration (collision, NPCs, dialogue) and turn-based battles both work.
-- Game is completable from title screen to ending.
-- Playable on a small/touch screen (on-screen controls, responsive canvas).
-- Save/load via localStorage works across reloads.
-- Verified by actually driving it in a browser, not just reading code.
+- Foundation (bug fixes, quest model, world-gating, ship hub): **done**.
+- Chapter rebuilds 1-5: **in progress**, one agent per chapter, run in
+  parallel, each only touching its own `src/worlds/<name>.js` file (same
+  append-only-registry pattern as v1 — no shared-file edits, so parallel
+  agents can't conflict with each other).
+- Final integration + full browser playthrough + commit: pending chapter
+  completion.

@@ -20,3 +20,15 @@ export function getWorld(id) {
 export function listWorldIds() {
   return [...order]
 }
+
+// Progression order is simply registration order, which matches the
+// chapter order main.js imports world files in (rustmoor -> mossfenReach
+// -> ashvaultStation -> skyreachCanopy -> theHollow). A boss-victory
+// callback calls this to unlock the next chapter.
+export function unlockNextWorld(state, currentWorldId) {
+  const idx = order.indexOf(currentWorldId)
+  if (idx === -1 || idx + 1 >= order.length) return null
+  const nextId = order[idx + 1]
+  if (!state.unlockedWorlds.includes(nextId)) state.unlockedWorlds.push(nextId)
+  return nextId
+}

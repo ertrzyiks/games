@@ -75,7 +75,15 @@ export class BattleScene {
 
   _currentOptions() {
     const unit = this.party[this.currentActorKey]
-    return [...unit.moves, 'item']
+    // Only ever show options that can actually be confirmed right now, so
+    // the menu can never get "stuck" on a selection that silently does
+    // nothing (insufficient Focus, or no medkits left). Every party member
+    // is guaranteed at least one 0-focus-cost move (see data/gameState.js),
+    // so `usable` is never empty.
+    const usable = unit.moves.filter((id) => getMove(id).focusCost <= unit.focus)
+    const options = usable.length > 0 ? usable : [unit.moves[0]]
+    if ((this.state.inventory.medkit || 0) > 0) options.push('item')
+    return options
   }
 
   _confirmSelection() {
@@ -309,9 +317,11 @@ export class BattleScene {
   }
 
   update(dt) {
+    const dialogueWasActive = this.dialogue.active
     this.dialogue.update(dt, input)
-
-    if (this.dialogue.active) return
+    // Same fix as overworldScene.js: don't let the press that just closed a
+    // message box also be read as this frame's menu/target input.
+    if (dialogueWasActive) return
 
     if (this.phase === 'menu') {
       const options = this._currentOptions()

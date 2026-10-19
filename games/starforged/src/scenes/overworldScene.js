@@ -43,8 +43,14 @@ export class OverworldScene {
   }
 
   update(dt) {
+    const dialogueWasActive = this.dialogue.active
     this.dialogue.update(dt, input)
-    if (this.dialogue.active) return
+    // If dialogue was open at the start of this frame, this frame's input
+    // (even the very press that just closed it) belongs to the dialogue,
+    // not to movement/interact/ship-menu — otherwise the same A/B press
+    // that closes a textbox immediately re-triggers _tryInteract() on the
+    // NPC still in front of you, reopening the same dialogue forever.
+    if (dialogueWasActive) return
 
     if (this.moveCooldown > 0) {
       this.moveCooldown -= dt
@@ -103,7 +109,7 @@ export class OverworldScene {
       if (!gated && !spent) {
         trigger.onEnter({
           state: this.state,
-          startBattle: (enemyIds) => this.startBattle(enemyIds),
+          startBattle: (enemyIds, callbacks) => this.startBattle(enemyIds, callbacks),
           showDialogue: (lines, cb) => this.dialogue.start(lines, cb),
           warpTo: (w) => this._applyWarp(w),
         })
@@ -145,13 +151,19 @@ export class OverworldScene {
     })
   }
 
-  startBattle(enemyIds) {
+  // `callbacks` is optional: { onVictory(state), onDefeat(state) }. Used by
+  // boss triggers to unlock the next world / advance quests on a win,
+  // without the battle engine itself needing to know about story state.
+  startBattle(enemyIds, callbacks = {}) {
     sceneManager.push(new BattleScene(), {
       state: this.state,
       enemyIds,
       onEnd: (result) => {
         sceneManager.pop()
-        if (!result.victory) {
+        if (result.victory) {
+          if (callbacks.onVictory) callbacks.onVictory(this.state)
+        } else {
+          if (callbacks.onDefeat) callbacks.onDefeat(this.state)
           for (const member of Object.values(this.state.party)) {
             member.hp = member.maxHp
             member.focus = member.maxFocus

@@ -48,16 +48,32 @@ export function createInitialState() {
         def: 3,
         spd: 6,
         xp: 0,
-        moves: ['push', 'mend'],
+        moves: ['glimmer', 'push', 'mend'],
       },
     },
     inventory: { medkit: 2 },
     flags: new Set(),
-    // All five worlds of the Drift are reachable from the start via the ship
-    // screen (no story-gated unlock system in this scope) — narrative
-    // difficulty/pacing comes from each world's own enemy balancing instead.
-    unlockedWorlds: ['rustmoor', 'mossfenReach', 'ashvaultStation', 'skyreachCanopy', 'theHollow'],
+    // Only Rustmoor is reachable at the start. Each world's finale boss
+    // trigger unlocks the next one on victory (see worlds/registry.js's
+    // WORLD_ORDER and OverworldScene.startBattle's onVictory callback).
+    unlockedWorlds: ['rustmoor'],
+    // Lightweight quest log: { [questId]: { id, name, stage, complete } }.
+    // World/NPC files call the helpers below to start/advance/complete a
+    // quest; the ship screen's Quest Log page reads this to render status.
+    quests: {},
   }
+}
+
+export function startQuest(state, id, name) {
+  if (!state.quests[id]) state.quests[id] = { id, name, stage: 0, complete: false }
+}
+
+export function setQuestStage(state, id, stage) {
+  if (state.quests[id]) state.quests[id].stage = stage
+}
+
+export function completeQuest(state, id) {
+  if (state.quests[id]) state.quests[id].complete = true
 }
 
 export function xpToNextLevel(level) {

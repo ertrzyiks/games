@@ -22,6 +22,9 @@ registerMoves({
   push: { name: 'Push', kind: 'attack', power: 7, focusCost: 2, accuracy: 0.9 },
   mend: { name: 'Mend', kind: 'heal', power: 10, focusCost: 4, accuracy: 1 },
   scavengerSlash: { name: 'Rusty Slash', kind: 'attack', power: 5, focusCost: 0, accuracy: 0.85 },
+  // Moss's free move — every party member needs at least one 0-focus-cost
+  // option so the battle menu can never be left with nothing selectable.
+  glimmer: { name: 'Glimmer', kind: 'attack', power: 4, focusCost: 0, accuracy: 0.95 },
 
   // Boss-tier / reusable additions. Other worlds' enemy/move files may
   // reference these by id, or not — fully opt-in, doesn't affect existing
