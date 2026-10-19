@@ -111,6 +111,19 @@ a real browser — title → exploration → dialogue → random encounter → b
 
 **Phase 4 — Commit & push to `main`.**
 
+## Status: Phases 1-3 complete
+
+All five worlds (Rustmoor, Mossfen Reach, Ashvault Station, Skyreach
+Canopy, The Hollow) are built, registered, and reachable from the start
+via a ship/world-select screen (press B from the overworld). Battle
+system has target selection for multi-enemy fights, smarter enemy AI,
+and extra moves (heavySlam/drain/rally). Overworld has an HP HUD and
+light procedural SFX. Verified end-to-end in a real headless-Chromium
+browser: title -> new game -> exploration -> NPC dialogue -> random
+encounter -> battle -> victory -> ship travel to every world -> final
+boss encounter -> save/load across reload. Zero console/runtime errors
+across the full run.
+
 ## Done criteria
 
 - All 5 worlds reachable and distinct visually/narratively.

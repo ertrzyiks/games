@@ -93,23 +93,86 @@ export class BattleScene {
         speed: unit.spd,
         name: unit.name,
       })
-    } else {
-      const move = getMove(choice)
-      if (move.focusCost > unit.focus) return
-      unit.focus -= move.focusCost
-      this.queuedActions.push({ unit, isParty: true, moveId: choice, speed: unit.spd, name: unit.name })
+      this.actIdx += 1
+      this._promptForActor()
+      return
     }
 
+    const move = getMove(choice)
+    if (move.focusCost > unit.focus) return
+
+    // Multi-enemy fights let the player pick a target; single-enemy fights
+    // keep the old instant-confirm flow untouched for speed/backward compat.
+    if (move.kind === 'attack' && this._livingEnemies().length > 1) {
+      this._pendingChoice = choice
+      this._pendingMove = move
+      this.targetIndex = 0
+      this.phase = 'target'
+      return
+    }
+
+    unit.focus -= move.focusCost
+    this.queuedActions.push({ unit, isParty: true, moveId: choice, speed: unit.spd, name: unit.name })
     this.actIdx += 1
     this._promptForActor()
   }
 
+  _confirmTarget() {
+    const unit = this.party[this.currentActorKey]
+    const move = this._pendingMove
+    const choice = this._pendingChoice
+    const targets = this._livingEnemies()
+    const target = targets[this.targetIndex] || targets[0]
+
+    unit.focus -= move.focusCost
+    this.queuedActions.push({
+      unit,
+      isParty: true,
+      moveId: choice,
+      speed: unit.spd,
+      name: unit.name,
+      targetUnit: target,
+    })
+    this._pendingChoice = null
+    this._pendingMove = null
+    this.actIdx += 1
+    this._promptForActor()
+  }
+
+  _cancelTarget() {
+    // Back out of target selection without spending focus or queuing an
+    // action, so the player returns to the move menu to pick again.
+    this._pendingChoice = null
+    this._pendingMove = null
+    this.phase = 'menu'
+  }
+
   _enemyChoose() {
     for (const enemy of this._livingEnemies()) {
-      const moveId = enemy.moves[Math.floor(Math.random() * enemy.moves.length)]
+      const moveId = this._chooseEnemyMove(enemy)
       this.queuedActions.push({ unit: enemy, isParty: false, moveId, speed: enemy.spd, name: enemy.name })
     }
     this._buildMessages()
+  }
+
+  _chooseEnemyMove(enemy) {
+    const healMoves = enemy.moves.filter((id) => getMove(id).kind === 'heal')
+    const isLowHp = enemy.hp / enemy.maxHp < 0.4
+    if (isLowHp && healMoves.length > 0) {
+      return healMoves[Math.floor(Math.random() * healMoves.length)]
+    }
+    const nonHealMoves = enemy.moves.filter((id) => getMove(id).kind !== 'heal')
+    const pool = nonHealMoves.length > 0 ? nonHealMoves : enemy.moves
+    return pool[Math.floor(Math.random() * pool.length)]
+  }
+
+  // Enemy AI target selection: weight toward whoever is lowest on HP, but
+  // leave some randomness so fights don't always focus-fire one member.
+  _pickWeightedPartyTarget(targets) {
+    if (Math.random() < 0.6) {
+      return targets.reduce((lowest, t) => (t.hp / t.maxHp < lowest.hp / lowest.maxHp ? t : lowest), targets[0])
+    }
+    return targets[Math.floor(Math.random() * targets.length)]
   }
 
   _buildMessages() {
@@ -128,7 +191,18 @@ export class BattleScene {
       const move = getMove(action.moveId)
       if (move.kind === 'buff') {
         action.unit.guarding = true
-        lines.push(`${action.name} guards.`)
+        if (move.focusRestore) {
+          const before = action.unit.focus
+          action.unit.focus = Math.min(action.unit.maxFocus, action.unit.focus + move.focusRestore)
+          const restored = action.unit.focus - before
+          lines.push(
+            restored > 0
+              ? `${action.name} uses ${move.name}, guarding and restoring ${restored} focus!`
+              : `${action.name} guards.`
+          )
+        } else {
+          lines.push(`${action.name} guards.`)
+        }
       } else {
         rest.push(action)
       }
@@ -162,7 +236,18 @@ export class BattleScene {
     // attack
     const targets = action.isParty ? this._livingEnemies() : this._livingPartyUnits()
     if (targets.length === 0) return lines
-    const target = targets[Math.floor(Math.random() * targets.length)]
+
+    let target
+    if (action.targetUnit && action.targetUnit.hp > 0) {
+      // Player picked this target explicitly in the target-select phase.
+      target = action.targetUnit
+    } else if (!action.isParty) {
+      // Enemy AI: weight toward the lowest-HP living party member.
+      target = this._pickWeightedPartyTarget(targets)
+    } else {
+      // Single-enemy fights (or no explicit target): old random behavior.
+      target = targets[Math.floor(Math.random() * targets.length)]
+    }
 
     if (Math.random() > move.accuracy) {
       lines.push(`${action.name} uses ${move.name} but misses!`)
@@ -173,6 +258,15 @@ export class BattleScene {
     if (target.guarding) dmg = Math.max(1, Math.round(dmg / 2))
     target.hp = Math.max(0, target.hp - dmg)
     lines.push(`${action.name} uses ${move.name}! ${target.name} takes ${dmg} damage.`)
+
+    if (move.lifesteal) {
+      const healAmt = Math.max(1, Math.round(dmg / 2))
+      const before = action.unit.hp
+      action.unit.hp = Math.min(action.unit.maxHp, action.unit.hp + healAmt)
+      const healed = action.unit.hp - before
+      if (healed > 0) lines.push(`${action.name} drains ${healed} HP!`)
+    }
+
     if (target.hp <= 0) lines.push(`${target.name} is defeated!`)
     return lines
   }
@@ -218,17 +312,40 @@ export class BattleScene {
     this.dialogue.update(dt, input)
 
     if (this.dialogue.active) return
-    if (this.phase !== 'menu') return
 
-    const options = this._currentOptions()
-    if (input.wasPressed('down')) this.menuIndex = (this.menuIndex + 1) % options.length
-    if (input.wasPressed('up')) this.menuIndex = (this.menuIndex - 1 + options.length) % options.length
-    if (input.wasPressed('a')) this._confirmSelection()
+    if (this.phase === 'menu') {
+      const options = this._currentOptions()
+      if (input.wasPressed('down')) this.menuIndex = (this.menuIndex + 1) % options.length
+      if (input.wasPressed('up')) this.menuIndex = (this.menuIndex - 1 + options.length) % options.length
+      if (input.wasPressed('a')) this._confirmSelection()
+      return
+    }
+
+    if (this.phase === 'target') {
+      const targets = this._livingEnemies()
+      if (targets.length === 0) {
+        // Shouldn't happen mid-selection, but bail out safely rather than
+        // leaving the player stuck with no living targets to cycle through.
+        this._cancelTarget()
+        return
+      }
+      if (input.wasPressed('down') || input.wasPressed('right')) {
+        this.targetIndex = (this.targetIndex + 1) % targets.length
+      }
+      if (input.wasPressed('up') || input.wasPressed('left')) {
+        this.targetIndex = (this.targetIndex - 1 + targets.length) % targets.length
+      }
+      if (input.wasPressed('a')) this._confirmTarget()
+      if (input.wasPressed('b')) this._cancelTarget()
+      return
+    }
   }
 
   draw(ctx) {
     ctx.fillStyle = '#1b1f2a'
     ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT)
+
+    const targetedEnemy = this.phase === 'target' ? this._livingEnemies()[this.targetIndex] : null
 
     this.enemies.forEach((enemy, i) => {
       if (enemy.hp <= 0) return
@@ -237,6 +354,11 @@ export class BattleScene {
       const y = 18
       if (sprite) drawSprite(ctx, sprite, 0, x, y, { scale: 1 })
       this._drawBar(ctx, x - 4, y - 8, enemy.name, enemy.hp, enemy.maxHp, null, null, 30)
+      if (enemy === targetedEnemy) {
+        ctx.font = '7px monospace'
+        ctx.fillStyle = '#f4d35b'
+        ctx.fillText('▶', x - 11, y - 2)
+      }
     })
 
     Object.entries(this.party).forEach(([key, member], i) => {
@@ -249,6 +371,8 @@ export class BattleScene {
 
     if (this.phase === 'menu' && !this.dialogue.active) {
       this._drawMenu(ctx)
+    } else if (this.phase === 'target' && !this.dialogue.active) {
+      this._drawTargetPrompt(ctx)
     }
 
     this.dialogue.draw(ctx)
@@ -268,6 +392,23 @@ export class BattleScene {
       ctx.fillStyle = '#8893f4'
       ctx.fillRect(x, y + 13, barW * Math.max(0, focus / maxFocus), 3)
     }
+  }
+
+  _drawTargetPrompt(ctx) {
+    const boxW = 70
+    const boxH = 20
+    const x = CANVAS_WIDTH - boxW - 6
+    const y = CANVAS_HEIGHT - boxH - 54
+    ctx.fillStyle = '#0b0d12'
+    ctx.fillRect(x, y, boxW, boxH)
+    ctx.strokeStyle = '#e8e8e8'
+    ctx.lineWidth = 1
+    ctx.strokeRect(x, y, boxW, boxH)
+    ctx.font = '7px monospace'
+    ctx.fillStyle = '#dfe3ea'
+    ctx.fillText('Choose target', x + 4, y + 7)
+    ctx.fillStyle = '#9ba1b4'
+    ctx.fillText('A: ok  B: back', x + 4, y + 16)
   }
 
   _drawMenu(ctx) {

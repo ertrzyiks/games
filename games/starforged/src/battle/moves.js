@@ -22,4 +22,16 @@ registerMoves({
   push: { name: 'Push', kind: 'attack', power: 7, focusCost: 2, accuracy: 0.9 },
   mend: { name: 'Mend', kind: 'heal', power: 10, focusCost: 4, accuracy: 1 },
   scavengerSlash: { name: 'Rusty Slash', kind: 'attack', power: 5, focusCost: 0, accuracy: 0.85 },
+
+  // Boss-tier / reusable additions. Other worlds' enemy/move files may
+  // reference these by id, or not — fully opt-in, doesn't affect existing
+  // fights.
+  heavySlam: { name: 'Heavy Slam', kind: 'attack', power: 14, focusCost: 4, accuracy: 0.8 },
+  // lifesteal is a generic flag battleScene._resolveAction checks for any
+  // attack move (move.kind === 'attack' && move.lifesteal), so it isn't
+  // special-cased by move id.
+  drain: { name: 'Drain', kind: 'attack', power: 8, focusCost: 3, accuracy: 0.9, lifesteal: true },
+  // focusRestore is a generic flag battleScene._buildMessages checks for
+  // any buff move, in addition to the normal guard effect.
+  rally: { name: 'Rally', kind: 'buff', power: 0, focusCost: 0, accuracy: 1, focusRestore: 2 },
 })

@@ -9,6 +9,10 @@ import { TitleScene } from './scenes/titleScene.js'
 import './assets/sprites/npc.js'
 import './assets/sprites/enemyScavenger.js'
 import './worlds/rustmoor.js'
+import './worlds/mossfenReach.js'
+import './worlds/ashvaultStation.js'
+import './worlds/skyreachCanopy.js'
+import './worlds/theHollow.js'
 
 const canvasEl = document.getElementById('game-canvas')
 if (!canvasEl) throw new Error('Missing #game-canvas element')

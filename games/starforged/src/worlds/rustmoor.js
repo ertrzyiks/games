@@ -30,6 +30,7 @@ export const rustmoorWorld = {
   id: 'rustmoor',
   name: 'Rustmoor',
   startMap: 'canyon',
+  entry: { x: 5, y: 7 },
   maps: {
     canyon: {
       width: 12,

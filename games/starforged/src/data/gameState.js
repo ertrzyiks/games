@@ -53,7 +53,10 @@ export function createInitialState() {
     },
     inventory: { medkit: 2 },
     flags: new Set(),
-    unlockedWorlds: ['rustmoor'],
+    // All five worlds of the Drift are reachable from the start via the ship
+    // screen (no story-gated unlock system in this scope) — narrative
+    // difficulty/pacing comes from each world's own enemy balancing instead.
+    unlockedWorlds: ['rustmoor', 'mossfenReach', 'ashvaultStation', 'skyreachCanopy', 'theHollow'],
   }
 }
 

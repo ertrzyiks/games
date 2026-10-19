@@ -10,6 +10,8 @@ import { TILE_SIZE } from '../engine/constants.js'
 import { sceneManager } from '../engine/sceneManager.js'
 import { BattleScene } from '../battle/battleScene.js'
 import { saveGame } from '../engine/save.js'
+import { ShipScene } from './shipScene.js'
+import { drawHud } from '../ui/hud.js'
 
 const BUMP_COOLDOWN_MS = 90
 
@@ -50,6 +52,11 @@ export class OverworldScene {
 
     if (input.wasPressed('a')) {
       this._tryInteract()
+    }
+
+    if (input.wasPressed('b')) {
+      this._openShip()
+      return
     }
 
     if (this.moveCooldown > 0) return
@@ -128,6 +135,16 @@ export class OverworldScene {
     saveGame(this.state)
   }
 
+  _openShip() {
+    sceneManager.push(new ShipScene(), {
+      state: this.state,
+      onClose: () => {
+        sceneManager.pop()
+        this._refreshMap()
+      },
+    })
+  }
+
   startBattle(enemyIds) {
     sceneManager.push(new BattleScene(), {
       state: this.state,
@@ -164,6 +181,8 @@ export class OverworldScene {
     ctx.font = '7px monospace'
     ctx.fillStyle = '#e8e8e8'
     ctx.fillText(this.world.name, 4, 10)
+
+    drawHud(ctx, this.state)
 
     this.dialogue.draw(ctx)
   }

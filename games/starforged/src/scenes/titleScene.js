@@ -7,6 +7,7 @@ import { hasSave, loadGame, clearSave } from '../engine/save.js'
 import { drawSprite } from '../engine/sprite.js'
 import { heroSprite } from '../assets/sprites/hero.js'
 import { mossSprite } from '../assets/sprites/moss.js'
+import { playBlip, playConfirm } from '../engine/audio.js'
 
 export class TitleScene {
   enter() {
@@ -22,9 +23,16 @@ export class TitleScene {
 
   update() {
     const opts = this.options
-    if (input.wasPressed('down')) this.menuIndex = (this.menuIndex + 1) % opts.length
-    if (input.wasPressed('up')) this.menuIndex = (this.menuIndex - 1 + opts.length) % opts.length
+    if (input.wasPressed('down')) {
+      this.menuIndex = (this.menuIndex + 1) % opts.length
+      playBlip()
+    }
+    if (input.wasPressed('up')) {
+      this.menuIndex = (this.menuIndex - 1 + opts.length) % opts.length
+      playBlip()
+    }
     if (input.wasPressed('a')) {
+      playConfirm()
       const choice = opts[this.menuIndex]
       let state
       if (choice === 'Continue') {
