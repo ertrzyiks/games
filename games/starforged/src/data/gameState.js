@@ -17,9 +17,12 @@
 export function createInitialState() {
   return {
     worldId: 'rustmoor',
-    mapId: 'canyon',
-    x: 5,
-    y: 7,
+    // Must match rustmoorWorld.startMap / .entry in worlds/rustmoor.js —
+    // kept in sync by hand since this file can't import the world file
+    // (would create a circular import with the quest helpers below).
+    mapId: 'canyonApproach',
+    x: 9,
+    y: 1,
     facing: 'up',
     party: {
       kade: {

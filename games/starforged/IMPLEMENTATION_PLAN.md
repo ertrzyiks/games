@@ -117,12 +117,27 @@ targets are slightly higher than v1)
 | 4 Skyreach Canopy | 46-58 | 140-165 |
 | 5 The Hollow (final) | — | 190-230 (buff the existing Warden — party will be well leveled by here) |
 
-## Status
+## Status: v2 complete
 
 - Foundation (bug fixes, quest model, world-gating, ship hub): **done**.
-- Chapter rebuilds 1-5: **in progress**, one agent per chapter, run in
-  parallel, each only touching its own `src/worlds/<name>.js` file (same
-  append-only-registry pattern as v1 — no shared-file edits, so parallel
-  agents can't conflict with each other).
-- Final integration + full browser playthrough + commit: pending chapter
-  completion.
+- Chapter rebuilds 1-5: **done**. Every world now has 3-4 connected maps,
+  5-6 NPCs with real stage-based quest dialogue, 2 quests each, a
+  quest-item/flag-gated area, enemy variety, and a named boss gating
+  progress to the next chapter (Rustmoor and Skyreach Canopy didn't have
+  bosses in v1 — they do now).
+- A bug surfaced during integration: `data/gameState.js`'s
+  `createInitialState()` still pointed at Rustmoor's old v1 map id/coords
+  (`'canyon'`, x:5,y:7), which no longer exist after the rebuild — New
+  Game would have crashed. Fixed to match the new `canyonApproach`/`(9,1)`
+  entry point.
+- Verified end-to-end in a real headless-Chromium browser: New Game no
+  longer crashes; Rustmoor's quest/flag-gated rubble dungeon, random
+  encounters, and boss fight all work; beating the Rustmoor boss correctly
+  unlocks Mossfen Reach (confirmed via the Quest-Log/Travel ship screen,
+  not just by reading code); all 5 worlds load cleanly from their entry
+  points with zero console errors; the final boss in The Hollow resolves
+  into a proper multi-line ending and sets `gameCompleted` without
+  incorrectly unlocking a nonexistent 6th world.
+- Committed to `main` locally. Not yet pushed — this sandbox currently has
+  no way to push (SSH remote, no key here); push from the host/another
+  machine with SSH access.
