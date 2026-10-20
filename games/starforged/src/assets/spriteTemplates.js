@@ -50,6 +50,30 @@ export const CHILD_TEMPLATE = [
   '.....RRRRRR.....',
 ]
 
+// Gogu only: the same round-headed child/robe silhouette as CHILD_TEMPLATE
+// (reused for every other fenling/child NPC), but with a pair of
+// characteristic tall, pointed ears (P) swept up and out from the sides of
+// the head, and large 2x2 eyes (E) instead of CHILD_TEMPLATE's single-pixel
+// dots — distinct at a glance from everyone else of his kind.
+export const GOGU_TEMPLATE = [
+  '.PP..........PP.',
+  '.PPP.HHHHHH.PPP.',
+  '..PPHHHHHHHHPP..',
+  '...PHEEHHEEHP...',
+  '....HEEHHEEH....',
+  '.....HHHHHH.....',
+  '....RRRRRRRR....',
+  '...RRRRRRRRRR...',
+  '...RRRRRRRRRR...',
+  '..RRRRRRRRRRRR..',
+  '..RRRRRRRRRRRR..',
+  '..RBBBBBBBBBBR..',
+  '..RRRRRRRRRRRR..',
+  '...RRRRRRRRRR...',
+  '....RRRRRRRR....',
+  '.....RRRRRR.....',
+]
+
 // Lone armored gunslinger (Wando only): angular pointed helmet (H) with a
 // narrow V-shaped visor (V), a cape swept off the shoulder (C), armored
 // torso (A) with a chest/belt trim stripe (T), a holstered sidearm bump at

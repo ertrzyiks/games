@@ -541,7 +541,14 @@ export class BattleScene {
       const sprite = PARTY_SPRITES[key]
       const x = 14 + i * 44
       const y = CANVAS_HEIGHT - 70
-      if (sprite && member.hp > 0) drawSprite(ctx, sprite, 0, x, y, { scale: 1 })
+      if (sprite && member.hp > 0) {
+        // Gogu reads smaller/younger than Wando - draw him at a slightly
+        // reduced scale, nudged so his feet still land on the same
+        // baseline instead of just shrinking toward the top-left corner.
+        const scale = key === 'moss' ? 0.85 : 1
+        const shrink = 16 - 16 * scale
+        drawSprite(ctx, sprite, 0, x + shrink / 2, y + shrink, { scale })
+      }
       if (this.phase === 'menu' && key === this.currentActorKey) {
         ctx.font = '8px Consolas, Menlo, monospace'
         ctx.fillStyle = '#f4d35b'

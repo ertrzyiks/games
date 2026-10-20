@@ -41,7 +41,14 @@ registerMoves({
   // never be left with nothing selectable.
   push: { name: 'Force Push', kind: 'attack', power: 7, focusCost: 2, accuracy: 0.9 },
   mend: { name: 'Force Heal', kind: 'heal', power: 10, focusCost: 4, accuracy: 1 },
-  glimmer: { name: 'Force Spark', kind: 'attack', power: 4, focusCost: 0, accuracy: 0.95 },
+  glimmer: {
+    name: 'Force Spark',
+    kind: 'attack',
+    power: 3,
+    focusCost: 0,
+    accuracy: 0.95,
+    applyStatus: { type: 'burn', duration: 2, power: 2 },
+  },
 
   // Boss-tier / reusable additions. Other worlds' enemy/move files may
   // reference these by id, or not — fully opt-in, doesn't affect existing
