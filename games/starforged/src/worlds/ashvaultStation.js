@@ -10,13 +10,34 @@ function fillRow(width, id) {
   return Array(width).fill(id)
 }
 
+// Grid-builder helpers used below so the bigger maps can be assembled by
+// carving/stamping regions instead of hand-counting array literals.
+function makeGrid(width, height, fillId) {
+  const grid = []
+  for (let y = 0; y < height; y++) grid.push(fillRow(width, fillId))
+  return grid
+}
+
+function fillRect(grid, x0, y0, x1, y1, id) {
+  for (let y = y0; y <= y1; y++) {
+    for (let x = x0; x <= x1; x++) {
+      grid[y][x] = id
+    }
+  }
+}
+
+function setTile(grid, x, y, id) {
+  grid[y][x] = id
+}
+
 /**
  * World 3 — Ashvault Station: the Hollow Syndicate's industrial foothold,
  * where they are building a "Current Extractor" to drain Gogu's power at
  * scale. Four connected maps: an exterior ship-graveyard approach, a
  * habitation ring (hub) of workers living under Syndicate control, a
  * maze-like engine core with a quest-gated vault corridor, and the
- * Extractor vault itself as the boss arena.
+ * Extractor vault itself as the boss arena. Enemies stand visibly on the
+ * map (enemySpawns) instead of rolling random encounters.
  */
 
 // --- Cold industrial tile set, namespaced to avoid collisions with other
@@ -41,6 +62,12 @@ registerTileTypes({
   ashvault_hullPlate: { color: '#23262e', walkable: false },
   ashvault_wreckage: { color: RUST_DARK, dither: VOID_BLACK, walkable: false },
   ashvault_voidGap: { color: VOID_BLACK, walkable: false },
+  // Decorative, mostly-unwalkable clutter for the bigger maps.
+  ashvault_cargoCrate: { color: '#8a5a2e', dither: '#5c3a1c', walkable: false },
+  ashvault_supportPillar: { color: '#555f6e', dither: '#2e343d', walkable: false },
+  ashvault_warningBarrier: { color: '#d9a62c', dither: VOID_BLACK, walkable: false },
+  ashvault_brokenMachinery: { color: '#6b7280', dither: '#3a3f47', walkable: false },
+  ashvault_hullBreach: { color: '#223044', dither: VOID_BLACK, walkable: false },
 })
 
 // --- Sprites, built from the shared humanoid silhouette with a cold,
@@ -197,113 +224,128 @@ registerEnemies({
 
 // --- Maps ---
 
-// Docking Approach (exterior, 18x14): a ship graveyard of derelict hulls
+// Docking Approach (exterior, 26x20): a ship graveyard of derelict hulls
 // clustered around the station's outer platforms. Hull plating (non-walkable)
-// borders the yard; scattered wreckage breaks up the open ground. An
-// airlock door (9,1) leads up into the Habitation Ring.
-const dockingApproachTiles = [
-  fillRow(18, 'ashvault_hullPlate'),
-  [
-    'ashvault_hullPlate',
-    ...fillRow(8, 'ashvault_metalFloor'),
-    'door',
-    ...fillRow(7, 'ashvault_metalFloor'),
-    'ashvault_hullPlate',
-  ],
-  [
-    'ashvault_hullPlate',
-    ...fillRow(3, 'ashvault_metalFloor'),
-    ...fillRow(2, 'ashvault_wreckage'),
-    ...fillRow(6, 'ashvault_metalFloor'),
-    ...fillRow(2, 'ashvault_wreckage'),
-    ...fillRow(3, 'ashvault_metalFloor'),
-    'ashvault_hullPlate',
-  ],
-  ['ashvault_hullPlate', ...fillRow(16, 'ashvault_gratedFloor'), 'ashvault_hullPlate'],
-  ['ashvault_hullPlate', ...fillRow(16, 'ashvault_rustFloor'), 'ashvault_hullPlate'],
-  ['ashvault_hullPlate', ...fillRow(16, 'ashvault_rustFloor'), 'ashvault_hullPlate'],
-  [
-    'ashvault_hullPlate',
-    ...fillRow(7, 'ashvault_gratedFloor'),
-    ...fillRow(2, 'ashvault_voidGap'),
-    ...fillRow(7, 'ashvault_gratedFloor'),
-    'ashvault_hullPlate',
-  ],
-  ['ashvault_hullPlate', ...fillRow(16, 'ashvault_metalFloor'), 'ashvault_hullPlate'],
-  ['ashvault_hullPlate', ...fillRow(16, 'ashvault_hazardStripe'), 'ashvault_hullPlate'],
-  [
-    'ashvault_hullPlate',
-    ...fillRow(7, 'ashvault_metalFloor'),
-    ...fillRow(2, 'ashvault_wreckage'),
-    ...fillRow(7, 'ashvault_metalFloor'),
-    'ashvault_hullPlate',
-  ],
-  ['ashvault_hullPlate', ...fillRow(16, 'ashvault_metalFloor'), 'ashvault_hullPlate'],
-  ['ashvault_hullPlate', ...fillRow(16, 'ashvault_gratedFloor'), 'ashvault_hullPlate'],
-  ['ashvault_hullPlate', ...fillRow(16, 'ashvault_metalFloor'), 'ashvault_hullPlate'],
-  fillRow(18, 'ashvault_hullPlate'),
-]
+// borders the yard; wreckage, void gaps, cargo crates, support pillars,
+// warning barriers and broken machinery break up the open ground. An
+// airlock door (13,1) leads up into the Habitation Ring.
+const dockingApproachTiles = makeGrid(26, 20, 'ashvault_metalFloor')
+fillRect(dockingApproachTiles, 0, 0, 25, 0, 'ashvault_hullPlate')
+fillRect(dockingApproachTiles, 0, 19, 25, 19, 'ashvault_hullPlate')
+fillRect(dockingApproachTiles, 0, 0, 0, 19, 'ashvault_hullPlate')
+fillRect(dockingApproachTiles, 25, 0, 25, 19, 'ashvault_hullPlate')
+setTile(dockingApproachTiles, 13, 1, 'door')
 
-// Habitation Ring (hub, 14x12): where Syndicate-controlled workers live.
-// South door (6,11) back to the Docking Approach, east door (13,6) down
+fillRect(dockingApproachTiles, 1, 4, 24, 4, 'ashvault_gratedFloor')
+fillRect(dockingApproachTiles, 1, 5, 24, 6, 'ashvault_rustFloor')
+fillRect(dockingApproachTiles, 1, 7, 24, 7, 'ashvault_gratedFloor')
+fillRect(dockingApproachTiles, 1, 10, 24, 10, 'ashvault_hazardStripe')
+fillRect(dockingApproachTiles, 1, 14, 24, 14, 'ashvault_gratedFloor')
+
+fillRect(dockingApproachTiles, 5, 6, 6, 6, 'ashvault_wreckage')
+fillRect(dockingApproachTiles, 19, 6, 20, 6, 'ashvault_wreckage')
+setTile(dockingApproachTiles, 4, 7, 'ashvault_voidGap')
+setTile(dockingApproachTiles, 5, 7, 'ashvault_voidGap')
+setTile(dockingApproachTiles, 20, 7, 'ashvault_voidGap')
+setTile(dockingApproachTiles, 21, 7, 'ashvault_voidGap')
+fillRect(dockingApproachTiles, 2, 9, 3, 9, 'ashvault_cargoCrate')
+fillRect(dockingApproachTiles, 21, 9, 22, 9, 'ashvault_cargoCrate')
+setTile(dockingApproachTiles, 9, 12, 'ashvault_supportPillar')
+setTile(dockingApproachTiles, 17, 12, 'ashvault_supportPillar')
+fillRect(dockingApproachTiles, 4, 10, 4, 11, 'ashvault_warningBarrier')
+fillRect(dockingApproachTiles, 21, 10, 21, 11, 'ashvault_warningBarrier')
+fillRect(dockingApproachTiles, 3, 16, 3, 17, 'ashvault_brokenMachinery')
+fillRect(dockingApproachTiles, 22, 16, 22, 17, 'ashvault_brokenMachinery')
+setTile(dockingApproachTiles, 2, 2, 'ashvault_hullBreach')
+setTile(dockingApproachTiles, 23, 2, 'ashvault_hullBreach')
+
+// Habitation Ring (hub, 20x18): where Syndicate-controlled workers live.
+// South door (10,17) back to the Docking Approach, east door (19,8) down
 // into the Engine Core.
-const habitationRingTiles = [
-  fillRow(14, 'wall'),
-  ['wall', ...fillRow(12, 'ashvault_metalFloor'), 'wall'],
-  ['wall', ...fillRow(12, 'ashvault_metalFloor'), 'wall'],
-  ['wall', ...fillRow(12, 'ashvault_gratedFloor'), 'wall'],
-  ['wall', ...fillRow(12, 'ashvault_metalFloor'), 'wall'],
-  ['wall', ...fillRow(12, 'ashvault_metalFloor'), 'wall'],
-  ['wall', ...fillRow(12, 'ashvault_metalFloor'), 'door'],
-  ['wall', ...fillRow(12, 'ashvault_gratedFloor'), 'wall'],
-  ['wall', ...fillRow(12, 'ashvault_metalFloor'), 'wall'],
-  ['wall', ...fillRow(12, 'ashvault_metalFloor'), 'wall'],
-  ['wall', ...fillRow(12, 'ashvault_hazardStripe'), 'wall'],
-  ['wall', ...fillRow(5, 'ashvault_metalFloor'), 'door', ...fillRow(6, 'ashvault_metalFloor'), 'wall'],
-]
+const habitationRingTiles = makeGrid(20, 18, 'ashvault_metalFloor')
+fillRect(habitationRingTiles, 0, 0, 19, 0, 'wall')
+fillRect(habitationRingTiles, 0, 17, 19, 17, 'wall')
+fillRect(habitationRingTiles, 0, 0, 0, 17, 'wall')
+fillRect(habitationRingTiles, 19, 0, 19, 17, 'wall')
+setTile(habitationRingTiles, 10, 17, 'door')
+setTile(habitationRingTiles, 19, 8, 'door')
 
-// Engine Core (depths, 16x16): maze-like industrial corridors. Entrance
-// hall -> narrow corridor -> junction room (Tamsin's restraint pit) ->
-// corridor -> pre-vault chamber (schematics console) -> a one-tile blast
-// door chokepoint, gated until the console has been read -> vault
+fillRect(habitationRingTiles, 1, 3, 18, 3, 'ashvault_gratedFloor')
+fillRect(habitationRingTiles, 1, 9, 18, 9, 'ashvault_gratedFloor')
+fillRect(habitationRingTiles, 1, 13, 18, 13, 'ashvault_hazardStripe')
+
+fillRect(habitationRingTiles, 6, 5, 6, 6, 'ashvault_supportPillar')
+fillRect(habitationRingTiles, 14, 5, 14, 6, 'ashvault_supportPillar')
+fillRect(habitationRingTiles, 3, 11, 4, 11, 'ashvault_cargoCrate')
+fillRect(habitationRingTiles, 15, 11, 16, 11, 'ashvault_cargoCrate')
+fillRect(habitationRingTiles, 8, 15, 9, 15, 'ashvault_warningBarrier')
+setTile(habitationRingTiles, 2, 2, 'ashvault_brokenMachinery')
+setTile(habitationRingTiles, 17, 2, 'ashvault_brokenMachinery')
+
+// Engine Core (depths, 24x24): maze-like industrial corridors. Entrance
+// hall -> narrow neck -> junction room (Tamsin's restraint pit) -> narrow
+// neck -> pre-vault chamber (schematics console) -> a one-tile blast door
+// chokepoint, soft-gated until the console has been read -> vault
 // antechamber -> south door into the Extractor Vault (boss arena).
-const engineCoreTiles = [
-  fillRow(16, 'wall'),
-  ['wall', 'door', ...fillRow(13, 'ashvault_metalFloor'), 'wall'],
-  ['wall', ...fillRow(14, 'ashvault_metalFloor'), 'wall'],
-  ['wall', ...fillRow(14, 'ashvault_gratedFloor'), 'wall'],
-  ['wall', ...fillRow(5, 'wall'), ...fillRow(2, 'ashvault_metalFloor'), ...fillRow(7, 'wall'), 'wall'],
-  ['wall', ...fillRow(5, 'wall'), ...fillRow(2, 'ashvault_metalFloor'), ...fillRow(7, 'wall'), 'wall'],
-  ['wall', ...fillRow(14, 'ashvault_metalFloor'), 'wall'],
-  ['wall', ...fillRow(14, 'ashvault_gratedFloor'), 'wall'],
-  ['wall', ...fillRow(14, 'ashvault_metalFloor'), 'wall'],
-  ['wall', ...fillRow(5, 'wall'), ...fillRow(2, 'ashvault_rustFloor'), ...fillRow(7, 'wall'), 'wall'],
-  ['wall', ...fillRow(5, 'wall'), ...fillRow(2, 'ashvault_rustFloor'), ...fillRow(7, 'wall'), 'wall'],
-  ['wall', ...fillRow(14, 'ashvault_hazardStripe'), 'wall'],
-  ['wall', ...fillRow(14, 'ashvault_metalFloor'), 'wall'],
-  ['wall', ...fillRow(7, 'wall'), 'ashvault_metalFloor', ...fillRow(6, 'wall'), 'wall'],
-  ['wall', ...fillRow(14, 'ashvault_metalFloor'), 'wall'],
-  ['wall', ...fillRow(5, 'wall'), 'door', ...fillRow(8, 'wall'), 'wall'],
-]
+const engineCoreTiles = makeGrid(24, 24, 'ashvault_metalFloor')
+fillRect(engineCoreTiles, 0, 0, 23, 0, 'wall')
+fillRect(engineCoreTiles, 0, 23, 23, 23, 'wall')
+fillRect(engineCoreTiles, 0, 0, 0, 23, 'wall')
+fillRect(engineCoreTiles, 23, 0, 23, 23, 'wall')
+setTile(engineCoreTiles, 1, 1, 'door')
+setTile(engineCoreTiles, 12, 23, 'door')
 
-// Extractor Vault (boss arena, 10x10): a narrow one-tile-wide corridor
-// funnels straight into the vault chamber, same proven chokepoint pattern
-// as theHollow.js, so the Foreman fight cannot be skipped.
-const extractorVaultTiles = [
-  fillRow(10, 'wall'),
-  ['wall', 'wall', ...fillRow(6, 'ashvault_rustFloor'), 'wall', 'wall'],
-  ['wall', 'wall', ...fillRow(6, 'ashvault_rustFloor'), 'wall', 'wall'],
-  ['wall', 'wall', ...fillRow(6, 'ashvault_rustFloor'), 'wall', 'wall'],
-  [...fillRow(4, 'wall'), 'ashvault_metalFloor', ...fillRow(5, 'wall')],
-  [...fillRow(4, 'wall'), 'ashvault_metalFloor', ...fillRow(5, 'wall')],
-  [...fillRow(4, 'wall'), 'ashvault_metalFloor', ...fillRow(5, 'wall')],
-  [...fillRow(3, 'wall'), ...fillRow(2, 'ashvault_metalFloor'), ...fillRow(5, 'wall')],
-  [...fillRow(4, 'wall'), 'door', ...fillRow(5, 'wall')],
-  fillRow(10, 'wall'),
-]
+fillRect(engineCoreTiles, 1, 3, 22, 3, 'ashvault_gratedFloor')
+fillRect(engineCoreTiles, 1, 8, 22, 8, 'ashvault_gratedFloor')
+fillRect(engineCoreTiles, 1, 13, 22, 13, 'ashvault_hazardStripe')
+fillRect(engineCoreTiles, 1, 19, 22, 19, 'ashvault_gratedFloor')
+
+// First narrow neck — bottleneck between the entrance hall and the
+// junction room where Tamsin is held.
+fillRect(engineCoreTiles, 1, 5, 22, 5, 'wall')
+fillRect(engineCoreTiles, 1, 6, 22, 6, 'wall')
+fillRect(engineCoreTiles, 9, 5, 11, 5, 'ashvault_metalFloor')
+fillRect(engineCoreTiles, 9, 6, 11, 6, 'ashvault_metalFloor')
+
+// Second narrow neck — bottleneck between the junction room and the
+// pre-vault console chamber.
+fillRect(engineCoreTiles, 1, 11, 22, 11, 'wall')
+fillRect(engineCoreTiles, 1, 12, 22, 12, 'wall')
+fillRect(engineCoreTiles, 9, 11, 11, 11, 'ashvault_rustFloor')
+fillRect(engineCoreTiles, 9, 12, 11, 12, 'ashvault_rustFloor')
+
+// Blast-door chokepoint — the single tile connecting the console chamber
+// to the vault antechamber. Soft-gated by a trigger below (see triggers),
+// since map tiles can't be conditionally walkable — stays a true
+// bottleneck even on the bigger map.
+fillRect(engineCoreTiles, 1, 16, 22, 16, 'wall')
+setTile(engineCoreTiles, 12, 16, 'ashvault_metalFloor')
+
+// Decoration: support struts, crates, machinery, warning barriers.
+setTile(engineCoreTiles, 19, 2, 'ashvault_supportPillar')
+setTile(engineCoreTiles, 3, 4, 'ashvault_supportPillar')
+fillRect(engineCoreTiles, 20, 9, 21, 9, 'ashvault_cargoCrate')
+fillRect(engineCoreTiles, 6, 14, 7, 14, 'ashvault_cargoCrate')
+setTile(engineCoreTiles, 15, 18, 'ashvault_brokenMachinery')
+setTile(engineCoreTiles, 9, 21, 'ashvault_brokenMachinery')
+fillRect(engineCoreTiles, 11, 19, 11, 20, 'ashvault_warningBarrier')
+
+// Extractor Vault (boss arena, 15x14): a narrow one-tile-wide corridor
+// funnels straight from the sealed door into the vault chamber, same
+// proven chokepoint pattern as theHollow.js, so the Foreman fight cannot
+// be skipped.
+const extractorVaultTiles = makeGrid(15, 14, 'wall')
+fillRect(extractorVaultTiles, 2, 1, 12, 5, 'ashvault_rustFloor')
+fillRect(extractorVaultTiles, 7, 6, 7, 10, 'ashvault_metalFloor')
+fillRect(extractorVaultTiles, 6, 11, 8, 11, 'ashvault_metalFloor')
+setTile(extractorVaultTiles, 7, 12, 'door')
+setTile(extractorVaultTiles, 3, 2, 'ashvault_cargoCrate')
+setTile(extractorVaultTiles, 11, 2, 'ashvault_cargoCrate')
+setTile(extractorVaultTiles, 3, 4, 'ashvault_supportPillar')
+setTile(extractorVaultTiles, 11, 4, 'ashvault_supportPillar')
 
 // Ship lands on the open platform in the Docking Approach yard.
-export const ENTRY = { x: 9, y: 12 }
+export const ENTRY = { x: 13, y: 18 }
 
 export const ashvaultStationWorld = {
   id: 'ashvaultStation',
@@ -312,43 +354,45 @@ export const ashvaultStationWorld = {
   entry: ENTRY,
   maps: {
     dockingApproach: {
-      width: 18,
-      height: 14,
+      width: 26,
+      height: 20,
       tiles: dockingApproachTiles,
       npcs: [
         {
           id: 'scrapRunner',
-          x: 3,
-          y: 7,
+          x: 5,
+          y: 12,
           facing: 'down',
           spriteId: 'ashvault_scrapRunner',
           dialogue: [
-            "Half these hulls were ships that tried running the Syndicate blockade. Didn't make it past the yard.",
-            "Ashvault used to be a relay station before the Hollow Syndicate muscled in and started 'refining.'",
-            "Keep off the grating near the gaps — some of it's rusted clean through to open space.",
+            "Ships that ran the blockade didn't make it past this yard.",
+            "Mind the grating — some of it's rusted clean through.",
           ],
         },
       ],
-      encounterZones: [
-        { x: 1, y: 4, w: 16, h: 2, chance: 0.16, enemyIds: ['ashvault_cinderTrooper', 'ashvault_scrapLurker'] },
+      enemySpawns: [
+        { id: 'dock_cinder1', x: 18, y: 5, enemyId: 'ashvault_cinderTrooper', spriteId: 'ashvault_cinderTrooper' },
+        { id: 'dock_lurker1', x: 8, y: 9, enemyId: 'ashvault_scrapLurker', spriteId: 'ashvault_scrapLurker' },
+        { id: 'dock_cinder2', x: 20, y: 13, enemyId: 'ashvault_cinderTrooper', spriteId: 'ashvault_cinderTrooper' },
+        { id: 'dock_lurker2', x: 13, y: 9, enemyId: 'ashvault_scrapLurker', spriteId: 'ashvault_scrapLurker' },
       ],
-      warps: [{ x: 9, y: 1, toMap: 'habitationRing', toX: 6, toY: 10 }],
+      warps: [{ x: 13, y: 1, toMap: 'habitationRing', toX: 10, toY: 16 }],
       triggers: [
         {
-          x: 2,
-          y: 2,
+          x: 4,
+          y: 3,
           once: true,
           setsFlag: 'ashvault_scrapCacheFound',
           onEnter(ctx) {
             ctx.state.inventory.medkit = (ctx.state.inventory.medkit || 0) + 1
-            ctx.showDialogue(['Wedged in a derelict hull, a sealed supply case.', 'Found a medkit!'])
+            ctx.showDialogue(['A sealed supply case, wedged in the wreckage.', 'Found a medkit!'])
           },
         },
       ],
     },
     habitationRing: {
-      width: 14,
-      height: 12,
+      width: 20,
+      height: 18,
       tiles: habitationRingTiles,
       npcs: [
         {
@@ -361,31 +405,22 @@ export const ashvaultStationWorld = {
             const quest = state.quests['ashvault_tamsinRescue']
             if (!quest) {
               startQuest(state, 'ashvault_tamsinRescue', 'Free Tamsin')
-              return [
-                "They've got one of ours chained up in the engine core restraint pit — Tamsin, from the scrap crews.",
-                "There's a release switch near her cell. Trip it before a trooper notices you.",
-              ]
+              return ["They've chained Tamsin in the engine core.", 'Find the release switch and free her.']
             }
             if (quest.complete) {
-              return [
-                "Tamsin's resting easier thanks to you. Shouldn't have taken a stranger to get her out, but here we are.",
-                "Mind the engine core deeper in — the foreman's keeping it locked tight for a reason.",
-              ]
+              return ["Thanks to you, Tamsin's safe now.", 'Watch yourself deeper in the core.']
             }
             if (quest.stage >= 1) {
               completeQuest(state, 'ashvault_tamsinRescue')
               state.inventory.medkit = (state.inventory.medkit || 0) + 1
-              return [
-                "You actually got her out. I won't forget this — take what's left of our medical stock.",
-                'Found a medkit!',
-              ]
+              return ["You freed her. I won't forget it.", 'Found a medkit!']
             }
-            return ["She's deep in the core, past the grated corridors. Watch for patrols on your way."]
+            return ["She's deep in the core — watch for patrols."]
           },
         },
         {
           id: 'technician',
-          x: 10,
+          x: 12,
           y: 4,
           facing: 'down',
           spriteId: 'ashvault_technician',
@@ -393,101 +428,85 @@ export const ashvaultStationWorld = {
             const quest = state.quests['ashvault_extractorSabotage']
             if (!quest) {
               startQuest(state, 'ashvault_extractorSabotage', 'The Current Extractor')
-              return [
-                "There's a device down in the core they call the Extractor. Built to pull the Current out of someone and hold it.",
-                "Gogu goes pale just hearing the word. Find their schematics console, confirm what it does before you touch anything.",
-              ]
+              return ["They built a device to drain Gogu's Current.", 'Find the schematics console and confirm it.']
             }
             if (quest.complete) {
-              return [
-                "The Extractor's slag now, and the foreman with it. Whatever they meant to do to Gogu, it dies here.",
-                'Skyreach Canopy is further out past the ridge — if the Syndicate was hunting this hard, they will be there too.',
-              ]
+              return ["The Extractor's slag now — it's over.", "Skyreach Canopy's next. They'll be there too."]
             }
             if (quest.stage >= 1) {
-              return [
-                "You read the schematics? Then you know — that thing was built to drain Gogu dry, not just study the Current.",
-                "The vault blast door should answer to the console now. Finish it before the foreman calls in more troopers.",
-              ]
+              return ['So the schematics confirm it — built for Gogu.', 'The vault door should open now. Hurry.']
             }
-            return ["Find the console in the core's control chamber. Don't touch the Extractor itself until you know what it does."]
+            return ["Find the console. Don't touch the Extractor yet."]
           },
         },
         {
           id: 'restingWorker',
           x: 5,
-          y: 8,
+          y: 10,
           facing: 'up',
           spriteId: 'ashvault_restingWorker',
           dialogue: [
-            "They work us the core in shifts and call it 'labor debt.' Debt to who, I keep asking.",
-            "The foreman doesn't come up to the ring much anymore — too busy babysitting whatever they're building down there.",
-            "You've got a look about you. The Syndicate doesn't like strangers asking questions. Neither do I, until I know whose side you're on.",
+            "They call our shifts 'labor debt' — debt to who?",
+            "The Syndicate doesn't trust strangers — neither do I, yet.",
           ],
         },
       ],
-      encounterZones: [],
+      enemySpawns: [
+        { id: 'ring_cinder1', x: 8, y: 2, enemyId: 'ashvault_cinderTrooper', spriteId: 'ashvault_cinderTrooper' },
+        { id: 'ring_drone1', x: 16, y: 9, enemyId: 'ashvault_reclaimerDrone', spriteId: 'ashvault_reclaimerDrone' },
+        { id: 'ring_cinder2', x: 6, y: 14, enemyId: 'ashvault_cinderTrooper', spriteId: 'ashvault_cinderTrooper' },
+      ],
       warps: [
-        { x: 6, y: 11, toMap: 'dockingApproach', toX: 9, toY: 2 },
-        { x: 13, y: 6, toMap: 'engineCore', toX: 2, toY: 1 },
+        { x: 10, y: 17, toMap: 'dockingApproach', toX: 13, toY: 2 },
+        { x: 19, y: 8, toMap: 'engineCore', toX: 2, toY: 1 },
       ],
       triggers: [],
     },
     engineCore: {
-      width: 16,
-      height: 16,
+      width: 24,
+      height: 24,
       tiles: engineCoreTiles,
       npcs: [
         {
           id: 'ventTech',
-          x: 10,
+          x: 14,
           y: 2,
           facing: 'down',
           spriteId: 'ashvault_ventTech',
           dialogue: [
-            "Core's running hotter every cycle since they brought that device online.",
-            "The foreman doesn't let anyone near the vault without the console's say-so. Smart, if you ask me — I've seen what's chained to it.",
-            "Watch the grated floors. Half of them haven't held a trooper's weight in months.",
+            "Core's been running hot since they powered that thing up.",
+            "Mind the grated floors — some won't hold your weight.",
           ],
         },
         {
           id: 'tamsin',
-          x: 2,
-          y: 7,
+          x: 3,
+          y: 9,
           facing: 'right',
           spriteId: 'ashvault_tamsin',
           dialogue: (state) => {
             if (state.flags.has('ashvault_tamsinFreed')) {
-              return [
-                "Go on — find the dock hand by the ring door, he'll want to know I'm out.",
-                "I won't forget who pulled that clamp.",
-              ]
+              return ["Tell the dock hand I'm out.", "I won't forget who freed me."]
             }
-            return [
-              "They've had this restraint field locked since the strike. Can't so much as sit up straight.",
-              "There's a release switch on the wall south of here — if you can reach it without a trooper seeing...",
-            ]
+            return ["This restraint field's held me since the strike.", "There's a release switch south of here."]
           },
         },
       ],
-      encounterZones: [
-        {
-          x: 1,
-          y: 6,
-          w: 14,
-          h: 5,
-          chance: 0.2,
-          enemyIds: ['ashvault_cinderTrooper', 'ashvault_scrapLurker', 'ashvault_reclaimerDrone'],
-        },
+      enemySpawns: [
+        { id: 'core_cinder1', x: 6, y: 2, enemyId: 'ashvault_cinderTrooper', spriteId: 'ashvault_cinderTrooper' },
+        { id: 'core_lurker1', x: 18, y: 4, enemyId: 'ashvault_scrapLurker', spriteId: 'ashvault_scrapLurker' },
+        { id: 'core_drone1', x: 16, y: 9, enemyId: 'ashvault_reclaimerDrone', spriteId: 'ashvault_reclaimerDrone' },
+        { id: 'core_cinder2', x: 8, y: 14, enemyId: 'ashvault_cinderTrooper', spriteId: 'ashvault_cinderTrooper' },
+        { id: 'core_lurker2', x: 18, y: 18, enemyId: 'ashvault_scrapLurker', spriteId: 'ashvault_scrapLurker' },
       ],
       warps: [
-        { x: 1, y: 1, toMap: 'habitationRing', toX: 12, toY: 6 },
-        { x: 6, y: 15, toMap: 'extractorVault', toX: 4, toY: 8 },
+        { x: 1, y: 1, toMap: 'habitationRing', toX: 18, toY: 8 },
+        { x: 12, y: 23, toMap: 'extractorVault', toX: 7, toY: 12 },
       ],
       triggers: [
         {
-          x: 3,
-          y: 8,
+          x: 4,
+          y: 10,
           once: true,
           setsFlag: 'ashvault_tamsinFreed',
           onEnter(ctx) {
@@ -495,15 +514,12 @@ export const ashvaultStationWorld = {
               startQuest(ctx.state, 'ashvault_tamsinRescue', 'Free Tamsin')
             }
             setQuestStage(ctx.state, 'ashvault_tamsinRescue', 1)
-            ctx.showDialogue([
-              "You yank the restraint clamp release. The field drops — Tamsin stumbles free, rubbing her wrists.",
-              '"Go, before they notice! I\'ll find my own way out."',
-            ])
+            ctx.showDialogue(["You trip the release — the field drops, Tamsin's free.", '"Go, before they notice!"'])
           },
         },
         {
-          x: 3,
-          y: 11,
+          x: 4,
+          y: 13,
           once: true,
           setsFlag: 'ashvault_extractorConfirmed',
           onEnter(ctx) {
@@ -511,11 +527,7 @@ export const ashvaultStationWorld = {
               startQuest(ctx.state, 'ashvault_extractorSabotage', 'The Current Extractor')
             }
             setQuestStage(ctx.state, 'ashvault_extractorSabotage', 1)
-            ctx.showDialogue([
-              "The console lights up with schematics — a Current Extractor, keyed to a single signature. Gogu's.",
-              'Gogu grips Wando\'s sleeve. "That\'s... that\'s for me. They built that for me."',
-              'The blast door down the corridor should answer to this console now.',
-            ])
+            ctx.showDialogue(["The schematics are keyed to Gogu's signature.", 'The vault door should open now.'])
           },
         },
         {
@@ -524,27 +536,24 @@ export const ashvaultStationWorld = {
           // above: until it's set, stepping here bounces the player back
           // instead of letting them through, since map tiles themselves
           // can't be conditionally walkable.
-          x: 8,
-          y: 13,
+          x: 12,
+          y: 16,
           once: false,
           onEnter(ctx) {
             if (!ctx.state.flags.has('ashvault_extractorConfirmed')) {
-              ctx.showDialogue([
-                'A sealed blast door. A console readout blinks: SCHEMATICS VERIFICATION REQUIRED.',
-                "Whatever's through there, the station won't open it without proof you know what it is.",
-              ])
-              ctx.warpTo({ toMap: 'engineCore', toX: 8, toY: 12 })
+              ctx.showDialogue(['A sealed blast door blinks: VERIFICATION REQUIRED.', 'You need proof first.'])
+              ctx.warpTo({ toMap: 'engineCore', toX: 12, toY: 15 })
             }
           },
         },
       ],
     },
     extractorVault: {
-      width: 10,
-      height: 10,
+      width: 15,
+      height: 14,
       tiles: extractorVaultTiles,
       npcs: [],
-      encounterZones: [],
+      enemySpawns: [],
       warps: [],
       triggers: [
         // Mandatory boss encounter: the only tile connecting the corridor
@@ -552,17 +561,16 @@ export const ashvaultStationWorld = {
         // above). once:true so re-entering after the fight doesn't replay
         // the lead-in or restart the battle.
         {
-          x: 4,
-          y: 3,
+          x: 7,
+          y: 5,
           once: true,
           setsFlag: 'ashvault_bossEngaged',
           onEnter(ctx) {
             ctx.showDialogue(
               [
-                'The corridor opens into a vaulted chamber humming with contained Current — the Extractor, half-built, chained in conduits.',
-                "Beside it, the Syndicate Foreman turns from the controls, ember-lit visor fixed on you.",
-                '"Scrap and a boy," he growls. "The device stays. You don\'t."',
-                'Wando steps between him and Gogu, plate grinding against the deck. "Try it."',
+                'The Extractor hums behind the Foreman, half-built.',
+                '"The device stays. You don\'t," he growls.',
+                'Wando steps forward. "Try it."',
               ],
               () => {
                 ctx.startBattle(['ashvault_foreman'], {
@@ -571,10 +579,9 @@ export const ashvaultStationWorld = {
                     completeQuest(state, 'ashvault_extractorSabotage')
                     ctx.showDialogue(
                       [
-                        'The Foreman crashes against the conduits — the Extractor sparks, cracks, and dies in a shower of slag.',
-                        'Gogu exhales, shoulders dropping like a held breath finally let go. "It\'s gone quiet. Whatever it wanted from me... it\'s gone."',
-                        'Wando lowers his hammer. "Then Ashvault\'s done with us. Skyreach Canopy waits past the ridge — let\'s see what else the Syndicate\'s reaching for."',
-                        'Head back to the Starskiff to set course for Skyreach Canopy.',
+                        'The Foreman falls — the Extractor sparks and dies.',
+                        'Gogu breathes out: "It\'s gone quiet."',
+                        'Head back to the Starskiff for Skyreach Canopy.',
                       ],
                       () => ctx.openShip()
                     )

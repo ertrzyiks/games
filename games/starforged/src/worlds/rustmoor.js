@@ -7,18 +7,16 @@ import { HUMANOID_TEMPLATE, CHILD_TEMPLATE, buildSprite } from '../assets/sprite
 import { PALETTE } from '../assets/palette.js'
 import { startQuest, setQuestStage, completeQuest } from '../data/gameState.js'
 
-function fillRow(width, id) {
-  return Array(width).fill(id)
-}
-
 /**
  * World 1 — Rustmoor: Wando's exile canyon, and Gogu's introduction. Four
- * connected maps: an outdoor Canyon Approach (encounter zone, ship landing
- * site), the Settlement hub (3-4 NPCs including Yara), the Depths (old mine
- * tunnels — maze-like, gated behind Yara's mining pick), and the boss arena
- * as the Depths' final chamber, reached through a one-tile chokepoint in
- * the same style as theHollow.js. Beating the Scavenger Captain here is
- * what gets Wando's skiff fueled to leave Rustmoor.
+ * connected maps: an outdoor Canyon Approach (ship landing site, visible
+ * raider/scavenger enemySpawns), the Settlement hub (4 NPCs including
+ * Yara), the Depths (old mine tunnels — gated behind Yara's mining pick),
+ * and the boss arena as the Depths' final chamber, reached through a
+ * one-tile chokepoint in the same style as theHollow.js. Beating the
+ * Scavenger Captain here is what gets Wando's skiff fueled to leave
+ * Rustmoor. Random encounterZones are inert at the engine level now —
+ * enemies are visible map sprites (enemySpawns) instead.
  */
 
 // --- Tile types (namespaced 'rustmoor_') ---------------------------------
@@ -27,6 +25,11 @@ registerTileTypes({
   rustmoor_rubble: { color: '#5a5248', walkable: false },
   rustmoor_tunnelFloor: { color: '#3a3228', dither: '#2c261e', walkable: true },
   rustmoor_tunnelWall: { color: '#6b5f4e', walkable: false },
+  // New decorative terrain for the bigger maps — all unwalkable scenery.
+  rustmoor_boulder: { color: '#7d6f5c', dither: '#5e5342', walkable: false },
+  rustmoor_scrub: { color: '#8a7a42', dither: '#6b5e30', walkable: false },
+  rustmoor_debris: { color: '#6a4a32', dither: '#4a3322', walkable: false },
+  rustmoor_fence: { color: '#2e2520', walkable: false },
 })
 
 // --- Sprites ---------------------------------------------------------------
@@ -139,69 +142,125 @@ registerEnemies({
   },
 })
 
-// --- Map: Canyon Approach (18x14) --------------------------------------
-// Ship lands at the top path lane; a grass encounter field fills the
-// middle; a raided caravan (Dessa) sits south of it, path leads to the
+// --- Map: Canyon Approach (26x20) --------------------------------------
+// Ship lands at the top path lane (kept at the original (9,1) so the new
+// game's hardcoded starting position in data/gameState.js still lands on
+// a walkable tile); a grass field fills the middle, scattered with
+// decorative rock/scrub/debris/fence terrain and 4 visible enemySpawns; a
+// raided caravan (Dessa) sits south of the field; path lanes lead to the
 // settlement door at the bottom.
-const canyonTiles = [
-  fillRow(18, 'rock'),
-  ['rock', ...fillRow(16, 'path'), 'rock'],
-  ['rock', 'path', ...fillRow(14, 'grass'), 'path', 'rock'],
-  ['rock', 'path', ...fillRow(14, 'grass'), 'path', 'rock'],
-  ['rock', 'path', ...fillRow(14, 'grass'), 'path', 'rock'],
-  ['rock', 'path', ...fillRow(14, 'grass'), 'path', 'rock'],
-  ['rock', 'path', ...fillRow(14, 'grass'), 'path', 'rock'],
-  ['rock', 'path', ...fillRow(14, 'grass'), 'path', 'rock'],
-  ['rock', 'path', ...fillRow(14, 'grass'), 'path', 'rock'],
-  ['rock', 'path', 'rustmoor_wreck', 'rustmoor_wreck', ...fillRow(13, 'path'), 'rock'],
-  ['rock', 'path', 'path', 'rustmoor_wreck', ...fillRow(13, 'path'), 'rock'],
-  ['rock', ...fillRow(16, 'path'), 'rock'],
-  ['rock', ...fillRow(16, 'path'), 'rock'],
-  [...fillRow(8, 'rock'), 'door', ...fillRow(9, 'rock')],
-]
+const CANYON_W = 26
+const CANYON_H = 20
+const canyonTiles = []
+for (let y = 0; y < CANYON_H; y++) {
+  const row = []
+  for (let x = 0; x < CANYON_W; x++) {
+    let tile
+    if (x === 0 || x === CANYON_W - 1 || y === 0 || y === CANYON_H - 1) {
+      tile = 'rock'
+    } else if (y === 1 || (y >= 17 && y <= 18)) {
+      tile = 'path'
+    } else if (x === 1 || x === CANYON_W - 2) {
+      tile = 'path'
+    } else {
+      tile = 'grass'
+    }
+    row.push(tile)
+  }
+  canyonTiles.push(row)
+}
+canyonTiles[CANYON_H - 1][13] = 'door' // settlement door, bottom border
+// Raided caravan wreckage — Dessa's camp.
+canyonTiles[14][5] = 'rustmoor_wreck'
+canyonTiles[14][6] = 'rustmoor_wreck'
+canyonTiles[15][5] = 'rustmoor_wreck'
+// Decorative scatter: boulders, scrub, debris piles, fence/watchtower silhouettes.
+canyonTiles[3][3] = 'rustmoor_boulder'
+canyonTiles[3][22] = 'rustmoor_scrub'
+canyonTiles[4][8] = 'rustmoor_scrub'
+canyonTiles[4][17] = 'rustmoor_boulder'
+canyonTiles[8][4] = 'rustmoor_debris'
+canyonTiles[7][12] = 'rustmoor_fence'
+canyonTiles[9][20] = 'rustmoor_fence'
+canyonTiles[13][9] = 'rustmoor_scrub'
+canyonTiles[12][16] = 'rustmoor_boulder'
+canyonTiles[15][23] = 'rustmoor_debris'
 
 export const ENTRY = { x: 9, y: 1 }
 
-// --- Map: Settlement hub (14x12) ----------------------------------------
+// --- Map: Settlement hub (20x18) ----------------------------------------
 // An exterior plaza ringed by a palisade wall: door north back to the
-// canyon, door south down into the mine tunnels (Depths).
-const settlementTiles = [
-  [...fillRow(7, 'wall'), 'door', ...fillRow(6, 'wall')],
-  ['wall', ...fillRow(12, 'floor'), 'wall'],
-  ['wall', ...fillRow(12, 'floor'), 'wall'],
-  ['wall', ...fillRow(12, 'floor'), 'wall'],
-  ['wall', ...fillRow(12, 'floor'), 'wall'],
-  ['wall', ...fillRow(12, 'floor'), 'wall'],
-  ['wall', ...fillRow(12, 'floor'), 'wall'],
-  ['wall', ...fillRow(12, 'floor'), 'wall'],
-  ['wall', ...fillRow(12, 'floor'), 'wall'],
-  ['wall', ...fillRow(12, 'floor'), 'wall'],
-  ['wall', ...fillRow(12, 'floor'), 'wall'],
-  [...fillRow(7, 'wall'), 'door', ...fillRow(6, 'wall')],
-]
+// canyon, door south down into the mine tunnels (Depths). A safe hub —
+// no enemySpawns here, matching the original's empty encounterZones.
+const SETTLEMENT_W = 20
+const SETTLEMENT_H = 18
+const settlementTiles = []
+for (let y = 0; y < SETTLEMENT_H; y++) {
+  const row = []
+  for (let x = 0; x < SETTLEMENT_W; x++) {
+    if (x === 0 || x === SETTLEMENT_W - 1 || y === 0 || y === SETTLEMENT_H - 1) {
+      row.push('wall')
+    } else {
+      row.push('floor')
+    }
+  }
+  settlementTiles.push(row)
+}
+settlementTiles[0][10] = 'door' // north: back to the canyon
+settlementTiles[SETTLEMENT_H - 1][10] = 'door' // south: down into the Depths
+// Decorative scatter: palisade fence posts, boulders, scrub, debris.
+settlementTiles[2][3] = 'rustmoor_fence'
+settlementTiles[2][16] = 'rustmoor_fence'
+settlementTiles[15][3] = 'rustmoor_fence'
+settlementTiles[15][16] = 'rustmoor_fence'
+settlementTiles[8][2] = 'rustmoor_debris'
+settlementTiles[8][17] = 'rustmoor_boulder'
+settlementTiles[4][9] = 'rustmoor_scrub'
+settlementTiles[13][11] = 'rustmoor_scrub'
 
-// --- Map: Depths (16x16) -------------------------------------------------
-// Entrance chamber -> narrow corridor -> mid chamber (Tamsin, the
-// Syndicate scout sign, Yara's cache) -> narrow corridor -> rubble gate
-// (needs Yara's pick) -> one-tile chokepoint -> boss arena.
-const depthsTiles = [
-  fillRow(16, 'rustmoor_tunnelWall'),
-  ['rustmoor_tunnelWall', ...fillRow(14, 'rustmoor_tunnelFloor'), 'rustmoor_tunnelWall'],
-  ['rustmoor_tunnelWall', ...fillRow(14, 'rustmoor_tunnelFloor'), 'rustmoor_tunnelWall'],
-  [...fillRow(3, 'rustmoor_tunnelWall'), 'rustmoor_tunnelFloor', ...fillRow(12, 'rustmoor_tunnelWall')],
-  [...fillRow(3, 'rustmoor_tunnelWall'), 'rustmoor_tunnelFloor', ...fillRow(12, 'rustmoor_tunnelWall')],
-  ['rustmoor_tunnelWall', ...fillRow(14, 'rustmoor_tunnelFloor'), 'rustmoor_tunnelWall'],
-  ['rustmoor_tunnelWall', ...fillRow(14, 'rustmoor_tunnelFloor'), 'rustmoor_tunnelWall'],
-  ['rustmoor_tunnelWall', ...fillRow(14, 'rustmoor_tunnelFloor'), 'rustmoor_tunnelWall'],
-  ['rustmoor_tunnelWall', ...fillRow(14, 'rustmoor_tunnelFloor'), 'rustmoor_tunnelWall'],
-  [...fillRow(12, 'rustmoor_tunnelWall'), 'rustmoor_tunnelFloor', ...fillRow(3, 'rustmoor_tunnelWall')],
-  [...fillRow(12, 'rustmoor_tunnelWall'), 'rustmoor_tunnelFloor', ...fillRow(3, 'rustmoor_tunnelWall')],
-  [...fillRow(12, 'rustmoor_tunnelWall'), 'rustmoor_rubble', ...fillRow(3, 'rustmoor_tunnelWall')],
-  [...fillRow(12, 'rustmoor_tunnelWall'), 'rustmoor_tunnelFloor', ...fillRow(3, 'rustmoor_tunnelWall')],
-  ['rustmoor_tunnelWall', ...fillRow(14, 'rustmoor_tunnelFloor'), 'rustmoor_tunnelWall'],
-  ['rustmoor_tunnelWall', ...fillRow(14, 'rustmoor_tunnelFloor'), 'rustmoor_tunnelWall'],
-  fillRow(16, 'rustmoor_tunnelWall'),
-]
+// --- Map: Depths (24x24) -------------------------------------------------
+// Entrance chamber -> single-column corridor (x=6) -> mid chamber (Tamsin,
+// the Syndicate scout sign, Yara's cache, 2 enemySpawns) -> single-column
+// corridor (x=17) -> rubble gate (needs Yara's pick) -> one-tile
+// chokepoint -> boss arena. Every corridor row is wall except its one
+// floor column, and the gate/chokepoint rows are the same way, so there
+// is exactly one path through and the boss cannot be bypassed.
+const DEPTHS_W = 24
+const DEPTHS_H = 24
+const DEPTHS_CORR1_X = 6
+const DEPTHS_CORR2_X = 17
+const depthsTiles = []
+for (let y = 0; y < DEPTHS_H; y++) {
+  const row = []
+  for (let x = 0; x < DEPTHS_W; x++) {
+    let tile
+    if (x === 0 || x === DEPTHS_W - 1 || y === 0 || y === DEPTHS_H - 1) {
+      tile = 'rustmoor_tunnelWall'
+    } else if (y >= 1 && y <= 4) {
+      tile = 'rustmoor_tunnelFloor' // entrance chamber
+    } else if (y >= 5 && y <= 7) {
+      tile = x === DEPTHS_CORR1_X ? 'rustmoor_tunnelFloor' : 'rustmoor_tunnelWall'
+    } else if (y >= 8 && y <= 12) {
+      tile = 'rustmoor_tunnelFloor' // mid chamber
+    } else if (y >= 13 && y <= 15) {
+      tile = x === DEPTHS_CORR2_X ? 'rustmoor_tunnelFloor' : 'rustmoor_tunnelWall'
+    } else if (y === 16) {
+      tile = x === DEPTHS_CORR2_X ? 'rustmoor_rubble' : 'rustmoor_tunnelWall' // rubble gate
+    } else if (y === 17) {
+      tile = x === DEPTHS_CORR2_X ? 'rustmoor_tunnelFloor' : 'rustmoor_tunnelWall' // chokepoint
+    } else {
+      tile = 'rustmoor_tunnelFloor' // y 18-22: boss arena
+    }
+    row.push(tile)
+  }
+  depthsTiles.push(row)
+}
+// Decorative cave-in rocks and debris piles, clear of both corridor
+// columns and the gate/chokepoint tiles.
+depthsTiles[2][9] = 'rustmoor_debris'
+depthsTiles[4][19] = 'rustmoor_boulder'
+depthsTiles[12][6] = 'rustmoor_boulder'
+depthsTiles[8][16] = 'rustmoor_debris'
 
 export const rustmoorWorld = {
   id: 'rustmoor',
@@ -210,14 +269,14 @@ export const rustmoorWorld = {
   entry: ENTRY,
   maps: {
     canyonApproach: {
-      width: 18,
-      height: 14,
+      width: CANYON_W,
+      height: CANYON_H,
       tiles: canyonTiles,
       npcs: [
         {
           id: 'dessa',
-          x: 4,
-          y: 10,
+          x: 7,
+          y: 15,
           facing: 'up',
           spriteId: 'rustmoor_dessa',
           // Plot quest giver: first sign of the Hollow Syndicate in Rustmoor.
@@ -226,55 +285,58 @@ export const rustmoorWorld = {
             if (!q) {
               startQuest(state, 'rustmoor_syndicateSigns', 'Signs of the Syndicate')
               return [
-                'They came at dawn — black sails, no warning. Took half our grain before we even armed up.',
-                "I saw their mark burned into the wagon side. Hollow Syndicate, same as the stories out of Mossfen.",
-                "If they're scouting this far into the canyon, Rustmoor's just the start. Find proof, deep in the old mine tunnels.",
+                'Raiders hit us at dawn — Hollow Syndicate markings on their wagon.',
+                'Find proof deep in the old mine tunnels.',
               ]
             }
             if (q.complete) {
               return [
-                "Rustmoor's clear of that captain's crew, thanks to you. For now.",
-                'Burn marks like that mean the Syndicate is still watching the Drift. Keep your guard up out there.',
+                "Rustmoor's safe from that captain's crew.",
+                "But the Syndicate's still watching the Drift.",
               ]
             }
             if (q.stage >= 2) {
               return [
-                "You found their sign in the depths? Then it's real — they're not done with Rustmoor.",
-                "That raider captain's been taking a cut for the Syndicate's silence. End him and you cut their leash on this canyon.",
+                "So it's real — they're not done with Rustmoor.",
+                'Kill that raider captain and cut their leash.',
               ]
             }
             return [
-              "Still haven't found proof? The old mine tunnels west of the settlement — that's where their scouts would have passed through.",
-              "Be careful. Whatever's running that raider camp down there isn't just scavengers anymore.",
+              'No proof yet? Check the old mine tunnels.',
+              "That raider camp isn't just scavengers anymore.",
             ]
           },
         },
       ],
-      encounterZones: [{ x: 2, y: 2, w: 14, h: 7, chance: 0.15, enemyIds: ['scavenger', 'rustmoor_raider'] }],
-      warps: [{ x: 8, y: 13, toMap: 'settlement', toX: 7, toY: 1 }],
+      enemySpawns: [
+        { id: 'canyonRaider1', x: 10, y: 5, enemyId: 'rustmoor_raider', spriteId: 'rustmoor_raider' },
+        { id: 'canyonScav1', x: 19, y: 6, enemyId: 'scavenger', spriteId: 'enemyScavenger' },
+        { id: 'canyonScout1', x: 14, y: 10, enemyId: 'rustmoor_raiderScout', spriteId: 'rustmoor_raiderScout' },
+        { id: 'canyonRaider2', x: 21, y: 13, enemyId: 'rustmoor_raider', spriteId: 'rustmoor_raider' },
+      ],
+      warps: [{ x: 13, y: CANYON_H - 1, toMap: 'settlement', toX: 10, toY: 1 }],
       triggers: [],
     },
     settlement: {
-      width: 14,
-      height: 12,
+      width: SETTLEMENT_W,
+      height: SETTLEMENT_H,
       tiles: settlementTiles,
       npcs: [
         {
           id: 'elder',
-          x: 3,
-          y: 3,
+          x: 5,
+          y: 5,
           facing: 'down',
           spriteId: 'npc',
           dialogue: [
-            "Rustmoor's held on through worse than raiders, but this captain's bleeding us slow.",
-            "Wando — if you and the boy can deal with him, I'll see your skiff gets fueled myself.",
-            'Yara and Dessa both have their ears to the ground. Talk to them before you head into the tunnels.',
+            "This raider captain's bleeding us slow.",
+            "Deal with him, and I'll fuel your skiff myself.",
           ],
         },
         {
           id: 'yara',
-          x: 10,
-          y: 3,
+          x: 14,
+          y: 5,
           facing: 'down',
           spriteId: 'rustmoor_yara',
           // Practical quest giver: retrieve her buried medkit cache from the
@@ -285,99 +347,102 @@ export const rustmoorWorld = {
               startQuest(state, 'rustmoor_yaraCache', "Yara's Buried Cache")
               state.flags.add('rustmoor_hasPick')
               return [
-                "You're headed into the tunnels? Then do an old trader a favor.",
-                'I had a cache of medkits stashed past the old rockfall before the raiders ran us out.',
-                "Take my mining pick — it's the only thing that'll shift that rubble now. Bring back what's left and I'll split it with you.",
+                'My medkit cache is buried past the rockfall.',
+                "Take my pick — it'll clear the rubble.",
               ]
             }
             if (q.complete) {
-              return ["That pick's served you well, I hope. Mind yourself out there — the canyon's quieter, but not safe."]
+              return ['Pick served you well? Stay sharp out there.']
             }
             if (q.stage >= 1) {
               completeQuest(state, 'rustmoor_yaraCache')
               state.inventory.medkit = (state.inventory.medkit || 0) + 2
               state.party.kade.def += 1
               return [
-                "You found it! Half-crushed, but the kits inside are still good.",
-                "Here — take a share, and keep the rest. That old armor of yours could use the extra plating too.",
-                '(You gained 2 medkits and Wando\'s defense increased!)',
+                'You found it — the kits are still good!',
+                'Take your share. (+2 medkits, DEF +1!)',
               ]
             }
-            return ["The rockfall's past the mid chamber, east side. My pick should break through — look for the gap in the tunnel wall."]
+            return ["Rockfall's east of the mid chamber. My pick breaks through."]
           },
         },
         {
           id: 'pip',
-          x: 4,
-          y: 8,
+          x: 6,
+          y: 12,
           facing: 'down',
           spriteId: 'rustmoor_pip',
           dialogue: [
-            'Gogu! Are you a Current-touched too? My gran says that\'s why the lights flicker when you\'re near.',
-            "Don't go past the rockfall in the tunnels without a grown-up. That's where the scary raider boss lives!",
+            'Gogu, are you Current-touched too?',
+            'Stay away from the rockfall — a scary boss lives there!',
           ],
         },
         {
           id: 'bram',
-          x: 8,
-          y: 9,
+          x: 12,
+          y: 13,
           facing: 'down',
           spriteId: 'npc',
           dialogue: [
-            "Mind yourself down there. Raiders've dug in deep, and their captain doesn't fight fair.",
-            "Word is he answers to someone bigger these days. Didn't used to be that organized.",
+            'Raiders dug in deep down there.',
+            'Their captain answers to someone bigger now.',
           ],
         },
       ],
-      encounterZones: [],
+      enemySpawns: [],
       warps: [
-        { x: 7, y: 0, toMap: 'canyonApproach', toX: 8, toY: 12 },
-        { x: 7, y: 11, toMap: 'depths', toX: 8, toY: 2 },
+        { x: 10, y: 0, toMap: 'canyonApproach', toX: 13, toY: CANYON_H - 2 },
+        { x: 10, y: SETTLEMENT_H - 1, toMap: 'depths', toX: 11, toY: 2 },
       ],
       triggers: [],
     },
     depths: {
-      width: 16,
-      height: 16,
+      width: DEPTHS_W,
+      height: DEPTHS_H,
       tiles: depthsTiles,
       npcs: [
         {
           id: 'tamsin',
-          x: 3,
-          y: 6,
+          x: 4,
+          y: 10,
           facing: 'down',
           spriteId: 'rustmoor_tamsin',
           dialogue: (state) => {
             const q = state.quests['rustmoor_syndicateSigns']
             if (q && q.stage >= 2) {
               return [
-                "You found their marker, then. I told you it was real.",
-                "Get back to the surface and warn Dessa properly — and watch for that captain. He answers to someone now.",
+                'You found their marker — I told you it was real.',
+                'Warn Dessa. Watch for that captain.',
               ]
             }
             return [
-              'Raiders dragged me down here when they hit my wagon. Left me chained once they realized I had nothing worth taking.',
-              'I saw them meet someone in black sailcloth near an old marker, deeper in. Hollow Syndicate colors, if the stories are true.',
+              'Raiders dragged me down here and left me chained.',
+              'I saw them meet someone in black sailcloth — Syndicate colors.',
             ]
           },
         },
       ],
-      encounterZones: [{ x: 1, y: 5, w: 14, h: 4, chance: 0.18, enemyIds: ['rustmoor_raider', 'rustmoor_raiderScout'] }],
-      warps: [{ x: 8, y: 1, toMap: 'settlement', toX: 7, toY: 10 }],
+      enemySpawns: [
+        { id: 'depthsScav1', x: 3, y: 3, enemyId: 'scavenger', spriteId: 'enemyScavenger' },
+        { id: 'depthsRaider1', x: 15, y: 3, enemyId: 'rustmoor_raider', spriteId: 'rustmoor_raider' },
+        { id: 'depthsScout1', x: 8, y: 9, enemyId: 'rustmoor_raiderScout', spriteId: 'rustmoor_raiderScout' },
+        { id: 'depthsRaider2', x: 14, y: 11, enemyId: 'rustmoor_raider', spriteId: 'rustmoor_raider' },
+      ],
+      warps: [{ x: 11, y: 1, toMap: 'settlement', toX: 10, toY: SETTLEMENT_H - 2 }],
       triggers: [
         // Syndicate scout sign — advances the plot quest once it has been
         // started by Dessa. Not gated behind the rubble, so the player can
         // find it on the first pass through the mid chamber.
         {
-          x: 9,
-          y: 6,
+          x: 10,
+          y: 9,
           onEnter: (ctx) => {
             const q = ctx.state.quests['rustmoor_syndicateSigns']
             if (q && q.stage < 2) {
               setQuestStage(ctx.state, 'rustmoor_syndicateSigns', 2)
               ctx.showDialogue([
-                "Scratched into the tunnel wall: a jagged sigil, half-covered in soot. Not a scavenger's mark.",
-                'Fresh boot prints lead deeper in — someone was here recently, and not alone.',
+                'A jagged sigil is scratched into the wall.',
+                'Fresh boot prints lead deeper in.',
               ])
             }
           },
@@ -386,14 +451,14 @@ export const rustmoorWorld = {
         // quest's payload. Reachable without the pick; only the rockfall
         // further in requires it.
         {
-          x: 13,
-          y: 7,
+          x: 19,
+          y: 11,
           onEnter: (ctx) => {
             const q = ctx.state.quests['rustmoor_yaraCache']
             if (q && q.stage === 0 && !q.complete) {
               setQuestStage(ctx.state, 'rustmoor_yaraCache', 1)
               ctx.showDialogue([
-                "Tucked behind a fallen beam, you find Yara's old supply cache — raiders picked through it, but some medkits survived.",
+                "You find Yara's cache — some medkits survived.",
                 'Worth bringing back to her.',
               ])
             }
@@ -403,17 +468,17 @@ export const rustmoorWorld = {
         // pick Yara hands over when her quest is accepted; re-checks every
         // time so getting the pick later still opens the way through.
         {
-          x: 12,
-          y: 10,
+          x: DEPTHS_CORR2_X,
+          y: 15,
           onEnter: (ctx) => {
-            if (depthsTiles[11][12] !== 'rustmoor_rubble') return
+            if (depthsTiles[16][DEPTHS_CORR2_X] !== 'rustmoor_rubble') return
             if (ctx.state.flags.has('rustmoor_hasPick')) {
-              depthsTiles[11][12] = 'rustmoor_tunnelFloor'
-              ctx.showDialogue(["Yara's old mining pick makes short work of the rockfall. The way south opens up."])
+              depthsTiles[16][DEPTHS_CORR2_X] = 'rustmoor_tunnelFloor'
+              ctx.showDialogue(["Yara's pick clears the rockfall. The way south opens."])
             } else {
               ctx.showDialogue([
-                'A wall of fallen rock and old timber blocks the tunnel ahead.',
-                "You'd need the right tool to clear a path through — someone back in the settlement might have one.",
+                'Fallen rock blocks the tunnel ahead.',
+                "You'd need the right tool to clear it.",
               ])
             }
           },
@@ -423,15 +488,15 @@ export const rustmoorWorld = {
         // theHollow.js), so the fight cannot be bypassed once the rubble
         // is cleared.
         {
-          x: 12,
-          y: 12,
+          x: DEPTHS_CORR2_X,
+          y: 17,
           once: true,
           setsFlag: 'rustmoor_bossEngaged',
           onEnter: (ctx) => {
             ctx.showDialogue([
-              'The tunnel opens into a wide, torch-lit chamber — scrap armor piled like trophies against the walls.',
-              '"Another fool wandered into my canyon," a scarred raider sneers, hefting a jagged blade. "The Syndicate pays well for Current-touched brats. Hand him over."',
-              'Wando steps between them, shield raised. "Not a chance."',
+              'The tunnel opens into a torch-lit chamber.',
+              '"Hand him over — the Syndicate pays well," the raider sneers.',
+              'Wando steps between them. "Not a chance."',
             ])
             ctx.startBattle(['rustmoor_scavengerCaptain'], {
               onVictory: (state) => {
@@ -439,10 +504,9 @@ export const rustmoorWorld = {
                 completeQuest(state, 'rustmoor_syndicateSigns')
                 ctx.showDialogue(
                   [
-                    "The captain collapses amid his own scrap-metal trophies, a Syndicate contact's sigil-coin rolling free of his coat.",
-                    "With Rustmoor's shakedown broken, the settlement makes good on its word — Wando's skiff sits fueled and ready at the canyon's edge.",
-                    'But the sigil-coin is proof enough: the Hollow Syndicate is real, and it is already moving through the Drift.',
-                    'Head back to the Starskiff — a new world on the Drift is ready to chart.',
+                    'The captain falls — a Syndicate sigil-coin rolls free.',
+                    "Rustmoor's shakedown is over. Wando's skiff is fueled and ready.",
+                    'Head back to the Starskiff — a new world awaits.',
                   ],
                   () => ctx.openShip()
                 )

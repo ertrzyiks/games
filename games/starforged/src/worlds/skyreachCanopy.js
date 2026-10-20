@@ -6,8 +6,35 @@ import { registerMoves } from '../battle/moves.js'
 import { HUMANOID_TEMPLATE, CHILD_TEMPLATE, buildSprite } from '../assets/spriteTemplates.js'
 import { startQuest, setQuestStage, completeQuest } from '../data/gameState.js'
 
-function fillRow(width, id) {
-  return Array(width).fill(id)
+// --- Small grid-building helpers (local to this file) ---------------------
+// Used to construct the larger maps below without hand-writing every row.
+function makeGrid(width, height, fillId) {
+  return Array.from({ length: height }, () => Array(width).fill(fillId))
+}
+
+function setTile(grid, x, y, id) {
+  grid[y][x] = id
+}
+
+function setRect(grid, x, y, w, h, id) {
+  for (let yy = y; yy < y + h; yy++) {
+    for (let xx = x; xx < x + w; xx++) {
+      grid[yy][xx] = id
+    }
+  }
+}
+
+function setBorder(grid, id) {
+  const h = grid.length
+  const w = grid[0].length
+  for (let x = 0; x < w; x++) {
+    grid[0][x] = id
+    grid[h - 1][x] = id
+  }
+  for (let y = 0; y < h; y++) {
+    grid[y][0] = id
+    grid[y][w - 1] = id
+  }
 }
 
 /**
@@ -18,22 +45,33 @@ function fillRow(width, id) {
  * Canopy Approach, the Skykin Refuge hub, the maze-like High Reaches (gated
  * behind a Windward Charm), and the Enforcer's Arena — a one-tile
  * chokepoint boss gate, right before the finale (The Hollow).
+ *
+ * Random encounters are disabled engine-wide: enemies are visible sprites
+ * placed directly on each map (`enemySpawns`), and walking into one starts
+ * the fight immediately. Only the boss stays a forced `Trigger` at the
+ * arena's single chokepoint tile, so it can never be walked around.
  */
 
 // --- Tile types (namespaced 'skyreach_' to avoid colliding with other
 // worlds being built in parallel) ---------------------------------------
 registerTileTypes({
   skyreach_walkway: { color: '#3c6b74', dither: '#2a4e55', walkable: true },
-  skyreach_canopy: { color: '#4a2f6e', dither: '#381f57', walkable: true, encounter: true },
+  skyreach_canopy: { color: '#4a2f6e', dither: '#381f57', walkable: true },
   skyreach_railing: { color: '#1f2d33', walkable: false },
   skyreach_door: { color: '#39c6b0', walkable: true },
   skyreach_refugeFloor: { color: '#2f4a52', dither: '#22363c', walkable: true },
   skyreach_rootPath: { color: '#3a2f52', dither: '#2a2240', walkable: true },
   skyreach_vinewall: { color: '#241a38', walkable: false },
-  skyreach_depthCanopy: { color: '#5c2f7a', dither: '#431f5c', walkable: true, encounter: true },
+  skyreach_depthCanopy: { color: '#5c2f7a', dither: '#431f5c', walkable: true },
   skyreach_vineGate: { color: '#2f6b57', dither: '#1f4d3d', walkable: true },
   skyreach_arenaFloor: { color: '#3d3450', dither: '#2a2440', walkable: true },
   skyreach_arenaWall: { color: '#17121f', walkable: false },
+  // --- new decorative tile types (floating-forest / treetop theme) --------
+  skyreach_giantTrunk: { color: '#2e1f14', dither: '#1c1209', walkable: false },
+  skyreach_ropeRail: { color: '#6b4a2f', dither: '#4a3220', walkable: false },
+  skyreach_glowFungus: { color: '#5ce3a8', dither: '#2f9e73', walkable: false },
+  skyreach_brokenEdge: { color: '#14181c', dither: '#0a0c0e', walkable: false },
+  skyreach_mistPatch: { color: '#aee6e0', dither: '#7fc9c2', walkable: true },
 })
 
 // --- Sprites -------------------------------------------------------------
@@ -192,111 +230,94 @@ const WATCH_QUEST = 'skyreach_hollowWatch'
 
 // --- Maps --------------------------------------------------------------
 
-// Map 1 — Canopy Approach (18x14, outdoor, encounter zone). Railings line
-// the outer edge; a wide canopy grove holds the encounter zone; a door on
-// the north wall leads into the Skykin Refuge.
-const canopyApproachTiles = [
-  fillRow(18, 'skyreach_railing'),
-  [
-    'skyreach_railing',
-    ...fillRow(7, 'skyreach_walkway'),
-    'skyreach_door',
-    ...fillRow(8, 'skyreach_walkway'),
-    'skyreach_railing',
-  ],
-  ...fillRow(8, 0).map(() => [
-    'skyreach_railing',
-    ...fillRow(2, 'skyreach_walkway'),
-    ...fillRow(12, 'skyreach_canopy'),
-    ...fillRow(2, 'skyreach_walkway'),
-    'skyreach_railing',
-  ]),
-  ['skyreach_railing', ...fillRow(16, 'skyreach_walkway'), 'skyreach_railing'],
-  ['skyreach_railing', ...fillRow(16, 'skyreach_walkway'), 'skyreach_railing'],
-  ['skyreach_railing', ...fillRow(16, 'skyreach_walkway'), 'skyreach_railing'],
-  fillRow(18, 'skyreach_railing'),
-]
+// Map 1 — Canopy Approach (26x20, outdoor). Railings line the outer edge;
+// a wide canopy grove fills the middle with scattered visible enemies and
+// decoration; rope-rail walkways run the flanks; a door on the north wall
+// leads into the Skykin Refuge.
+const CANOPY_W = 26
+const CANOPY_H = 20
+const canopyApproachTiles = makeGrid(CANOPY_W, CANOPY_H, 'skyreach_walkway')
+setBorder(canopyApproachTiles, 'skyreach_railing')
+setTile(canopyApproachTiles, 13, 1, 'skyreach_door')
+setRect(canopyApproachTiles, 4, 4, 18, 10, 'skyreach_canopy')
+for (let y = 2; y <= 17; y++) {
+  setTile(canopyApproachTiles, 1, y, 'skyreach_ropeRail')
+  setTile(canopyApproachTiles, 24, y, 'skyreach_ropeRail')
+}
+setTile(canopyApproachTiles, 12, 4, 'skyreach_giantTrunk')
+setTile(canopyApproachTiles, 12, 13, 'skyreach_giantTrunk')
+setTile(canopyApproachTiles, 5, 9, 'skyreach_giantTrunk')
+setTile(canopyApproachTiles, 20, 9, 'skyreach_giantTrunk')
+setTile(canopyApproachTiles, 10, 8, 'skyreach_glowFungus')
+setTile(canopyApproachTiles, 15, 8, 'skyreach_glowFungus')
+setTile(canopyApproachTiles, 7, 7, 'skyreach_mistPatch')
+setTile(canopyApproachTiles, 16, 7, 'skyreach_mistPatch')
+setTile(canopyApproachTiles, 2, 16, 'skyreach_brokenEdge')
+setTile(canopyApproachTiles, 23, 16, 'skyreach_brokenEdge')
 
-// Map 2 — Skykin Refuge (14x12 hub). A single clearing of root-plank floor;
+// Map 2 — Skykin Refuge (20x18 hub). A single clearing of root-plank floor;
 // a south door back to the Approach, a north door up into the High Reaches.
-const skykinRefugeTiles = [
-  fillRow(14, 'skyreach_railing'),
-  [
-    'skyreach_railing',
-    ...fillRow(7, 'skyreach_refugeFloor'),
-    'skyreach_door',
-    ...fillRow(4, 'skyreach_refugeFloor'),
-    'skyreach_railing',
-  ],
-  ...fillRow(8, 0).map(() => ['skyreach_railing', ...fillRow(12, 'skyreach_refugeFloor'), 'skyreach_railing']),
-  [
-    'skyreach_railing',
-    ...fillRow(7, 'skyreach_refugeFloor'),
-    'skyreach_door',
-    ...fillRow(4, 'skyreach_refugeFloor'),
-    'skyreach_railing',
-  ],
-  fillRow(14, 'skyreach_railing'),
-]
+const REFUGE_W = 20
+const REFUGE_H = 18
+const skykinRefugeTiles = makeGrid(REFUGE_W, REFUGE_H, 'skyreach_refugeFloor')
+setBorder(skykinRefugeTiles, 'skyreach_railing')
+setTile(skykinRefugeTiles, 10, 1, 'skyreach_door')
+setTile(skykinRefugeTiles, 10, 16, 'skyreach_door')
+setTile(skykinRefugeTiles, 4, 9, 'skyreach_giantTrunk')
+setTile(skykinRefugeTiles, 15, 9, 'skyreach_giantTrunk')
+setTile(skykinRefugeTiles, 7, 7, 'skyreach_glowFungus')
+setTile(skykinRefugeTiles, 12, 7, 'skyreach_glowFungus')
+setTile(skykinRefugeTiles, 7, 12, 'skyreach_mistPatch')
+setTile(skykinRefugeTiles, 12, 12, 'skyreach_mistPatch')
 
-// Map 3 — High Reaches (16x16, maze-like dungeon). Room D ("the Roost",
-// rows 1-4) is sealed off from the rest of the maze by a vine-lock gate
-// (row 5) that only opens for someone carrying the Windward Charm
+// Map 3 — High Reaches (24x24, maze-like dungeon). The Roost (rows 1-6) is
+// sealed off from the rest of the maze by a vine-lock gate (row 7) that
+// only opens for someone carrying the Windward Charm
 // (state.flags.has('skyreach_hasCharm')) — Wren and the way down into the
-// boss arena both sit beyond it.
-const highReachesTiles = [
-  fillRow(16, 'skyreach_vinewall'),
-  ['skyreach_vinewall', 'skyreach_vinewall', 'skyreach_vinewall', ...fillRow(10, 'skyreach_rootPath'), 'skyreach_vinewall', 'skyreach_vinewall', 'skyreach_vinewall'],
-  ['skyreach_vinewall', 'skyreach_vinewall', 'skyreach_vinewall', ...fillRow(10, 'skyreach_rootPath'), 'skyreach_vinewall', 'skyreach_vinewall', 'skyreach_vinewall'],
-  [
-    'skyreach_vinewall',
-    'skyreach_vinewall',
-    'skyreach_vinewall',
-    'skyreach_rootPath',
-    'skyreach_rootPath',
-    'skyreach_rootPath',
-    'skyreach_rootPath',
-    'skyreach_rootPath',
-    'skyreach_rootPath',
-    'skyreach_rootPath',
-    'skyreach_rootPath',
-    'skyreach_door',
-    'skyreach_rootPath',
-    'skyreach_vinewall',
-    'skyreach_vinewall',
-    'skyreach_vinewall',
-  ],
-  ['skyreach_vinewall', 'skyreach_vinewall', 'skyreach_vinewall', ...fillRow(10, 'skyreach_rootPath'), 'skyreach_vinewall', 'skyreach_vinewall', 'skyreach_vinewall'],
-  [...fillRow(8, 'skyreach_vinewall'), 'skyreach_vineGate', ...fillRow(7, 'skyreach_vinewall')],
-  [...fillRow(8, 'skyreach_vinewall'), 'skyreach_rootPath', ...fillRow(7, 'skyreach_vinewall')],
-  [...fillRow(8, 'skyreach_vinewall'), 'skyreach_rootPath', ...fillRow(7, 'skyreach_vinewall')],
-  ['skyreach_vinewall', 'skyreach_vinewall', 'skyreach_rootPath', ...fillRow(10, 'skyreach_depthCanopy'), 'skyreach_vinewall', 'skyreach_vinewall', 'skyreach_vinewall'],
-  ['skyreach_vinewall', 'skyreach_vinewall', 'skyreach_vinewall', ...fillRow(10, 'skyreach_depthCanopy'), 'skyreach_vinewall', 'skyreach_vinewall', 'skyreach_vinewall'],
-  ['skyreach_vinewall', 'skyreach_vinewall', 'skyreach_vinewall', ...fillRow(10, 'skyreach_depthCanopy'), 'skyreach_vinewall', 'skyreach_vinewall', 'skyreach_vinewall'],
-  ['skyreach_vinewall', 'skyreach_vinewall', 'skyreach_vinewall', ...fillRow(10, 'skyreach_depthCanopy'), 'skyreach_vinewall', 'skyreach_vinewall', 'skyreach_vinewall'],
-  [...fillRow(8, 'skyreach_vinewall'), 'skyreach_rootPath', ...fillRow(7, 'skyreach_vinewall')],
-  [...fillRow(8, 'skyreach_vinewall'), 'skyreach_rootPath', ...fillRow(7, 'skyreach_vinewall')],
-  ['skyreach_vinewall', 'skyreach_vinewall', 'skyreach_vinewall', ...fillRow(10, 'skyreach_rootPath'), 'skyreach_vinewall', 'skyreach_vinewall', 'skyreach_vinewall'],
-  fillRow(16, 'skyreach_vinewall'),
-]
+// boss arena both sit beyond it, reached via a single-tile corridor
+// (col 11) so the gate cannot be routed around.
+const REACHES_W = 24
+const REACHES_H = 24
+const highReachesTiles = makeGrid(REACHES_W, REACHES_H, 'skyreach_vinewall')
+setRect(highReachesTiles, 6, 1, 12, 6, 'skyreach_rootPath')
+setTile(highReachesTiles, 11, 7, 'skyreach_vineGate')
+for (let y = 8; y <= 11; y++) setTile(highReachesTiles, 11, y, 'skyreach_rootPath')
+setRect(highReachesTiles, 4, 12, 16, 8, 'skyreach_depthCanopy')
+for (let y = 20; y <= 21; y++) setTile(highReachesTiles, 11, y, 'skyreach_rootPath')
+setTile(highReachesTiles, 11, 22, 'skyreach_door')
+setTile(highReachesTiles, 15, 4, 'skyreach_door')
+setTile(highReachesTiles, 7, 2, 'skyreach_giantTrunk')
+setTile(highReachesTiles, 16, 2, 'skyreach_giantTrunk')
+setTile(highReachesTiles, 9, 5, 'skyreach_glowFungus')
+setTile(highReachesTiles, 13, 5, 'skyreach_glowFungus')
+setTile(highReachesTiles, 5, 14, 'skyreach_giantTrunk')
+setTile(highReachesTiles, 18, 14, 'skyreach_giantTrunk')
+setTile(highReachesTiles, 5, 17, 'skyreach_giantTrunk')
+setTile(highReachesTiles, 18, 17, 'skyreach_giantTrunk')
+setTile(highReachesTiles, 10, 16, 'skyreach_glowFungus')
+setTile(highReachesTiles, 12, 16, 'skyreach_glowFungus')
+setTile(highReachesTiles, 9, 14, 'skyreach_mistPatch')
+setTile(highReachesTiles, 13, 14, 'skyreach_mistPatch')
+setTile(highReachesTiles, 6, 19, 'skyreach_brokenEdge')
+setTile(highReachesTiles, 17, 19, 'skyreach_brokenEdge')
 
-// Map 4 — Enforcer's Arena (10x10). A single-tile-wide corridor funnels
+// Map 4 — Enforcer's Arena (15x15). A single-tile-wide corridor funnels
 // straight into the arena room (same chokepoint pattern as theHollow.js),
 // so the boss fight cannot be walked around.
-const enforcerArenaTiles = [
-  fillRow(10, 'skyreach_arenaWall'),
-  ['skyreach_arenaWall', 'skyreach_arenaWall', ...fillRow(6, 'skyreach_arenaFloor'), 'skyreach_arenaWall', 'skyreach_arenaWall'],
-  ['skyreach_arenaWall', 'skyreach_arenaWall', ...fillRow(6, 'skyreach_arenaFloor'), 'skyreach_arenaWall', 'skyreach_arenaWall'],
-  ['skyreach_arenaWall', 'skyreach_arenaWall', ...fillRow(6, 'skyreach_arenaFloor'), 'skyreach_arenaWall', 'skyreach_arenaWall'],
-  [...fillRow(4, 'skyreach_arenaWall'), 'skyreach_arenaFloor', ...fillRow(5, 'skyreach_arenaWall')],
-  [...fillRow(4, 'skyreach_arenaWall'), 'skyreach_arenaFloor', ...fillRow(5, 'skyreach_arenaWall')],
-  [...fillRow(4, 'skyreach_arenaWall'), 'skyreach_arenaFloor', ...fillRow(5, 'skyreach_arenaWall')],
-  [...fillRow(3, 'skyreach_arenaWall'), 'skyreach_arenaFloor', 'skyreach_arenaFloor', ...fillRow(5, 'skyreach_arenaWall')],
-  [...fillRow(4, 'skyreach_arenaWall'), 'skyreach_door', ...fillRow(5, 'skyreach_arenaWall')],
-  fillRow(10, 'skyreach_arenaWall'),
-]
+const ARENA_W = 15
+const ARENA_H = 15
+const enforcerArenaTiles = makeGrid(ARENA_W, ARENA_H, 'skyreach_arenaWall')
+setRect(enforcerArenaTiles, 3, 1, 9, 5, 'skyreach_arenaFloor')
+for (let y = 6; y <= 9; y++) setTile(enforcerArenaTiles, 7, y, 'skyreach_arenaFloor')
+setTile(enforcerArenaTiles, 6, 10, 'skyreach_arenaFloor')
+setTile(enforcerArenaTiles, 7, 10, 'skyreach_arenaFloor')
+setTile(enforcerArenaTiles, 7, 11, 'skyreach_door')
+setTile(enforcerArenaTiles, 4, 2, 'skyreach_glowFungus')
+setTile(enforcerArenaTiles, 10, 2, 'skyreach_glowFungus')
+setTile(enforcerArenaTiles, 5, 4, 'skyreach_mistPatch')
+setTile(enforcerArenaTiles, 9, 4, 'skyreach_mistPatch')
 
-export const ENTRY = { x: 9, y: 12 }
+export const ENTRY = { x: 9, y: 18 }
 
 export const skyreachCanopyWorld = {
   id: 'skyreachCanopy',
@@ -305,64 +326,61 @@ export const skyreachCanopyWorld = {
   entry: ENTRY,
   maps: {
     canopyApproach: {
-      width: 18,
-      height: 14,
+      width: CANOPY_W,
+      height: CANOPY_H,
       tiles: canopyApproachTiles,
       npcs: [
         {
           id: 'hale',
-          x: 5,
-          y: 11,
+          x: 6,
+          y: 18,
           facing: 'up',
           spriteId: 'skyreach_hale',
-          dialogue: [
-            "Hale: Don't go further without your wits about you — gale stalkers have been thick in the canopy since the Syndicate started climbing.",
-            'Hale: An enforcer led the last patrol. Moved like the wind owed her something. I barely got out.',
-            "Hale: The refuge is just past the north walk. Go — warn them, if you haven't already.",
-          ],
+          dialogue: ['Hale: Gale stalkers are thick in the canopy now.', 'Hale: The refuge is north — hurry.'],
         },
       ],
-      encounterZones: [
-        { x: 3, y: 2, w: 12, h: 8, chance: 0.2, enemyIds: ['skyreach_galeStalker', 'skyreach_windReaver'] },
+      enemySpawns: [
+        { id: 'canopy_galeStalker1', x: 6, y: 6, enemyId: 'skyreach_galeStalker', spriteId: 'skyreach_galeStalker' },
+        { id: 'canopy_windReaver1', x: 18, y: 6, enemyId: 'skyreach_windReaver', spriteId: 'skyreach_windReaver' },
+        { id: 'canopy_galeStalker2', x: 9, y: 12, enemyId: 'skyreach_galeStalker', spriteId: 'skyreach_galeStalker' },
+        { id: 'canopy_windReaver2', x: 17, y: 12, enemyId: 'skyreach_windReaver', spriteId: 'skyreach_windReaver' },
       ],
-      warps: [{ x: 8, y: 1, toMap: 'skykinRefuge', toX: 8, toY: 2 }],
+      warps: [{ x: 13, y: 1, toMap: 'skykinRefuge', toX: 10, toY: 15 }],
       triggers: [
         {
-          x: 9,
-          y: 3,
+          x: 13,
+          y: 5,
           once: true,
           setsFlag: 'skyreach_approachLoreSeen',
           onEnter: (ctx) => {
             ctx.showDialogue([
-              'A gust off the canopy carries a low, grinding hum from far below the clouds.',
-              'Gogu presses close to Wando, trembling. "That sound... it comes from where they want to take me."',
-              'Somewhere beneath the Drift, the Hollow Syndicate waits in their stronghold — the Hollow itself.',
-              "Wando tightens the straps on his plate. Whatever's happening up ahead, it's already found this place.",
+              'A grinding hum rises from far below the clouds.',
+              'Gogu shivers. "That\'s where they want to take me."',
             ])
           },
         },
         {
-          x: 6,
-          y: 7,
+          x: 8,
+          y: 10,
           once: true,
           setsFlag: 'skyreach_approachCacheFound',
           onEnter: (ctx) => {
             ctx.state.inventory.medkit = (ctx.state.inventory.medkit || 0) + 1
-            ctx.showDialogue(['Tucked into a hollow root, a scout cache yields a spare medkit.'])
+            ctx.showDialogue(['Found a spare medkit in a hollow root.'])
           },
         },
       ],
     },
 
     skykinRefuge: {
-      width: 14,
-      height: 12,
+      width: REFUGE_W,
+      height: REFUGE_H,
       tiles: skykinRefugeTiles,
       npcs: [
         {
           id: 'senna',
-          x: 3,
-          y: 3,
+          x: 5,
+          y: 4,
           facing: 'down',
           spriteId: 'skyreach_senna',
           // Plot quest-giver: the Syndicate thread for this chapter.
@@ -371,33 +389,23 @@ export const skyreachCanopyWorld = {
             if (!q) {
               startQuest(state, WATCH_QUEST, 'Shroud the Current-Well')
               return [
-                'Senna: Wando. Gogu. You feel it too — the hum under our floor is louder every day.',
-                "Senna: The Syndicate tracks the Current like a hound tracks blood. Our well up in the High Reaches is singing right to them.",
-                'Senna: An enforcer is already climbing toward us. If we shroud the well before she arrives, we buy the refuge time.',
-                'Senna: Go. Find the well in the High Reaches and still it, before they find us first.',
+                'Senna: The Current-well is singing straight to the Syndicate.',
+                'Senna: Still it in the High Reaches before they arrive.',
               ]
             }
             if (q.complete) {
-              return [
-                'Senna: The enforcer is gone, and the refuge is still standing. We owe you both more than words.',
-                'Senna: The Hollow waits below the clouds, same as the map showed. End what they started, Wando.',
-              ]
+              return ['Senna: The enforcer is gone. The refuge stands.']
             }
             if (q.stage >= 1) {
-              return [
-                'Senna: You stilled it. Thank the Current, you stilled it.',
-                'Senna: One of our scouts escaped Syndicate hands years back. Before she died, she drew us a map — she swore it marked their stronghold. The Hollow.',
-                "Senna: I never thought we'd need it. Keep it close, Wando. If the enforcer falls here, you'll have somewhere to carry the fight next.",
-                'Senna: But first — she is almost here. Stand with us.',
-              ]
+              return ['Senna: You stilled it. Thank the Current.', "Senna: She's almost here — stand with us."]
             }
-            return ["Senna: The well's hum still carries. Please, hurry — I can feel them getting closer."]
+            return ["Senna: Please hurry — they're getting closer."]
           },
         },
         {
           id: 'orin',
-          x: 11,
-          y: 3,
+          x: 14,
+          y: 4,
           facing: 'down',
           spriteId: 'skyreach_orin',
           // Practical quest-giver: a "go rescue a Skykin in the Depths" quest.
@@ -405,25 +413,18 @@ export const skyreachCanopyWorld = {
             const q = state.quests[ROOST_QUEST]
             if (!q) {
               startQuest(state, ROOST_QUEST, 'Find Wren in the High Reaches')
-              return [
-                "Orin: Wren went scouting the enforcer's climb and never came back down.",
-                'Orin: Last I saw, they were headed past the vine-locks toward the old roost towers.',
-                'Orin: Please — find them. Wren knows those towers better than any of us, but that counts for nothing against a Syndicate blade.',
-              ]
+              return ['Orin: Wren never came back from scouting.', 'Orin: Please find them near the roost towers.']
             }
             if (q.complete) {
-              return [
-                "Orin: Wren told me what you did up there. The Reaches feel steadier with them back.",
-                'Orin: Whatever happens with the enforcer — you have our wings at your back, Wando.',
-              ]
+              return ['Orin: Wren\'s back safe. Thank you, Wando.']
             }
-            return ["Orin: Please, hurry. I keep listening for wingbeats that aren't Wren's."]
+            return ['Orin: Please, hurry — find Wren.']
           },
         },
         {
           id: 'tamsin',
-          x: 3,
-          y: 8,
+          x: 5,
+          y: 13,
           facing: 'down',
           spriteId: 'skyreach_tamsin',
           // Hands over the Windward Charm once the roost quest is active —
@@ -432,50 +433,40 @@ export const skyreachCanopyWorld = {
             const roost = state.quests[ROOST_QUEST]
             if (roost && !roost.complete && !state.flags.has('skyreach_hasCharm')) {
               state.flags.add('skyreach_hasCharm')
-              return [
-                "Tamsin: Heading into the High Reaches for Orin's sake? Take this.",
-                'Tamsin: A Windward Charm. The vine-locks up there answer to it — they were woven to keep Syndicate scouts out, not kin.',
-                "Tamsin: Hold onto it. You will need it to reach the high roosts at all.",
-              ]
+              return ['Tamsin: Take this Windward Charm.', 'Tamsin: It opens the vine-locks up high.']
             }
             if (state.flags.has('skyreach_hasCharm')) {
-              return ["Tamsin: The charm still hums warm in your hand. Good. The Reaches don't forgive the unprepared."]
+              return ['Tamsin: The charm still hums warm. Good.']
             }
-            return [
-              'Tamsin: The High Reaches used to be a nursery for fledgling Skykin. Now half of it is choked in vine-lock, sealed since the first Syndicate raid.',
-            ]
+            return ['Tamsin: The High Reaches are sealed in vine-lock.']
           },
         },
         {
           id: 'fenn',
-          x: 11,
-          y: 8,
+          x: 14,
+          y: 13,
           facing: 'down',
           spriteId: 'skyreach_fenn',
-          dialogue: [
-            'Fenn: Are you really Wando Ironhelm? The forge-clan exile with the Current-touched kid?',
-            "Fenn: Gogu doesn't look scary at all. Everyone up here talks about the Current like it's a monster, but Gogu just looks like... a kid.",
-            "Fenn: I hope the enforcer doesn't come. But if she does, I hope you're as tough as the stories say.",
-          ],
+          dialogue: ["Fenn: You're really Wando Ironhelm?", "Fenn: Gogu doesn't look scary at all."],
         },
       ],
-      encounterZones: [],
+      enemySpawns: [],
       warps: [
-        { x: 8, y: 10, toMap: 'canopyApproach', toX: 8, toY: 2 },
-        { x: 8, y: 1, toMap: 'highReaches', toX: 8, toY: 13 },
+        { x: 10, y: 16, toMap: 'canopyApproach', toX: 13, toY: 2 },
+        { x: 10, y: 1, toMap: 'highReaches', toX: 11, toY: 21 },
       ],
       triggers: [],
     },
 
     highReaches: {
-      width: 16,
-      height: 16,
+      width: REACHES_W,
+      height: REACHES_H,
       tiles: highReachesTiles,
       npcs: [
         {
           id: 'wren',
-          x: 8,
-          y: 2,
+          x: 11,
+          y: 3,
           facing: 'down',
           spriteId: 'skyreach_wren',
           dialogue: (state) => {
@@ -487,27 +478,24 @@ export const skyreachCanopyWorld = {
               const moss = state.party.moss
               moss.maxFocus += 1
               moss.focus = moss.maxFocus
-              return [
-                'Wren: Wando?! You actually came all the way up here.',
-                "Wren: I got turned around chasing an enforcer's scout past the vine-locks. Thought I'd be stuck roosting here till the Current went quiet for good.",
-                'Wren: Here — let me show Gogu how we steady the Current up in the high air. It might help in a real fight.',
-                "Wren: (Gogu feels something settle, like a held breath finally let go. Gogu's Focus capacity increased!)",
-                "Wren: Tell Orin I'm alright. And Wando — that enforcer's close. Be ready.",
-              ]
+              return ['Wren: Wando! You found me.', "Wren: Here — this will steady Gogu's Focus."]
             }
             if (state.flags.has('skyreach_wrenRescued')) {
-              return ["Wren: Still steadier than I've felt in days. Thank you — truly."]
+              return ["Wren: Steadier than I've felt in days."]
             }
-            return ['Wren: ...? Who— ! Oh. Oh, thank the Current, someone finally found me.']
+            return ['Wren: Oh — thank the Current, someone found me.']
           },
         },
       ],
-      encounterZones: [
-        { x: 3, y: 8, w: 10, h: 4, chance: 0.22, enemyIds: ['skyreach_rootLurker', 'skyreach_galeStalker'] },
+      enemySpawns: [
+        { id: 'reaches_rootLurker1', x: 7, y: 13, enemyId: 'skyreach_rootLurker', spriteId: 'skyreach_rootLurker' },
+        { id: 'reaches_galeStalker1', x: 14, y: 13, enemyId: 'skyreach_galeStalker', spriteId: 'skyreach_galeStalker' },
+        { id: 'reaches_rootLurker2', x: 7, y: 18, enemyId: 'skyreach_rootLurker', spriteId: 'skyreach_rootLurker' },
+        { id: 'reaches_galeStalker2', x: 15, y: 18, enemyId: 'skyreach_galeStalker', spriteId: 'skyreach_galeStalker' },
       ],
       warps: [
-        { x: 8, y: 14, toMap: 'skykinRefuge', toX: 8, toY: 2 },
-        { x: 11, y: 3, toMap: 'enforcerArena', toX: 4, toY: 8 },
+        { x: 11, y: 22, toMap: 'skykinRefuge', toX: 10, toY: 2 },
+        { x: 15, y: 4, toMap: 'enforcerArena', toX: 7, toY: 11 },
       ],
       triggers: [
         // Vine-lock gate guarding "the Roost" (Wren + the way down into the
@@ -515,12 +503,12 @@ export const skyreachCanopyWorld = {
         // keeps blocking until the Windward Charm flag is set, and is a
         // harmless no-op afterward.
         {
-          x: 8,
-          y: 5,
+          x: 11,
+          y: 7,
           onEnter: (ctx) => {
             if (!ctx.state.flags.has('skyreach_hasCharm')) {
-              ctx.showDialogue(['Thick vine-cord seals the path. Only a Windward Charm will loosen it.'])
-              ctx.warpTo({ toMap: 'highReaches', toX: 8, toY: 6 })
+              ctx.showDialogue(['Thick vines block the way. You need the Windward Charm.'])
+              ctx.warpTo({ toMap: 'highReaches', toX: 11, toY: 8 })
             }
           },
         },
@@ -528,61 +516,60 @@ export const skyreachCanopyWorld = {
         // its own flag check rather than `once`, so it stays a harmless
         // flavor line before the quest is accepted and after it's doused.
         {
-          x: 5,
-          y: 9,
+          x: 8,
+          y: 15,
           onEnter: (ctx) => {
             const q = ctx.state.quests[WATCH_QUEST]
             if (ctx.state.flags.has('skyreach_beaconDoused')) {
-              ctx.showDialogue(['The Current-well sits dark and quiet now.'])
+              ctx.showDialogue(['The well sits dark and quiet now.'])
               return
             }
             if (q && q.stage === 0 && !q.complete) {
               ctx.state.flags.add('skyreach_beaconDoused')
               setQuestStage(ctx.state, WATCH_QUEST, 1)
               ctx.showDialogue([
-                'A squat lantern-well pulses with raw Current-light, humming loud enough to feel in your teeth.',
-                'Gogu reaches out and the hum drops to nothing. "There. They can\'t hear it anymore."',
+                'The well hums, loud enough to feel in your teeth.',
+                'Gogu silences it. "They can\'t hear it now."',
               ])
               return
             }
-            ctx.showDialogue(['A dim lantern-well hums quietly here, half-buried in root and moss.'])
+            ctx.showDialogue(['A dim lantern-well hums quietly here.'])
           },
         },
         {
-          x: 2,
-          y: 8,
+          x: 16,
+          y: 15,
           once: true,
           setsFlag: 'skyreach_alcoveCacheFound',
           onEnter: (ctx) => {
             ctx.state.inventory.medkit = (ctx.state.inventory.medkit || 0) + 1
-            ctx.showDialogue(['A narrow root-alcove hides a scout cache.', 'Found a medkit!'])
+            ctx.showDialogue(['Found a medkit in a root alcove.'])
           },
         },
       ],
     },
 
     enforcerArena: {
-      width: 10,
-      height: 10,
+      width: ARENA_W,
+      height: ARENA_H,
       tiles: enforcerArenaTiles,
       npcs: [],
-      encounterZones: [],
-      warps: [{ x: 4, y: 8, toMap: 'highReaches', toX: 11, toY: 4 }],
+      enemySpawns: [],
+      warps: [{ x: 7, y: 11, toMap: 'highReaches', toX: 15, toY: 5 }],
       triggers: [
         // Mandatory boss encounter: the only tile connecting the corridor
         // to the arena room, so it cannot be bypassed.
         {
-          x: 4,
-          y: 4,
+          x: 7,
+          y: 6,
           once: true,
           setsFlag: 'skyreach_enforcerEngaged',
           onEnter: (ctx) => {
             ctx.showDialogue(
               [
-                'The arena floor opens beneath the high towers, wind screaming through broken rafters.',
-                'A figure drops from above on a glider-rig, armor humming with stolen Current-charge.',
-                '"Enforcer Vane," she says, landing light as a blade. "The refuge ends its hiding today."',
-                'Wando steps between her and Gogu. "Not today. Not while I\'m standing."',
+                'A figure drops from above on a glider-rig.',
+                '"Enforcer Vane," she says. "Hiding ends today."',
+                'Wando steps in front of Gogu. "Not today."',
               ],
               () => {
                 ctx.startBattle(['skyreach_enforcerVane'], {
@@ -591,13 +578,9 @@ export const skyreachCanopyWorld = {
                     completeQuest(state, WATCH_QUEST)
                     ctx.showDialogue(
                       [
-                        'Enforcer Vane crashes against the arena rail, her glider-rig sparking out.',
-                        '"...the Hollow... will still..." Her voice fades as the stolen Current-charge bleeds out of her armor.',
-                        "Senna's voice carries up from below: the refuge is safe, for now.",
-                        "With the enforcer fallen, the location the old scout's map once marked is confirmed — the Hollow itself, buried beneath the Drift's deepest clouds.",
-                        'Wando looks to Gogu. "That\'s where they want to take you. So that\'s where we end it."',
-                        'The way down into the Hollow lies open. The final confrontation awaits.',
-                        'Head back to the Starskiff to set course for the Hollow.',
+                        'Enforcer Vane crashes against the rail, defeated.',
+                        'The refuge is safe — for now.',
+                        'Head back to the Starskiff. The Hollow awaits.',
                       ],
                       () => ctx.openShip()
                     )

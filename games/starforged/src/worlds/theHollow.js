@@ -13,9 +13,15 @@ import { startQuest, setQuestStage, completeQuest } from '../data/gameState.js'
  *   outerHollow (entry, patrols, shield relay)
  *     -> innerSanctum (regrouped forces, a captive to free)
  *       -> wardenChamber (corridor build-up into the one-tile-chokepoint
- *          boss arena — same chokepoint pattern v1 used, just with more
- *          lead-in before it, and a real onVictory ending instead of the
- *          old "walk past the boss" epilogue-trigger workaround).
+ *          boss arena — a longer corridor than before, now with a few
+ *          visible patrol enemySpawns, feeding a real onVictory ending).
+ *
+ * Random encounters are disabled engine-wide: encounterZones are inert, so
+ * every map below uses visible, map-placed enemySpawns instead (walking
+ * into one's tile starts the fight; once beaten it's remembered as
+ * defeated and stops blocking the tile). The only forced fight is the
+ * final boss, which stays a Trigger on the chamber's one-tile chokepoint —
+ * that cannot be an enemySpawn, since it must be unavoidable.
  */
 
 function makeRoom(width, height, floorId, wallId = 'hollow_wall') {
@@ -42,6 +48,12 @@ registerTileTypes({
   hollow_rune: { color: '#6e1620', dither: '#4a0f16', walkable: true },
   hollow_courtyard: { color: '#241018', dither: '#1a0c12', walkable: true, encounter: true },
   hollow_cellFloor: { color: '#2a1620', dither: '#1c0f16', walkable: true },
+  // Decorative additions for the enlarged maps — mostly unwalkable so they
+  // read as stronghold debris/fixtures rather than new floor space.
+  hollow_brokenPillar: { color: '#241c1c', dither: '#160f0f', walkable: false },
+  hollow_crackedRune: { color: '#4a0a1e', dither: '#2e0612', walkable: true },
+  hollow_cage: { color: '#15151c', dither: '#0a0a10', walkable: false },
+  hollow_machinery: { color: '#241c08', dither: '#160f04', walkable: false },
 })
 
 // --- Sprites ---------------------------------------------------------------
@@ -121,8 +133,9 @@ registerMoves({
 })
 
 // --- Enemies -------------------------------------------------------------
-// Two regular elite-guard types patrolling the outer courtyard and the
-// regrouped forces in the sanctum, plus the buffed final boss.
+// Two regular elite-guard types, now placed as visible enemySpawns across
+// the outer courtyard, the sanctum, and the warden's corridor, plus the
+// buffed final boss (still a forced Trigger fight at the chokepoint).
 registerEnemies({
   hollow_eliteGuard: {
     name: 'Hollow Elite Guard',
@@ -164,46 +177,51 @@ const FINALE_QUEST_ID = 'hollow_finaleQuestId'
 const FINALE_QUEST_NAME = 'Break the Hollow'
 
 // --- Map 1: Outer Hollow (entry, patrols, shield relay) --------------------
-const OUTER_W = 16
-const OUTER_H = 14
+// 19x16 (was 16x14) — bigger courtyard with pillar cover, broken-pillar
+// rubble, cracked-rune floor patches, an empty cage cluster, and a
+// machinery bank filling the extra space. Main thoroughfare is kept clear
+// along column x=8 from the entry up to the relay/warp.
+const OUTER_W = 19
+const OUTER_H = 16
 const outerHollowTiles = makeRoom(OUTER_W, OUTER_H, 'hollow_courtyard')
-// A handful of interior pillars for patrol cover — decorative, none of them
-// sit on the column-8 route between the entry and the exit, or on any
-// NPC/trigger tile.
-for (const [x, y] of [[3, 3], [3, 4], [12, 10], [12, 11], [6, 7]]) {
+// Patrol-cover pillars — kept off the x=9 thoroughfare and every
+// NPC/trigger/enemySpawn tile.
+for (const [x, y] of [[4, 3], [4, 4], [14, 10], [14, 11], [7, 8]]) {
   setTile(outerHollowTiles, x, y, 'hollow_wall')
 }
+for (const [x, y] of [[3, 7], [3, 8], [16, 8]]) {
+  setTile(outerHollowTiles, x, y, 'hollow_brokenPillar')
+}
+for (const [x, y] of [[11, 5], [11, 6], [6, 13]]) {
+  setTile(outerHollowTiles, x, y, 'hollow_crackedRune')
+}
+for (const [x, y] of [[15, 12], [16, 12]]) {
+  setTile(outerHollowTiles, x, y, 'hollow_cage')
+}
+for (const [x, y] of [[12, 4], [13, 4]]) {
+  setTile(outerHollowTiles, x, y, 'hollow_machinery')
+}
 // Shield-relay console, marked with rune tiling.
-setTile(outerHollowTiles, 8, 3, 'hollow_rune')
+setTile(outerHollowTiles, 9, 3, 'hollow_rune')
 
-export const ENTRY = { x: 8, y: 12 }
+export const ENTRY = { x: 9, y: 14 }
 
 function vexDialogue(state) {
   const quest = state.quests[FINALE_QUEST_ID]
   if (!quest || quest.stage === 0) {
-    return [
-      "You're Wando. The armorer. Word travels even down here.",
-      "I'm Vex — ran courier for the Syndicate until I saw what they actually want Gogu for.",
-      "The Warden's shield relay is still live, up past the courtyard. Knock it out before you push deeper, or every alarm in the Hollow finds you at once.",
-    ]
+    return ["I'm Vex. I escaped the Syndicate.", 'Kill the shield relay past the courtyard before you go deeper.']
   }
   if (quest.stage === 1) {
-    return [
-      "Relay's dark — good. That buys you a straight run through the sanctum.",
-      "They're still holding some of the people they dragged in off Ashvault and the Canopy. If you can free them, do it.",
-    ]
+    return ["Relay's dead — good.", "They're still holding prisoners. Free them if you can."]
   }
-  return [
-    'You freed them. That\'s more mercy than the Hollow\'s shown anyone in years.',
-    "The Warden's past the sanctum, in the old rune chamber. Whatever happens in there — Gogu doesn't face it alone.",
-  ]
+  return ["You freed them. That's rare mercy down here.", "The Warden waits past the sanctum. Gogu won't face it alone."]
 }
 
 function lookoutDialogue(state) {
   if (state.flags.has('hollow_relayDisabled')) {
-    return ['Alarms are dead now. Patrols are still walking their old routes out of habit — use that.']
+    return ['Alarms are dead. Patrols still walk old routes.']
   }
-  return ['Patrol sweeps every few minutes. Stick to the open floor and you can read their pattern before they see you.']
+  return ['Patrols sweep every few minutes. Watch the pattern.']
 }
 
 const outerHollowMap = {
@@ -213,61 +231,61 @@ const outerHollowMap = {
   npcs: [
     {
       id: 'vex',
-      x: 5,
-      y: 10,
+      x: 6,
+      y: 11,
       facing: 'up',
       spriteId: 'hollow_vex',
       dialogue: vexDialogue,
     },
     {
       id: 'lookout',
-      x: 11,
-      y: 9,
+      x: 13,
+      y: 10,
       facing: 'left',
       spriteId: 'hollow_lookout',
       dialogue: lookoutDialogue,
     },
   ],
-  encounterZones: [{ x: 2, y: 2, w: 12, h: 9, chance: 0.15, enemyIds: ['hollow_eliteGuard', 'hollow_shadowAgent'] }],
-  warps: [{ x: 8, y: 1, toMap: 'innerSanctum', toX: 7, toY: 12 }],
+  enemySpawns: [
+    { id: 'outer_guard1', x: 5, y: 5, enemyId: 'hollow_eliteGuard', spriteId: 'hollow_eliteGuard' },
+    { id: 'outer_guard2', x: 15, y: 5, enemyId: 'hollow_shadowAgent', spriteId: 'hollow_shadowAgent' },
+    { id: 'outer_guard3', x: 12, y: 12, enemyId: 'hollow_eliteGuard', spriteId: 'hollow_eliteGuard' },
+  ],
+  warps: [{ x: 9, y: 1, toMap: 'innerSanctum', toX: 8, toY: 13 }],
   triggers: [
     // Fires on the first step away from the entry — kicks off the finale
     // quest regardless of which path the player takes afterward.
     {
-      x: 8,
-      y: 11,
+      x: 9,
+      y: 13,
       once: true,
       onEnter(ctx) {
         startQuest(ctx.state, FINALE_QUEST_ID, FINALE_QUEST_NAME)
-        ctx.showDialogue([
-          'This is it — the Hollow itself. Every road since Rustmoor led here.',
-          'Gogu presses close to Wando\'s side. "I can feel it. Whatever they built to use me... it\'s close."',
-          "Cut their defenses, get anyone they're still holding, and we go straight for the one in charge.",
-        ])
+        ctx.showDialogue(['This is the Hollow — it ends here.', 'Cut their defenses, then go for the one in charge.'])
       },
     },
     // Shield relay — a quest beat, not a fight. Defensively starts the
     // quest too, in case the player reaches it before talking to Vex.
     {
-      x: 8,
+      x: 9,
       y: 3,
       once: true,
       setsFlag: 'hollow_relayDisabled',
       onEnter(ctx) {
         startQuest(ctx.state, FINALE_QUEST_ID, FINALE_QUEST_NAME)
         setQuestStage(ctx.state, FINALE_QUEST_ID, 1)
-        ctx.showDialogue([
-          'A humming console, half-buried in rune conduit — the shield relay.',
-          'Wando jams a blade into the housing. The hum dies. Somewhere deep in the Hollow, an alarm that never got to ring goes quiet.',
-        ])
+        ctx.showDialogue(['The shield relay hums before you.', 'Wando cuts it dead — the alarms go silent.'])
       },
     },
   ],
 }
 
 // --- Map 2: Inner Sanctum (regrouped forces, a captive to free) ------------
-const INNER_W = 14
-const INNER_H = 14
+// 17x16 (was 14x14) — the west cell alcove is unchanged (same one-tile
+// doorway chokepoint), with the extra room filled by broken pillars,
+// cracked-rune floor, a cage cluster, and a machinery bank to the east.
+const INNER_W = 17
+const INNER_H = 16
 const innerSanctumTiles = makeRoom(INNER_W, INNER_H, 'hollow_floor')
 // A walled cell alcove on the west side, reachable only through the single
 // doorway tile at (4,6) — the same one-tile-chokepoint idea as the boss
@@ -278,31 +296,31 @@ for (const [x, y] of [[2, 5], [3, 5], [2, 6], [3, 6], [2, 7], [3, 7], [4, 6]]) {
 for (const [x, y] of [[2, 4], [3, 4], [4, 4], [2, 8], [3, 8], [4, 8], [1, 5], [1, 6], [1, 7], [4, 5], [4, 7]]) {
   setTile(innerSanctumTiles, x, y, 'hollow_wall')
 }
+for (const [x, y] of [[9, 3], [9, 4], [6, 3]]) {
+  setTile(innerSanctumTiles, x, y, 'hollow_brokenPillar')
+}
+for (const [x, y] of [[12, 8], [12, 9], [14, 6]]) {
+  setTile(innerSanctumTiles, x, y, 'hollow_crackedRune')
+}
+for (const [x, y] of [[6, 13], [7, 13]]) {
+  setTile(innerSanctumTiles, x, y, 'hollow_cage')
+}
+for (const [x, y] of [[13, 4], [14, 4]]) {
+  setTile(innerSanctumTiles, x, y, 'hollow_machinery')
+}
 
 function rellDialogue(state) {
   if (state.flags.has('hollow_rellFreed')) {
-    return [
-      "Air. Real air. I'd almost forgotten what that felt like.",
-      "Go, Wando — finish this. I've got people to find and a long walk out of here.",
-    ]
+    return ["Real air. I'd forgotten the feel.", 'Go finish this, Wando.']
   }
-  return [
-    '...Wando? They said you\'d be dead by Ashvault.',
-    "Get this chain off and I'll tell you everything I heard them say about Gogu.",
-  ]
+  return ['...Wando? They said you were dead.', "Free me and I'll tell you about Gogu."]
 }
 
 function junDialogue(state) {
   if (state.unlockedWorlds.length >= 5) {
-    return [
-      'Rustmoor. Mossfen. Ashvault. The Canopy. And now here.',
-      "You crossed the whole Drift to reach this room. The Warden knows it too — that's why it hasn't fled.",
-    ]
+    return ['You crossed the whole Drift to get here.', "The Warden knows — that's why it stayed."]
   }
-  return [
-    "Whatever path brought you here, it ends past that door.",
-    "The Warden doesn't run. It's waited this long on purpose.",
-  ]
+  return ['This ends past that door.', "The Warden isn't running."]
 }
 
 const innerSanctumMap = {
@@ -320,26 +338,27 @@ const innerSanctumMap = {
     },
     {
       id: 'jun',
-      x: 9,
+      x: 10,
       y: 7,
       facing: 'left',
       spriteId: 'hollow_jun',
       dialogue: junDialogue,
     },
   ],
-  encounterZones: [{ x: 5, y: 2, w: 7, h: 8, chance: 0.17, enemyIds: ['hollow_eliteGuard', 'hollow_shadowAgent'] }],
-  warps: [{ x: 7, y: 1, toMap: 'wardenChamber', toX: 4, toY: 13 }],
+  enemySpawns: [
+    { id: 'inner_guard1', x: 12, y: 4, enemyId: 'hollow_eliteGuard', spriteId: 'hollow_eliteGuard' },
+    { id: 'inner_guard2', x: 6, y: 10, enemyId: 'hollow_shadowAgent', spriteId: 'hollow_shadowAgent' },
+    { id: 'inner_guard3', x: 13, y: 11, enemyId: 'hollow_eliteGuard', spriteId: 'hollow_eliteGuard' },
+  ],
+  warps: [{ x: 8, y: 1, toMap: 'wardenChamber', toX: 4, toY: 17 }],
   triggers: [
     {
-      x: 7,
-      y: 11,
+      x: 8,
+      y: 12,
       once: true,
       onEnter(ctx) {
         const quest = ctx.state.quests[FINALE_QUEST_ID]
-        const lines =
-          quest && quest.stage >= 1
-            ? ["The sanctum beyond is quiet — too quiet. Whatever's left of the Warden's guard is falling back to regroup."]
-            : ['Alarms are still live somewhere behind you. Move fast.']
+        const lines = quest && quest.stage >= 1 ? ["The sanctum's quiet — too quiet."] : ['Alarms are still live. Move fast.']
         ctx.showDialogue(lines)
       },
     },
@@ -353,25 +372,26 @@ const innerSanctumMap = {
       onEnter(ctx) {
         startQuest(ctx.state, FINALE_QUEST_ID, FINALE_QUEST_NAME)
         setQuestStage(ctx.state, FINALE_QUEST_ID, 2)
-        ctx.showDialogue([
-          'Chains shatter at a touch — these were never meant to hold against a real fight.',
-          'Rell slumps forward, then catches herself. "...Wando. You actually came."',
-        ])
+        ctx.showDialogue(['The chains break at a touch.', 'Rell: "...Wando. You came."'])
       },
     },
   ],
 }
 
 // --- Map 3: Warden's Chamber (corridor build-up into the boss arena) -------
-// 10x15. Rows 1-3, cols 2-7 form the rune-lit arena. The only way in is the
-// single-tile opening at (4,4), fed by a one-tile-wide corridor (rows 5-12,
-// col 4 only) running down to the door at (4,13) — so there is no route
-// around the chokepoint trigger at (4,4); every other tile in the corridor
-// rows and the chokepoint row is a wall. The corridor is longer than v1's
-// so there's real build-up (a couple of patrol encounters) before the
-// boss, instead of walking straight from the door into the fight.
+// 10x19 (was 10x15). Rows 1-3, cols 2-7 form the rune-lit arena, unchanged.
+// The only way in is the single-tile opening at (4,4), fed by a one-tile-
+// wide corridor (rows 5-16, col 4 only) running down to the door at
+// (4,17) — longer than before (12 corridor rows vs. 8), but still exactly
+// one tile wide, so there is no route around the chokepoint trigger at
+// (4,4); every other tile in the corridor rows and the chokepoint row is a
+// wall. The corridor's side walls (cols 3 and 5) get cage/machinery/
+// broken-pillar dressing at a few rows purely for flavor — they stay
+// unwalkable either way, so the chokepoint geometry is untouched. A few
+// visible enemySpawns patrol the corridor itself as build-up before the
+// boss.
 const WC_W = 10
-const WC_H = 15
+const WC_H = 19
 const wardenChamberTiles = []
 for (let y = 0; y < WC_H; y++) {
   if (y === 0 || y === WC_H - 1) {
@@ -380,12 +400,24 @@ for (let y = 0; y < WC_H; y++) {
     wardenChamberTiles.push(['hollow_wall', 'hollow_wall', ...Array(6).fill('hollow_rune'), 'hollow_wall', 'hollow_wall'])
   } else if (y === 4) {
     wardenChamberTiles.push([...Array(4).fill('hollow_wall'), 'hollow_rune', ...Array(5).fill('hollow_wall')])
-  } else if (y >= 5 && y <= 12) {
+  } else if (y >= 5 && y <= 16) {
     wardenChamberTiles.push([...Array(4).fill('hollow_wall'), 'hollow_floor', ...Array(5).fill('hollow_wall')])
   } else {
-    // y === 13: the entry door
+    // y === 17: the entry door
     wardenChamberTiles.push([...Array(4).fill('hollow_wall'), 'door', ...Array(5).fill('hollow_wall')])
   }
+}
+// Cosmetic-only side-wall dressing — cols 3 and 5 are already unwalkable
+// 'hollow_wall', so swapping a few rows to other unwalkable decorative
+// types changes nothing about the chokepoint's one-tile-wide geometry.
+for (const [x, y] of [[3, 6], [5, 6]]) {
+  setTile(wardenChamberTiles, x, y, 'hollow_cage')
+}
+for (const [x, y] of [[3, 10], [5, 10]]) {
+  setTile(wardenChamberTiles, x, y, 'hollow_machinery')
+}
+for (const [x, y] of [[3, 13], [5, 13]]) {
+  setTile(wardenChamberTiles, x, y, 'hollow_brokenPillar')
 }
 
 const wardenChamberMap = {
@@ -393,13 +425,18 @@ const wardenChamberMap = {
   height: WC_H,
   tiles: wardenChamberTiles,
   npcs: [],
-  encounterZones: [{ x: 4, y: 5, w: 1, h: 8, chance: 0.2, enemyIds: ['hollow_eliteGuard', 'hollow_shadowAgent'] }],
+  enemySpawns: [
+    { id: 'warden_corridor_guard1', x: 4, y: 8, enemyId: 'hollow_eliteGuard', spriteId: 'hollow_eliteGuard' },
+    { id: 'warden_corridor_guard2', x: 4, y: 11, enemyId: 'hollow_shadowAgent', spriteId: 'hollow_shadowAgent' },
+    { id: 'warden_corridor_guard3', x: 4, y: 14, enemyId: 'hollow_eliteGuard', spriteId: 'hollow_eliteGuard' },
+  ],
   warps: [],
   triggers: [
     // Mandatory boss encounter — the only tile connecting the corridor to
-    // the arena, so it cannot be bypassed (see map comment above). once:
-    // true so re-entering the arena after the fight doesn't replay the
-    // lead-in or restart the battle.
+    // the arena, so it cannot be bypassed (see map comment above). This
+    // stays a Trigger, not an enemySpawn, specifically because it must be
+    // a forced, unavoidable fight. once: true so re-entering the arena
+    // after the fight doesn't replay the lead-in or restart the battle.
     {
       x: 4,
       y: 4,
