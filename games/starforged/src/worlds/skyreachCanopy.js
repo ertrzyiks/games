@@ -3,7 +3,7 @@ import { registerTileTypes } from '../assets/tiles.js'
 import { registerSprites } from '../assets/sprites/registry.js'
 import { registerEnemies } from '../battle/enemies.js'
 import { registerMoves } from '../battle/moves.js'
-import { HUMANOID_TEMPLATE, CHILD_TEMPLATE, buildSprite } from '../assets/spriteTemplates.js'
+import { HUMANOID_TEMPLATE, CHILD_TEMPLATE, CREATURE_TEMPLATE, ARMORED_TEMPLATE, buildSprite } from '../assets/spriteTemplates.js'
 import { startQuest, setQuestStage, completeQuest } from '../data/gameState.js'
 
 // --- Small grid-building helpers (local to this file) ---------------------
@@ -121,33 +121,36 @@ const wrenSprite = buildSprite(CHILD_TEMPLATE, {
   B: '#dfe3ea',
 })
 
-const galeStalkerSprite = buildSprite(HUMANOID_TEMPLATE, {
+const galeStalkerSprite = buildSprite(CREATURE_TEMPLATE, {
   H: '#1f2d33',
-  V: '#39c6b0',
+  E: '#39c6b0',
+  B: '#2a4e55',
   T: '#6fe3d0',
-  A: '#2a4e55',
   L: '#101820',
 })
 
-const windReaverSprite = buildSprite(HUMANOID_TEMPLATE, {
+const windReaverSprite = buildSprite(CREATURE_TEMPLATE, {
   H: '#214047',
-  V: '#dfffe8',
+  E: '#dfffe8',
+  B: '#2f6b74',
   T: '#6fe3d0',
-  A: '#2f6b74',
   L: '#12282c',
 })
 
-const rootLurkerSprite = buildSprite(HUMANOID_TEMPLATE, {
+const rootLurkerSprite = buildSprite(CREATURE_TEMPLATE, {
   H: '#2a2038',
-  V: '#120c1a',
+  E: '#120c1a',
+  B: '#3a2a52',
   T: '#5c3f7a',
-  A: '#3a2a52',
   L: '#160f24',
 })
 
-const enforcerVaneSprite = buildSprite(HUMANOID_TEMPLATE, {
+// Elite Syndicate enforcer boss — a human combatant, not wildlife, so she
+// gets the bulkier armored-trooper silhouette instead of the creature one.
+const enforcerVaneSprite = buildSprite(ARMORED_TEMPLATE, {
   H: '#2e2440',
-  V: '#dfe3ea',
+  F: '#dfe3ea',
+  S: '#17121f',
   T: '#8a6fd1',
   A: '#3d3450',
   L: '#17121f',

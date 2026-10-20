@@ -3,7 +3,7 @@ import { registerTileTypes } from '../assets/tiles.js'
 import { registerSprites } from '../assets/sprites/registry.js'
 import { registerEnemies } from '../battle/enemies.js'
 import { registerMoves } from '../battle/moves.js'
-import { HUMANOID_TEMPLATE, CHILD_TEMPLATE, buildSprite } from '../assets/spriteTemplates.js'
+import { HUMANOID_TEMPLATE, CHILD_TEMPLATE, ARMORED_TEMPLATE, buildSprite } from '../assets/spriteTemplates.js'
 import { PALETTE } from '../assets/palette.js'
 import { startQuest, setQuestStage, completeQuest } from '../data/gameState.js'
 
@@ -64,25 +64,28 @@ const pipSprite = buildSprite(CHILD_TEMPLATE, {
   B: '#dfe8f5',
 })
 
-const raiderSprite = buildSprite(HUMANOID_TEMPLATE, {
+const raiderSprite = buildSprite(ARMORED_TEMPLATE, {
   H: '#4a3828',
-  V: '#1a1d26',
+  F: '#1a1d26',
+  S: '#2a2018',
   T: '#7a5a3a',
   A: '#5a4228',
   L: '#2a2018',
 })
 
-const raiderScoutSprite = buildSprite(HUMANOID_TEMPLATE, {
+const raiderScoutSprite = buildSprite(ARMORED_TEMPLATE, {
   H: '#3a4a38',
-  V: '#1a1d26',
+  F: '#1a1d26',
+  S: '#1a2a1a',
   T: '#6a8a5a',
   A: '#3f5a3a',
   L: '#1a2a1a',
 })
 
-const captainSprite = buildSprite(HUMANOID_TEMPLATE, {
+const captainSprite = buildSprite(ARMORED_TEMPLATE, {
   H: '#2a1818',
-  V: PALETTE.danger,
+  F: PALETTE.danger,
+  S: '#1a0e0e',
   T: '#8a2a2a',
   A: '#4a1a1a',
   L: '#1a0e0e',
