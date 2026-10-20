@@ -50,11 +50,13 @@ export const CHILD_TEMPLATE = [
   '.....RRRRRR.....',
 ]
 
-// Gogu only: the same round-headed child/robe silhouette as CHILD_TEMPLATE
-// (reused for every other fenling/child NPC), but with a pair of
-// characteristic tall, pointed ears (P) swept up and out from the sides of
-// the head, and large 2x2 eyes (E) instead of CHILD_TEMPLATE's single-pixel
-// dots — distinct at a glance from everyone else of his kind.
+// Gogu only: a slimmer variant of CHILD_TEMPLATE's round-headed child/robe
+// silhouette (reused for every other fenling/child NPC) — the robe tops out
+// at 10 wide instead of 12 and never bulges past that, instead of widening
+// into a round "belly" partway down — plus a pair of characteristic tall,
+// pointed ears (P) swept up and out from the sides of the head, and large
+// 2x2 eyes (E) instead of CHILD_TEMPLATE's single-pixel dots. Distinct at a
+// glance from everyone else of his kind.
 export const GOGU_TEMPLATE = [
   '.PP..........PP.',
   '.PPP.HHHHHH.PPP.',
@@ -63,13 +65,13 @@ export const GOGU_TEMPLATE = [
   '....HEEHHEEH....',
   '.....HHHHHH.....',
   '....RRRRRRRR....',
+  '....RRRRRRRR....',
   '...RRRRRRRRRR...',
   '...RRRRRRRRRR...',
-  '..RRRRRRRRRRRR..',
-  '..RRRRRRRRRRRR..',
-  '..RBBBBBBBBBBR..',
-  '..RRRRRRRRRRRR..',
   '...RRRRRRRRRR...',
+  '...RBBBBBBBBR...',
+  '...RRRRRRRRRR...',
+  '....RRRRRRRR....',
   '....RRRRRRRR....',
   '.....RRRRRR.....',
 ]
