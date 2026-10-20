@@ -11,6 +11,10 @@ import { mossSprite } from '../assets/sprites/moss.js'
 import { grantXp } from '../data/gameState.js'
 
 const PARTY_SPRITES = { kade: heroSprite, moss: mossSprite }
+// Discrete font-size ladder for auto-shrinking a single overflowing action
+// label in the move-selection menu. Small and discrete so text stays crisp
+// pixel-art-style at this tiny canvas resolution.
+const MENU_FONT_SIZES = [7, 6, 5, 4]
 const ITEM_HEAL_AMOUNT = 15
 const TONIC_ATK_BOOST = 5
 const TONIC_DURATION = 3
@@ -621,7 +625,9 @@ export class BattleScene {
 
     // Who's acting is shown by the ▼ marker over their sprite (see draw()),
     // not repeated here.
-    ctx.font = '7px Consolas, Menlo, monospace'
+    // Available interior width for each option's drawn string (prefix +
+    // label), inset from the box's left/right edges.
+    const maxWidth = boxW - 4 - 4
     options.forEach((opt, i) => {
       const label =
         opt === 'item'
@@ -629,8 +635,24 @@ export class BattleScene {
           : opt === 'tonic'
             ? tf('Tonic x{count}', { count: this.state.inventory.tonic || 0 })
             : t(getMove(opt).name)
+      const str = `${i === this.menuIndex ? '>' : ' '}${label}`
+      const fontSize = this._fitMenuOptionFontSize(ctx, str, maxWidth)
+      ctx.font = `${fontSize}px Consolas, Menlo, monospace`
       ctx.fillStyle = i === this.menuIndex ? '#dfe3ea' : '#9ba1b4'
-      ctx.fillText(`${i === this.menuIndex ? '>' : ' '}${label}`, x + 4, y + 8 + i * 10)
+      ctx.fillText(str, x + 4, y + 8 + i * 10)
     })
+  }
+
+  // Picks the largest size from MENU_FONT_SIZES at which `str` measures
+  // within `maxWidth`, falling back to the smallest size in the ladder if
+  // even that still overflows (never loops forever).
+  _fitMenuOptionFontSize(ctx, str, maxWidth) {
+    for (let i = 0; i < MENU_FONT_SIZES.length; i++) {
+      const size = MENU_FONT_SIZES[i]
+      ctx.font = `${size}px Consolas, Menlo, monospace`
+      const isLast = i === MENU_FONT_SIZES.length - 1
+      if (ctx.measureText(str).width <= maxWidth || isLast) return size
+    }
+    return MENU_FONT_SIZES[MENU_FONT_SIZES.length - 1]
   }
 }
