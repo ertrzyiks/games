@@ -419,7 +419,7 @@ export const ashvaultStationWorld = {
           dialogue: (state) => {
             const quest = state.quests['ashvault_tamsinRescue']
             if (!quest) {
-              startQuest(state, 'ashvault_tamsinRescue', 'Free Tamsin')
+              startQuest(state, 'ashvault_tamsinRescue', 'Free Tamsin', 'T5')
               return ["They've chained Tamsin in the engine core.", 'Find the release switch and free her.']
             }
             if (quest.complete) {
@@ -443,7 +443,7 @@ export const ashvaultStationWorld = {
           dialogue: (state) => {
             const quest = state.quests['ashvault_extractorSabotage']
             if (!quest) {
-              startQuest(state, 'ashvault_extractorSabotage', 'The Current Extractor')
+              startQuest(state, 'ashvault_extractorSabotage', 'The Current Extractor', 'T6')
               return ["They built a device to drain Gogu's Current.", 'Find the schematics console and confirm it.']
             }
             if (quest.complete) {
@@ -528,7 +528,7 @@ export const ashvaultStationWorld = {
           setsFlag: 'ashvault_tamsinFreed',
           onEnter(ctx) {
             if (!ctx.state.quests['ashvault_tamsinRescue']) {
-              startQuest(ctx.state, 'ashvault_tamsinRescue', 'Free Tamsin')
+              startQuest(ctx.state, 'ashvault_tamsinRescue', 'Free Tamsin', 'T5')
             }
             setQuestStage(ctx.state, 'ashvault_tamsinRescue', 1)
             ctx.showDialogue(["You trip the release — the field drops, Tamsin's free.", '"Go, before they notice!"'])
@@ -541,7 +541,7 @@ export const ashvaultStationWorld = {
           setsFlag: 'ashvault_extractorConfirmed',
           onEnter(ctx) {
             if (!ctx.state.quests['ashvault_extractorSabotage']) {
-              startQuest(ctx.state, 'ashvault_extractorSabotage', 'The Current Extractor')
+              startQuest(ctx.state, 'ashvault_extractorSabotage', 'The Current Extractor', 'T6')
             }
             setQuestStage(ctx.state, 'ashvault_extractorSabotage', 1)
             ctx.showDialogue(["The schematics are keyed to Gogu's signature.", 'The vault door should open now.'])

@@ -96,6 +96,14 @@
  * @property {string[]} moves
  * @property {number} xpReward
  * @property {boolean} [isBoss]
+ *
+ * @typedef {Object} Quest
+ * @property {string} id       - unique quest id, e.g. 'rustmoor_syndicateSigns'
+ * @property {string} name     - display name, routed through t() when rendered
+ * @property {string} key      - short stable reference code (T1, T2, ...) for referring to this
+ *   quest unambiguously in code/discussion; shown in-game as-is, never translated
+ * @property {number} stage
+ * @property {boolean} complete
  */
 
 export {}

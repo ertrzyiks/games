@@ -246,7 +246,9 @@ export class ShipScene {
         if (y > boxY + boxH - 4) return
         ctx.fillStyle = q.complete ? '#5bd17a' : '#dfe3ea'
         const status = q.complete ? t('[done]') : `[${q.stage}]`
-        ctx.fillText(`${status} ${t(q.name)}`, boxX + 4, y)
+        // Key is a plain reference code (T1, T2, ...), not natural-language
+        // text, so it's never routed through t() — only q.name is translated.
+        ctx.fillText(`${status} ${t(q.name)} [${q.key}]`, boxX + 4, y)
       })
     }
 

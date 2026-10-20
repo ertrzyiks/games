@@ -64,9 +64,11 @@ export function createInitialState() {
     // trigger unlocks the next one on victory (see worlds/registry.js's
     // WORLD_ORDER and OverworldScene.startBattle's onVictory callback).
     unlockedWorlds: ['rustmoor'],
-    // Lightweight quest log: { [questId]: { id, name, stage, complete } }.
+    // Lightweight quest log: { [questId]: { id, name, key, stage, complete } }.
     // World/NPC files call the helpers below to start/advance/complete a
     // quest; the ship screen's Quest Log page reads this to render status.
+    // `key` is a short stable reference code (T1, T2, ...) shown in-game and
+    // used to refer to quests unambiguously in code/discussion.
     quests: {},
     // Tracks which "content signature" (see overworldScene.js's
     // npcHasNewContent) the player last saw for each NPC they've talked
@@ -76,8 +78,8 @@ export function createInitialState() {
   }
 }
 
-export function startQuest(state, id, name) {
-  if (!state.quests[id]) state.quests[id] = { id, name, stage: 0, complete: false }
+export function startQuest(state, id, name, key) {
+  if (!state.quests[id]) state.quests[id] = { id, name, key, stage: 0, complete: false }
 }
 
 export function setQuestStage(state, id, stage) {

@@ -185,6 +185,7 @@ registerEnemies({
 // --- Quest -----------------------------------------------------------------
 const FINALE_QUEST_ID = 'hollow_finaleQuestId'
 const FINALE_QUEST_NAME = 'Break the Hollow'
+const FINALE_QUEST_KEY = 'T9'
 
 // --- Map 1: Outer Hollow (entry, patrols, shield relay) --------------------
 // 19x16 (was 16x14) — bigger courtyard with pillar cover, broken-pillar
@@ -281,7 +282,7 @@ const outerHollowMap = {
       y: 13,
       once: true,
       onEnter(ctx) {
-        startQuest(ctx.state, FINALE_QUEST_ID, FINALE_QUEST_NAME)
+        startQuest(ctx.state, FINALE_QUEST_ID, FINALE_QUEST_NAME, FINALE_QUEST_KEY)
         ctx.showDialogue(['This is the Hollow — it ends here.', 'Cut their defenses, then go for the one in charge.'])
       },
     },
@@ -293,7 +294,7 @@ const outerHollowMap = {
       once: true,
       setsFlag: 'hollow_relayDisabled',
       onEnter(ctx) {
-        startQuest(ctx.state, FINALE_QUEST_ID, FINALE_QUEST_NAME)
+        startQuest(ctx.state, FINALE_QUEST_ID, FINALE_QUEST_NAME, FINALE_QUEST_KEY)
         setQuestStage(ctx.state, FINALE_QUEST_ID, 1)
         ctx.showDialogue(['The shield relay hums before you.', 'Wando cuts it dead — the alarms go silent.'])
       },
@@ -392,7 +393,7 @@ const innerSanctumMap = {
       once: true,
       setsFlag: 'hollow_rellFreed',
       onEnter(ctx) {
-        startQuest(ctx.state, FINALE_QUEST_ID, FINALE_QUEST_NAME)
+        startQuest(ctx.state, FINALE_QUEST_ID, FINALE_QUEST_NAME, FINALE_QUEST_KEY)
         setQuestStage(ctx.state, FINALE_QUEST_ID, 2)
         ctx.showDialogue(['The chains break at a touch.', 'Rell: "...Wando. You came."'])
       },

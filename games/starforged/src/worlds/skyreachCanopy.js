@@ -229,7 +229,9 @@ registerEnemies({
 
 // --- Quest ids / names ----------------------------------------------------
 const ROOST_QUEST = 'skyreach_roostRescue'
+const ROOST_QUEST_KEY = 'T8'
 const WATCH_QUEST = 'skyreach_hollowWatch'
+const WATCH_QUEST_KEY = 'T7'
 
 // --- Maps --------------------------------------------------------------
 
@@ -404,7 +406,7 @@ export const skyreachCanopyWorld = {
           dialogue: (state) => {
             const q = state.quests[WATCH_QUEST]
             if (!q) {
-              startQuest(state, WATCH_QUEST, 'Shroud the Current-Well')
+              startQuest(state, WATCH_QUEST, 'Shroud the Current-Well', WATCH_QUEST_KEY)
               return [
                 'Senna: The Current-well is singing straight to the Syndicate.',
                 'Senna: Still it in the High Reaches before they arrive.',
@@ -430,7 +432,7 @@ export const skyreachCanopyWorld = {
           dialogue: (state) => {
             const q = state.quests[ROOST_QUEST]
             if (!q) {
-              startQuest(state, ROOST_QUEST, 'Find Wren in the High Reaches')
+              startQuest(state, ROOST_QUEST, 'Find Wren in the High Reaches', ROOST_QUEST_KEY)
               return ['Orin: Wren never came back from scouting.', 'Orin: Please find them near the roost towers.']
             }
             if (q.complete) {
