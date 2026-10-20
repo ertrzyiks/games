@@ -394,7 +394,7 @@ export const mossfenReachWorld = {
           dialogue: (state) => {
             const quest = state.quests['mossfen_lostScout']
             if (!quest) {
-              startQuest(state, 'mossfen_lostScout', 'The Lost Scout')
+              startQuest(state, 'mossfen_lostScout', 'The Lost Scout', 'T3')
               return ['Finn grips his spear. "My kin Wick is missing in the Mire."', '"Please — find her."']
             }
             if (quest.complete) {
@@ -418,7 +418,7 @@ export const mossfenReachWorld = {
           dialogue: (state) => {
             const quest = state.quests['mossfen_syndicateTrail']
             if (!quest) {
-              startQuest(state, 'mossfen_syndicateTrail', 'What the Syndicate Took')
+              startQuest(state, 'mossfen_syndicateTrail', 'What the Syndicate Took', 'T4')
               return [
                 '"The Syndicate dug for something at the old shrine."',
                 '"I need to know what. Follow the shrine path."',
@@ -505,7 +505,7 @@ export const mossfenReachWorld = {
           setsFlag: 'mossfen_glowReed',
           onEnter: (ctx) => {
             const { state } = ctx
-            startQuest(state, 'mossfen_lostScout', 'The Lost Scout')
+            startQuest(state, 'mossfen_lostScout', 'The Lost Scout', 'T3')
             setQuestStage(state, 'mossfen_lostScout', 1)
             ctx.showDialogue(['Tangled in root-snares: Wick, Finn\'s kin.', '"Take this kinlight — it wards off the dark."'])
           },
@@ -532,7 +532,7 @@ export const mossfenReachWorld = {
           setsFlag: 'mossfen_evidenceFound',
           onEnter: (ctx) => {
             const { state } = ctx
-            startQuest(state, 'mossfen_syndicateTrail', 'What the Syndicate Took')
+            startQuest(state, 'mossfen_syndicateTrail', 'What the Syndicate Took', 'T4')
             setQuestStage(state, 'mossfen_syndicateTrail', 1)
             ctx.showDialogue([
               'A cracked Syndicate siphon rig, half-buried in muck.',

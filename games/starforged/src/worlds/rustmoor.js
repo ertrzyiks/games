@@ -288,7 +288,7 @@ export const rustmoorWorld = {
           dialogue: (state) => {
             const q = state.quests['rustmoor_syndicateSigns']
             if (!q) {
-              startQuest(state, 'rustmoor_syndicateSigns', 'Signs of the Syndicate')
+              startQuest(state, 'rustmoor_syndicateSigns', 'Signs of the Syndicate', 'T1')
               return [
                 'Raiders hit us at dawn — Hollow Syndicate markings on their wagon.',
                 'Find proof deep in the old mine tunnels.',
@@ -362,7 +362,7 @@ export const rustmoorWorld = {
           dialogue: (state) => {
             const q = state.quests['rustmoor_yaraCache']
             if (!q) {
-              startQuest(state, 'rustmoor_yaraCache', "Yara's Buried Cache")
+              startQuest(state, 'rustmoor_yaraCache', "Yara's Buried Cache", 'T2')
               state.flags.add('rustmoor_hasPick')
               return [
                 'My medkit cache is buried past the rockfall.',
