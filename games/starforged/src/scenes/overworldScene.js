@@ -97,6 +97,16 @@ export class OverworldScene {
       return
     }
 
+    // Same idea for secrets: walking straight into a "fake wall" reveals it
+    // immediately, same as bumping into an NPC starts a conversation — no
+    // need to also stop, turn to face it exactly, and press "a".
+    const secret = getSecretAt(this.mapDef, nx, ny)
+    if (secret) {
+      this.moveCooldown = BUMP_COOLDOWN_MS
+      this._tryRevealSecret(secret)
+      return
+    }
+
     if (isWalkable(this.mapDef, nx, ny)) {
       this.state.x = nx
       this.state.y = ny
