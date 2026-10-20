@@ -89,3 +89,13 @@ export function getWarpAt(mapDef, x, y) {
 export function getTriggerAt(mapDef, x, y) {
   return (mapDef.triggers || []).find((t) => t.x === x && t.y === y)
 }
+
+// Visible markers for important story/quest objects (a lamp, a console, ...)
+// sitting on an otherwise-plain floor tile. Purely a rendering lookup —
+// nothing here participates in collision or interaction; the actual
+// gameplay (dialogue, quest stage, flags) still comes entirely from a
+// Trigger/Warp/NPC at the same coordinates. See MapDef.items:
+// [{ id, x, y, spriteId }].
+export function getItemAt(mapDef, x, y) {
+  return (mapDef.items || []).find((i) => i.x === x && i.y === y)
+}

@@ -145,6 +145,58 @@ export const ARMORED_TEMPLATE = [
   '...LLLLLLLLLL...',
 ]
 
+// --- Compact object templates ---------------------------------------------
+// Unlike the 16x16 character silhouettes above, important story/quest
+// OBJECTS (a lamp, a console, a buried cache, ...) are drawn much smaller —
+// 8x8, a quarter of a tile's area — so they read as "a thing sitting on the
+// floor" rather than a character, and so OverworldScene can center them
+// within TILE_SIZE (16) with a few pixels of floor showing around the edge.
+
+// Lamp/lantern/beacon: a framed glow (F = frame/casing, G = the light
+// itself) on a short post (P). Reused with different legends for both a
+// cozy rescue lantern and an ominous Syndicate-tech beacon — only the
+// colors change, never the shape.
+export const LAMP_TEMPLATE = [
+  '..FFFF..',
+  '.FGGGGF.',
+  '.FGGGGF.',
+  '.FGGGGF.',
+  '..FFFF..',
+  '...PP...',
+  '...PP...',
+  '..PPPP..',
+]
+
+// Console/terminal/device: a squared casing (B = body) around a glowing
+// display (S = screen), with a small indicator strip (L = light/lever)
+// underneath. Reused for every "quest-critical device" sprite in the game
+// (a schematics console, a release switch, a corroded siphon rig, a shield
+// relay, ...) — each world just re-skins the legend.
+export const CONSOLE_TEMPLATE = [
+  'BBBBBBBB',
+  'BSSSSSSB',
+  'BSSSSSSB',
+  'BSSSSSSB',
+  'BBBBBBBB',
+  '.BBLLBB.',
+  '.BBBBBB.',
+  '..BBBB..',
+]
+
+// Buried/supply cache: a banded crate (C = crate body, B = metal band/
+// latch). Reused for quest-critical "find the cache" payoffs that aren't
+// lamps or devices.
+export const CACHE_TEMPLATE = [
+  '.CCCCCC.',
+  'CCCCCCCC',
+  'CCBBBBCC',
+  'CCCCCCCC',
+  'CCCCCCCC',
+  'CCBBBBCC',
+  'CCCCCCCC',
+  '.CCCCCC.',
+]
+
 export function buildSprite(template, legend) {
   const charToIdx = {}
   const palette = {}

@@ -4,7 +4,7 @@ import { registerSprites } from '../assets/sprites/registry.js'
 import { registerEnemies } from '../battle/enemies.js'
 import { registerMoves } from '../battle/moves.js'
 import { startQuest, setQuestStage, completeQuest } from '../data/gameState.js'
-import { CHILD_TEMPLATE, CREATURE_TEMPLATE, buildSprite } from '../assets/spriteTemplates.js'
+import { CHILD_TEMPLATE, CREATURE_TEMPLATE, LAMP_TEMPLATE, CONSOLE_TEMPLATE, buildSprite } from '../assets/spriteTemplates.js'
 
 // Builds a width x height grid filled with a single tile id.
 function buildGrid(width, height, fillId) {
@@ -136,6 +136,25 @@ const bogWardenSprite = buildSprite(CREATURE_TEMPLATE, {
   L: '#1c1420',
 })
 
+// Wick's kinlight: the glow-reed lantern she hands over, found as a
+// visible object marker on the tile where Wick is rescued (deepMire, 5,4).
+// Warm, cozy "rescue lantern" colors.
+const kinlightLampSprite = buildSprite(LAMP_TEMPLATE, {
+  F: '#5a4a33',
+  G: '#f4e04d',
+  P: '#3a2f1e',
+})
+
+// The cracked Syndicate siphon rig (deepMire, 16,13): the physical proof
+// behind 'mossfen_syndicateTrail'. A corroded console re-skin, not a lamp —
+// sickly rust/green to read as "broken Syndicate tech," not a device Wando
+// would use on purpose.
+const siphonRigSprite = buildSprite(CONSOLE_TEMPLATE, {
+  B: '#4a3b2a',
+  S: '#6e1620',
+  L: '#8a9a3a',
+})
+
 registerSprites({
   mossfen_fenling: fenlingSprite,
   mossfen_sentry: sentrySprite,
@@ -147,6 +166,8 @@ registerSprites({
   mossfen_mireLurker: mireLurkerSprite,
   mossfen_reedViper: reedViperSprite,
   mossfen_bogWarden: bogWardenSprite,
+  mossfen_kinlightLamp: kinlightLampSprite,
+  mossfen_siphonRig: siphonRigSprite,
 })
 
 // --- World-specific moves ------------------------------------------------
@@ -454,6 +475,13 @@ export const mossfenReachWorld = {
         { id: 'mire_stalker1', x: 6, y: 13, enemyId: 'mossfen_bogStalker', spriteId: 'mossfen_bogStalker' },
         { id: 'mire_viper1', x: 17, y: 10, enemyId: 'mossfen_reedViper', spriteId: 'mossfen_reedViper' },
         { id: 'mire_stalker2', x: 18, y: 14, enemyId: 'mossfen_bogStalker', spriteId: 'mossfen_bogStalker' },
+      ],
+      // Visible markers for the two quest-critical objects on this map,
+      // same tiles as their (unchanged) Trigger definitions below: Wick's
+      // kinlight lantern, and the Syndicate siphon rig evidence.
+      items: [
+        { id: 'kinlightLamp', x: 5, y: 4, spriteId: 'mossfen_kinlightLamp' },
+        { id: 'siphonRig', x: 16, y: 13, spriteId: 'mossfen_siphonRig' },
       ],
       warps: [
         { x: 0, y: 12, toMap: 'settlement', toX: 19, toY: 6 },

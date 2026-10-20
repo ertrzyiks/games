@@ -317,9 +317,50 @@ export class OverworldScene {
     })
   }
 
+  // A pulsing golden aura behind an important story/quest item, so it's
+  // unmistakable at a glance instead of blending into the floor. (sx, sy)
+  // is the item's screen-space top-left corner, same convention as every
+  // other sprite draw in this method. Follows the same performance.now()
+  // pulse technique already used below for the NPC "!" marker and for the
+  // dialogue box's blinking "▼" indicator, rather than inventing a new
+  // animation approach.
+  _drawGoldenAura(ctx, sx, sy) {
+    const cx = sx + TILE_SIZE / 2
+    const cy = sy + TILE_SIZE / 2
+    const pulse = Math.sin(performance.now() / 300) * 1.5
+    const rings = [
+      { r: 8.5 + pulse, a: 0.14 },
+      { r: 6 + pulse * 0.7, a: 0.22 },
+      { r: 3.5 + pulse * 0.4, a: 0.32 },
+    ]
+    for (const { r, a } of rings) {
+      ctx.beginPath()
+      ctx.fillStyle = `rgba(244, 211, 91, ${a})`
+      ctx.arc(cx, cy, Math.max(r, 0), 0, Math.PI * 2)
+      ctx.fill()
+    }
+  }
+
   draw(ctx) {
     const camera = computeCamera(this.mapDef, this.state.x, this.state.y)
     drawMap(ctx, this.mapDef, camera)
+
+    // Important story/quest item markers (a lamp, a console, ...): drawn
+    // like an NPC/enemy sprite, but with a golden aura glow behind them
+    // first so they read as unmistakably significant rather than ordinary
+    // scenery. Purely visual — the Trigger at the same tile (if any) still
+    // drives all the actual gameplay, untouched.
+    for (const item of this.mapDef.items || []) {
+      const sprite = getSprite(item.spriteId)
+      if (!sprite) continue
+      const sx = (item.x - camera.camX) * TILE_SIZE
+      const sy = (item.y - camera.camY) * TILE_SIZE
+      this._drawGoldenAura(ctx, sx, sy)
+      const frame = sprite.frames[0]
+      const offX = Math.floor((TILE_SIZE - frame[0].length) / 2)
+      const offY = Math.floor((TILE_SIZE - frame.length) / 2)
+      drawSprite(ctx, sprite, 0, sx + offX, sy + offY, { scale: 1 })
+    }
 
     // NPC "!" markers are collected here and drawn in a final overlay pass
     // (after every sprite, including the hero) so a sprite standing on an
