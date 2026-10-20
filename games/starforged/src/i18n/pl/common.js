@@ -31,7 +31,6 @@ registerTranslations('pl', {
   'A: ok  B: back': 'A: ok  B: wstecz',
   'Medkit x{count}': 'Apteczka x{count}',
   '{name} Lv{level}': '{name} Poz.{level}',
-  "{name}'s turn": 'Tura: {name}',
   '{name} uses a medkit and recovers {amount} HP!': '{name} używa apteczki i odzyskuje {amount} PŻ!',
   '{name} guards.': '{name} przyjmuje postawę obronną.',
   '{name} uses {move}, guarding and restoring {amount} focus!':

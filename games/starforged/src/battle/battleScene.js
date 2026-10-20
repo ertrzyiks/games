@@ -609,10 +609,8 @@ export class BattleScene {
 
   _drawMenu(ctx) {
     const options = this._currentOptions()
-    const unit = this.party[this.currentActorKey]
     const boxW = 76
-    const headerH = 10
-    const boxH = headerH + 6 + options.length * 10
+    const boxH = 6 + options.length * 10
     const x = CANVAS_WIDTH - boxW - 6
     const y = CANVAS_HEIGHT - boxH - 54
     ctx.fillStyle = '#0b0d12'
@@ -621,17 +619,8 @@ export class BattleScene {
     ctx.lineWidth = 1
     ctx.strokeRect(x, y, boxW, boxH)
 
-    // Whose turn it is right now — the menu only ever shows one actor's
-    // options, but it wasn't otherwise labeled whose they were.
-    ctx.font = '6px Consolas, Menlo, monospace'
-    ctx.fillStyle = '#f4d35b'
-    ctx.fillText(tf("{name}'s turn", { name: t(unit.name) }), x + 4, y + 6)
-    ctx.strokeStyle = '#3a3f4b'
-    ctx.beginPath()
-    ctx.moveTo(x + 2, y + headerH + 2)
-    ctx.lineTo(x + boxW - 2, y + headerH + 2)
-    ctx.stroke()
-
+    // Who's acting is shown by the ▼ marker over their sprite (see draw()),
+    // not repeated here.
     ctx.font = '7px Consolas, Menlo, monospace'
     options.forEach((opt, i) => {
       const label =
@@ -641,7 +630,7 @@ export class BattleScene {
             ? tf('Tonic x{count}', { count: this.state.inventory.tonic || 0 })
             : t(getMove(opt).name)
       ctx.fillStyle = i === this.menuIndex ? '#dfe3ea' : '#9ba1b4'
-      ctx.fillText(`${i === this.menuIndex ? '>' : ' '}${label}`, x + 4, y + headerH + 8 + i * 10)
+      ctx.fillText(`${i === this.menuIndex ? '>' : ' '}${label}`, x + 4, y + 8 + i * 10)
     })
   }
 }

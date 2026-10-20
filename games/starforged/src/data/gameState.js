@@ -100,8 +100,8 @@ export function xpToNextLevel(level) {
 // removed) — every character keeps a guaranteed free 0-focus-cost move,
 // so the battle menu can never end up with nothing selectable.
 const MOVE_UNLOCKS = {
-  kade: { 4: 'rifleShot', 8: 'flamethrower' },
-  moss: { 4: 'push', 8: 'mend' },
+  kade: { 2: 'rifleShot', 5: 'flamethrower' },
+  moss: { 2: 'push', 5: 'mend' },
 }
 
 export function grantXp(member, amount) {
