@@ -361,9 +361,19 @@ export const rustmoorWorld = {
           // Depths, and take her mining pick to get past the rockfall.
           dialogue: (state) => {
             const q = state.quests['rustmoor_yaraCache']
-            if (!q) {
-              startQuest(state, 'rustmoor_yaraCache', "Yara's Buried Cache", 'T2')
+            // The pick is granted on the FIRST conversation, tracked by its
+            // own flag rather than "!q" — the Depths cache trigger below can
+            // now defensively start this quest itself if the player reaches
+            // it before ever meeting Yara, which meant "!q" was no longer a
+            // reliable "have we met" check: without this split, a player who
+            // found the cache first would walk straight into the q.stage>=1
+            // branch on their first meeting and complete the quest on the
+            // spot, never passing through this branch at all — leaving them
+            // with no pick and no way through the rubble gate later.
+            if (!state.flags.has('rustmoor_metYara')) {
+              state.flags.add('rustmoor_metYara')
               state.flags.add('rustmoor_hasPick')
+              if (!q) startQuest(state, 'rustmoor_yaraCache', "Yara's Buried Cache", 'T2')
               return [
                 'My medkit cache is buried past the rockfall.',
                 "Take my pick — it'll clear the rubble.",
@@ -471,13 +481,21 @@ export const rustmoorWorld = {
         },
         // Yara's buried cache — the "go do a thing in the Depths" fetch
         // quest's payload. Reachable without the pick; only the rockfall
-        // further in requires it.
+        // further in requires it. Defensively starts the quest too, in case
+        // the player reaches it before ever talking to Yara — without this,
+        // finding the cache first was a silent no-op on an unmarked floor
+        // tile, and a player who didn't know to come back here a second
+        // time could never advance past stage 0 (see Yara's own dialogue
+        // above for the matching fix to how the pick is granted).
         {
           x: 19,
           y: 11,
           onEnter: (ctx) => {
+            if (!ctx.state.quests['rustmoor_yaraCache']) {
+              startQuest(ctx.state, 'rustmoor_yaraCache', "Yara's Buried Cache", 'T2')
+            }
             const q = ctx.state.quests['rustmoor_yaraCache']
-            if (q && q.stage === 0 && !q.complete) {
+            if (q.stage === 0 && !q.complete) {
               setQuestStage(ctx.state, 'rustmoor_yaraCache', 1)
               ctx.showDialogue([
                 "You find Yara's cache — some medkits survived.",
