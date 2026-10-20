@@ -4,7 +4,7 @@ import { registerSprites } from '../assets/sprites/registry.js'
 import { registerEnemies } from '../battle/enemies.js'
 import { registerMoves } from '../battle/moves.js'
 import { startQuest, setQuestStage, completeQuest } from '../data/gameState.js'
-import { CHILD_TEMPLATE, HUMANOID_TEMPLATE, buildSprite } from '../assets/spriteTemplates.js'
+import { CHILD_TEMPLATE, CREATURE_TEMPLATE, buildSprite } from '../assets/spriteTemplates.js'
 
 // Builds a width x height grid filled with a single tile id.
 function buildGrid(width, height, fillId) {
@@ -104,35 +104,35 @@ const hermitSprite = buildSprite(CHILD_TEMPLATE, {
   B: '#cfc6b0',
 })
 
-const bogStalkerSprite = buildSprite(HUMANOID_TEMPLATE, {
+const bogStalkerSprite = buildSprite(CREATURE_TEMPLATE, {
   H: '#3a5a3a',
-  V: '#102018',
+  E: '#102018',
+  B: '#2f4a38',
   T: '#6b8f5a',
-  A: '#2f4a38',
   L: '#1a2a20',
 })
 
-const mireLurkerSprite = buildSprite(HUMANOID_TEMPLATE, {
+const mireLurkerSprite = buildSprite(CREATURE_TEMPLATE, {
   H: '#2a4030',
-  V: '#0b1a12',
+  E: '#0b1a12',
+  B: '#223a28',
   T: '#4a6b40',
-  A: '#223a28',
   L: '#101c14',
 })
 
-const reedViperSprite = buildSprite(HUMANOID_TEMPLATE, {
+const reedViperSprite = buildSprite(CREATURE_TEMPLATE, {
   H: '#5a7a2a',
-  V: '#1a2a0e',
+  E: '#1a2a0e',
+  B: '#3a5a20',
   T: '#8fae4a',
-  A: '#3a5a20',
   L: '#17240c',
 })
 
-const bogWardenSprite = buildSprite(HUMANOID_TEMPLATE, {
+const bogWardenSprite = buildSprite(CREATURE_TEMPLATE, {
   H: '#2e3a1e',
-  V: '#e0564b',
+  E: '#e0564b',
+  B: '#3a2a38',
   T: '#8a9a3a',
-  A: '#3a2a38',
   L: '#1c1420',
 })
 

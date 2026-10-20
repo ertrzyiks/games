@@ -1,7 +1,7 @@
 import { registerWorld, unlockNextWorld } from './registry.js'
 import { registerTileTypes } from '../assets/tiles.js'
 import { registerSprites } from '../assets/sprites/registry.js'
-import { buildSprite, HUMANOID_TEMPLATE } from '../assets/spriteTemplates.js'
+import { buildSprite, HUMANOID_TEMPLATE, ARMORED_TEMPLATE, ROBOT_TEMPLATE } from '../assets/spriteTemplates.js'
 import { registerEnemies } from '../battle/enemies.js'
 import { registerMoves } from '../battle/moves.js'
 import { startQuest, setQuestStage, completeQuest } from '../data/gameState.js'
@@ -89,17 +89,19 @@ const technicianSprite = buildSprite(HUMANOID_TEMPLATE, {
   L: VOID_BLACK,
 })
 
-const cinderTrooperSprite = buildSprite(HUMANOID_TEMPLATE, {
+const cinderTrooperSprite = buildSprite(ARMORED_TEMPLATE, {
   H: VOID_BLACK,
-  V: EMBER_RED,
+  F: EMBER_RED,
+  S: '#3a3f47',
   T: WARNING_YELLOW,
   A: '#3a3f47',
   L: VOID_BLACK,
 })
 
-const foremanSprite = buildSprite(HUMANOID_TEMPLATE, {
+const foremanSprite = buildSprite(ARMORED_TEMPLATE, {
   H: VOID_BLACK,
-  V: EMBER_RED,
+  F: EMBER_RED,
+  S: STEEL_DARK,
   T: WARNING_YELLOW,
   A: STEEL_DARK,
   L: VOID_BLACK,
@@ -137,17 +139,19 @@ const ventTechSprite = buildSprite(HUMANOID_TEMPLATE, {
   L: VOID_BLACK,
 })
 
-const scrapLurkerSprite = buildSprite(HUMANOID_TEMPLATE, {
+const scrapLurkerSprite = buildSprite(ROBOT_TEMPLATE, {
+  N: RUST_DARK,
   H: RUST_DARK,
-  V: EMBER_RED,
+  O: EMBER_RED,
   T: CIVILIAN_GREY,
   A: RUST_ORANGE,
   L: VOID_BLACK,
 })
 
-const reclaimerDroneSprite = buildSprite(HUMANOID_TEMPLATE, {
+const reclaimerDroneSprite = buildSprite(ROBOT_TEMPLATE, {
+  N: COOLANT_TEAL,
   H: COOLANT_TEAL,
-  V: VOID_BLACK,
+  O: VOID_BLACK,
   T: STEEL,
   A: '#2c4a47',
   L: VOID_BLACK,

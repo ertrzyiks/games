@@ -3,7 +3,7 @@ import { registerTileTypes } from '../assets/tiles.js'
 import { registerSprites } from '../assets/sprites/registry.js'
 import { registerEnemies } from '../battle/enemies.js'
 import { registerMoves } from '../battle/moves.js'
-import { HUMANOID_TEMPLATE, buildSprite } from '../assets/spriteTemplates.js'
+import { HUMANOID_TEMPLATE, ARMORED_TEMPLATE, buildSprite } from '../assets/spriteTemplates.js'
 import { startQuest, setQuestStage, completeQuest } from '../data/gameState.js'
 
 /**
@@ -89,25 +89,28 @@ const junSprite = buildSprite(HUMANOID_TEMPLATE, {
   L: '#120a0e',
 })
 
-const eliteGuardSprite = buildSprite(HUMANOID_TEMPLATE, {
+const eliteGuardSprite = buildSprite(ARMORED_TEMPLATE, {
   H: '#4a0f16',
-  V: '#120a0e',
+  F: '#120a0e',
+  S: '#120a0e',
   T: '#8a1526',
   A: '#2e0f16',
   L: '#120a0e',
 })
 
-const shadowAgentSprite = buildSprite(HUMANOID_TEMPLATE, {
+const shadowAgentSprite = buildSprite(ARMORED_TEMPLATE, {
   H: '#1a0e14',
-  V: '#e0564b',
+  F: '#e0564b',
+  S: '#0b0d12',
   T: '#4a0f16',
   A: '#120a0e',
   L: '#0b0d12',
 })
 
-const wardenSprite = buildSprite(HUMANOID_TEMPLATE, {
+const wardenSprite = buildSprite(ARMORED_TEMPLATE, {
   H: '#2e0f16',
-  V: '#e0564b',
+  F: '#e0564b',
+  S: '#120a0e',
   T: '#8a1526',
   A: '#4a0f16',
   L: '#120a0e',

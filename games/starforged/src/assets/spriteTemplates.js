@@ -50,6 +50,101 @@ export const CHILD_TEMPLATE = [
   '.....RRRRRR.....',
 ]
 
+// Lone armored gunslinger (Wando only): angular pointed helmet (H) with a
+// narrow V-shaped visor (V), a cape swept off the shoulder (C), armored
+// torso (A) with a chest/belt trim stripe (T), a holstered sidearm bump at
+// the hip that pokes past the body outline (G), and booted legs (L). An
+// original design for this game — distinct from the plain rounded-helmet
+// HUMANOID_TEMPLATE silhouette at a glance.
+export const HERO_TEMPLATE = [
+  '................',
+  '.......HH.......',
+  '......HHHH......',
+  '.....HHHHHH.....',
+  '.....HVVVVH.....',
+  '.....HVVVVH.....',
+  '.....HHHHHH.....',
+  '...CTTTTTTTT....',
+  '.CCCAAAAAAAA....',
+  'CCCCAAAAAAAA....',
+  '.CCCAAAAAAAA....',
+  '..CCTTTTTTTT....',
+  '....AAAAAAAGG...',
+  '....LLLL.LLLL...',
+  '....LLLL.LLLL...',
+  '....LLLL.LLLL...',
+]
+
+// Boxy mechanical chassis for droid/industrial enemies: a flat-top head
+// block (H) with a single optic sensor band (O) instead of a face, a stub
+// antenna (N), a squared chassis torso (A) with a panel-seam trim stripe
+// (T), and blocky piston legs (L). No organic curves anywhere.
+export const ROBOT_TEMPLATE = [
+  '........N.......',
+  '........N.......',
+  '.....HHHHHH.....',
+  '.....HHHHHH.....',
+  '.....HHOOHH.....',
+  '.....HHHHHH.....',
+  '....TTTTTTTT....',
+  '...AAAAAAAAAA...',
+  '...AAAAAAAAAA...',
+  '...AAAAAAAAAA...',
+  '....AAAAAAAA....',
+  '....TTTTTTTT....',
+  '....AAAAAAAA....',
+  '....LLLLLLLL....',
+  '....LLLLLLLL....',
+  '...LLLLLLLLLL...',
+]
+
+// Low, hunched quadruped beast for wildlife enemies: a forward-jutting head
+// (H) with beady eyes (E), a long humped back/body (B) and a trailing tail
+// (T), and four short stubby legs (L). Deliberately non-humanoid — reads
+// as "animal," not "person," at a glance.
+export const CREATURE_TEMPLATE = [
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '.....BBBBBBB....',
+  'HHHHBBBBBBBBB...',
+  'HEHEHBBBBBBBBBT.',
+  'HHHHHBBBBBBBBBTT',
+  '.....BBBBBBBBB..',
+  '.....LL....LL...',
+  '.....LL....LL...',
+  '.....LL....LL...',
+  '................',
+  '................',
+  '................',
+]
+
+// Armed human troop, bulkier and more closed-off than the plain
+// HUMANOID_TEMPLATE NPC: a full-face closed visor (F) instead of the NPC's
+// open visor band, wide squared shoulder pads (S) that jut past the torso,
+// armored body (A) with a belt trim stripe (T), and heavy blocky boots
+// (L). Reads as "armed enemy trooper," not "townsfolk."
+export const ARMORED_TEMPLATE = [
+  '................',
+  '................',
+  '....HHHHHHHH....',
+  '....HHHHHHHH....',
+  '....FFFFFFFF....',
+  '....FFFFFFFF....',
+  '....HHHHHHHH....',
+  '.SSSSSSSSSSSSSS.',
+  '.SSAAAAAAAAAASS.',
+  '...AAAAAAAAAA...',
+  '...AAAAAAAAAA...',
+  '...TTTTTTTTTT...',
+  '...AAAAAAAAAA...',
+  '...LLLLLLLLLL...',
+  '...LLLLLLLLLL...',
+  '...LLLLLLLLLL...',
+]
+
 export function buildSprite(template, legend) {
   const charToIdx = {}
   const palette = {}
