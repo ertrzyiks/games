@@ -128,7 +128,14 @@ registerMoves({
   hollow_shockLance: { name: 'Shock Lance', kind: 'attack', power: 10, focusCost: 0, accuracy: 0.88 },
   hollow_crushingBlow: { name: 'Crushing Blow', kind: 'attack', power: 16, focusCost: 0, accuracy: 0.85 },
   hollow_resonantSlam: { name: 'Resonant Slam', kind: 'attack', power: 19, focusCost: 0, accuracy: 0.78 },
-  hollow_syndicateVenom: { name: 'Syndicate Venom', kind: 'debuff', power: 5, focusCost: 0, accuracy: 0.9 },
+  hollow_syndicateVenom: {
+    name: 'Syndicate Venom',
+    kind: 'debuff',
+    power: 5,
+    focusCost: 0,
+    accuracy: 0.9,
+    applyStatus: { type: 'poison', duration: 3, power: 4 },
+  },
   hollow_wardenResolve: { name: "Warden's Resolve", kind: 'heal', power: 16, focusCost: 0, accuracy: 1 },
 })
 
@@ -219,9 +226,9 @@ function vexDialogue(state) {
 
 function lookoutDialogue(state) {
   if (state.flags.has('hollow_relayDisabled')) {
-    return ['Alarms are dead. Patrols still walk old routes.']
+    return ['Alarms are dead. Patrols still walk old routes.', 'One of the broken pillars near the west wall is hollow.']
   }
-  return ['Patrols sweep every few minutes. Watch the pattern.']
+  return ['Patrols sweep every few minutes. Watch the pattern.', 'One of the broken pillars near the west wall is hollow.']
 }
 
 const outerHollowMap = {
@@ -235,6 +242,7 @@ const outerHollowMap = {
       y: 11,
       facing: 'up',
       spriteId: 'hollow_vex',
+      watchesQuests: [FINALE_QUEST_ID],
       dialogue: vexDialogue,
     },
     {
@@ -243,6 +251,7 @@ const outerHollowMap = {
       y: 10,
       facing: 'left',
       spriteId: 'hollow_lookout',
+      watchesFlags: ['hollow_relayDisabled'],
       dialogue: lookoutDialogue,
     },
   ],
@@ -250,6 +259,15 @@ const outerHollowMap = {
     { id: 'outer_guard1', x: 5, y: 5, enemyId: 'hollow_eliteGuard', spriteId: 'hollow_eliteGuard' },
     { id: 'outer_guard2', x: 15, y: 5, enemyId: 'hollow_shadowAgent', spriteId: 'hollow_shadowAgent' },
     { id: 'outer_guard3', x: 12, y: 12, enemyId: 'hollow_eliteGuard', spriteId: 'hollow_eliteGuard' },
+  ],
+  secrets: [
+    {
+      id: 'outerPillarStash',
+      x: 3,
+      y: 7,
+      reward: { medkit: 1, tonic: 1 },
+      dialogue: ['The pillar crumbles — a guard’s stashed kit!', 'Found a medkit and a tonic!'],
+    },
   ],
   warps: [{ x: 9, y: 1, toMap: 'innerSanctum', toX: 8, toY: 13 }],
   triggers: [
@@ -334,6 +352,7 @@ const innerSanctumMap = {
       y: 6,
       facing: 'right',
       spriteId: 'hollow_rell',
+      watchesQuests: [FINALE_QUEST_ID],
       dialogue: rellDialogue,
     },
     {

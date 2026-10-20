@@ -367,6 +367,7 @@ export const ashvaultStationWorld = {
           dialogue: [
             "Ships that ran the blockade didn't make it past this yard.",
             "Mind the grating — some of it's rusted clean through.",
+            "That support pillar near the middle sounds hollow when you knock it.",
           ],
         },
       ],
@@ -375,6 +376,15 @@ export const ashvaultStationWorld = {
         { id: 'dock_lurker1', x: 8, y: 9, enemyId: 'ashvault_scrapLurker', spriteId: 'ashvault_scrapLurker' },
         { id: 'dock_cinder2', x: 20, y: 13, enemyId: 'ashvault_cinderTrooper', spriteId: 'ashvault_cinderTrooper' },
         { id: 'dock_lurker2', x: 13, y: 9, enemyId: 'ashvault_scrapLurker', spriteId: 'ashvault_scrapLurker' },
+      ],
+      secrets: [
+        {
+          id: 'dockPillarStash',
+          x: 9,
+          y: 12,
+          reward: { medkit: 1, tonic: 1 },
+          dialogue: ['The pillar panel pops loose — a smuggler stash!', 'Found a medkit and a tonic!'],
+        },
       ],
       warps: [{ x: 13, y: 1, toMap: 'habitationRing', toX: 10, toY: 16 }],
       triggers: [
@@ -401,6 +411,7 @@ export const ashvaultStationWorld = {
           y: 2,
           facing: 'down',
           spriteId: 'ashvault_dockHand',
+          watchesQuests: ['ashvault_tamsinRescue'],
           dialogue: (state) => {
             const quest = state.quests['ashvault_tamsinRescue']
             if (!quest) {
@@ -424,6 +435,7 @@ export const ashvaultStationWorld = {
           y: 4,
           facing: 'down',
           spriteId: 'ashvault_technician',
+          watchesQuests: ['ashvault_extractorSabotage'],
           dialogue: (state) => {
             const quest = state.quests['ashvault_extractorSabotage']
             if (!quest) {
@@ -484,6 +496,7 @@ export const ashvaultStationWorld = {
           y: 9,
           facing: 'right',
           spriteId: 'ashvault_tamsin',
+          watchesFlags: ['ashvault_tamsinFreed'],
           dialogue: (state) => {
             if (state.flags.has('ashvault_tamsinFreed')) {
               return ["Tell the dock hand I'm out.", "I won't forget who freed me."]
@@ -575,7 +588,7 @@ export const ashvaultStationWorld = {
               () => {
                 ctx.startBattle(['ashvault_foreman'], {
                   onVictory: (state) => {
-                    unlockNextWorld(state, 'ashvaultStation')
+                    const nextWorldId = unlockNextWorld(state, 'ashvaultStation')
                     completeQuest(state, 'ashvault_extractorSabotage')
                     ctx.showDialogue(
                       [
@@ -583,7 +596,7 @@ export const ashvaultStationWorld = {
                         'Gogu breathes out: "It\'s gone quiet."',
                         'Head back to the Starskiff for Skyreach Canopy.',
                       ],
-                      () => ctx.openShip()
+                      () => ctx.openShip({ preselectWorldId: nextWorldId })
                     )
                   },
                 })

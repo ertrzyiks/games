@@ -12,6 +12,12 @@ import { grantXp } from '../data/gameState.js'
 
 const PARTY_SPRITES = { kade: heroSprite, moss: mossSprite }
 const ITEM_HEAL_AMOUNT = 15
+const TONIC_ATK_BOOST = 5
+const TONIC_DURATION = 3
+// Short on-screen tags for active status effects, shown next to a unit's
+// name on its HP bar.
+const STATUS_TAG = { burn: 'BRN', poison: 'PSN', boostAtk: 'ATK+', boostDef: 'DEF+' }
+const STATUS_VERB = { burn: 'burned', poison: 'poisoned' }
 
 /**
  * Turn-based battle: each round, the player picks a move for every living
@@ -27,9 +33,11 @@ export class BattleScene {
     this.state = state
     this.party = state.party
     this.onEnd = onEnd
+    // Status effects never carry over between separate battles.
+    for (const member of Object.values(this.party)) member.statusEffects = []
     this.enemies = enemyIds.map((id) => {
       const def = getEnemy(id)
-      return { ...def, hp: def.maxHp, maxHp: def.maxHp, guarding: false }
+      return { ...def, hp: def.maxHp, maxHp: def.maxHp, guarding: false, statusEffects: [] }
     })
     this.phase = 'intro'
     this.menuIndex = 0
@@ -84,6 +92,7 @@ export class BattleScene {
     const usable = unit.moves.filter((id) => getMove(id).focusCost <= unit.focus)
     const options = usable.length > 0 ? usable : [unit.moves[0]]
     if ((this.state.inventory.medkit || 0) > 0) options.push('item')
+    if ((this.state.inventory.tonic || 0) > 0) options.push('tonic')
     return options
   }
 
@@ -99,6 +108,21 @@ export class BattleScene {
         unit,
         isParty: true,
         special: 'item',
+        speed: unit.spd,
+        name: unit.name,
+      })
+      this.actIdx += 1
+      this._promptForActor()
+      return
+    }
+
+    if (choice === 'tonic') {
+      if ((this.state.inventory.tonic || 0) <= 0) return
+      this.state.inventory.tonic -= 1
+      this.queuedActions.push({
+        unit,
+        isParty: true,
+        special: 'tonic',
         speed: unit.spd,
         name: unit.name,
       })
@@ -197,7 +221,7 @@ export class BattleScene {
     // this round resolves (so it correctly halves incoming damage no
     // matter the speed order) — but its message/focus-restore are shown
     // in their normal sequence position, synced like everything else.
-    const isBuff = (a) => a.special !== 'item' && getMove(a.moveId).kind === 'buff'
+    const isBuff = (a) => !a.special && getMove(a.moveId).kind === 'buff'
     for (const action of live) {
       if (isBuff(action)) action.unit.guarding = true
     }
@@ -230,6 +254,10 @@ export class BattleScene {
       return [
         tf('{name} uses a medkit and recovers {amount} HP!', { name: t(action.name), amount: action.unit.hp - before }),
       ]
+    }
+    if (action.special === 'tonic') {
+      this._applyStatus(action.unit, { type: 'boostAtk', duration: TONIC_DURATION, power: TONIC_ATK_BOOST })
+      return [tf('{name} drinks a tonic! Attack rises.', { name: t(action.name) })]
     }
     const move = getMove(action.moveId)
     if (move.kind === 'buff') {
@@ -295,7 +323,7 @@ export class BattleScene {
       return lines
     }
 
-    let dmg = Math.max(1, Math.round(move.power + action.unit.atk - target.def * 0.5))
+    let dmg = Math.max(1, Math.round(move.power + this._effectiveAtk(action.unit) - this._effectiveDef(target) * 0.5))
     if (target.guarding) dmg = Math.max(1, Math.round(dmg / 2))
     target.hp = Math.max(0, target.hp - dmg)
     lines.push(
@@ -315,8 +343,42 @@ export class BattleScene {
       if (healed > 0) lines.push(tf('{name} drains {amount} HP!', { name: t(action.name), amount: healed }))
     }
 
+    if (move.applyStatus && target.hp > 0) {
+      this._applyStatus(target, move.applyStatus)
+      lines.push(
+        tf('{target} is {status}!', { target: t(target.name), status: t(STATUS_VERB[move.applyStatus.type] || move.applyStatus.type) })
+      )
+    }
+
     if (target.hp <= 0) lines.push(tf('{target} is defeated!', { target: t(target.name) }))
     return lines
+  }
+
+  _effectiveAtk(unit) {
+    const boost = (unit.statusEffects || [])
+      .filter((e) => e.type === 'boostAtk')
+      .reduce((sum, e) => sum + e.power, 0)
+    return unit.atk + boost
+  }
+
+  _effectiveDef(unit) {
+    const boost = (unit.statusEffects || [])
+      .filter((e) => e.type === 'boostDef')
+      .reduce((sum, e) => sum + e.power, 0)
+    return unit.def + boost
+  }
+
+  // Refreshes an existing effect of the same type rather than stacking
+  // duplicates, so repeated burn/poison hits just extend the duration.
+  _applyStatus(unit, { type, duration, power }) {
+    unit.statusEffects = unit.statusEffects || []
+    const existing = unit.statusEffects.find((e) => e.type === type)
+    if (existing) {
+      existing.duration = duration
+      existing.power = power
+    } else {
+      unit.statusEffects.push({ type, duration, power })
+    }
   }
 
   _battleOver() {
@@ -324,15 +386,65 @@ export class BattleScene {
   }
 
   _afterResolve() {
-    if (this._livingEnemies().length === 0) {
-      this._onVictory()
+    if (this._battleOver()) {
+      this._resolveBattleEnd()
       return
     }
-    if (this._livingPartyUnits().length === 0) {
-      this._onDefeat()
+    // Burn/poison ticks (and buff expiry) happen once per round, after all
+    // of that round's chosen actions have resolved — shown one at a time,
+    // same synced-to-the-message pattern as everything else.
+    this._statusTickQueue = []
+    for (const unit of [...Object.values(this.party), ...this.enemies]) {
+      if (unit.hp <= 0) continue
+      for (const effect of unit.statusEffects || []) {
+        this._statusTickQueue.push({ unit, effect })
+      }
+    }
+    this._processNextStatusTick()
+  }
+
+  _resolveBattleEnd() {
+    if (this._livingEnemies().length === 0) this._onVictory()
+    else this._onDefeat()
+  }
+
+  _processNextStatusTick() {
+    if (this._statusTickQueue.length === 0 || this._battleOver()) {
+      for (const unit of [...Object.values(this.party), ...this.enemies]) {
+        unit.statusEffects = (unit.statusEffects || []).filter((e) => e.duration > 0)
+      }
+      if (this._battleOver()) {
+        this._resolveBattleEnd()
+        return
+      }
+      this._beginSelection()
       return
     }
-    this._beginSelection()
+    const { unit, effect } = this._statusTickQueue.shift()
+    if (unit.hp <= 0) {
+      this._processNextStatusTick()
+      return
+    }
+    const lines = this._tickStatusEffect(unit, effect)
+    this.phase = 'resolving'
+    this.dialogue.start(lines.length ? lines : ['...'], () => this._processNextStatusTick())
+  }
+
+  _tickStatusEffect(unit, effect) {
+    const lines = []
+    if (effect.type === 'burn' || effect.type === 'poison') {
+      unit.hp = Math.max(0, unit.hp - effect.power)
+      lines.push(
+        tf('{name} takes {dmg} {status} damage!', {
+          name: t(unit.name),
+          dmg: effect.power,
+          status: t(effect.type),
+        })
+      )
+      if (unit.hp <= 0) lines.push(tf('{target} is defeated!', { target: t(unit.name) }))
+    }
+    effect.duration -= 1
+    return lines
   }
 
   _onVictory() {
@@ -348,8 +460,11 @@ export class BattleScene {
         lines.push(tf('{name} is revived with {amount} HP!', { name: t(member.name), amount: member.hp }))
         continue
       }
-      const leveledUp = grantXp(member, xpTotal)
+      const { leveledUp, unlockedMoves } = grantXp(member, xpTotal)
       if (leveledUp) lines.push(tf('{name} leveled up to Lv.{level}!', { name: t(member.name), level: member.level }))
+      for (const moveId of unlockedMoves) {
+        lines.push(tf('{name} learned {move}!', { name: t(member.name), move: t(getMove(moveId).name) }))
+      }
     }
     this.dialogue.start(lines, () => {
       if (this.onEnd) this.onEnd({ victory: true })
@@ -410,7 +525,7 @@ export class BattleScene {
       const x = 60 + i * 36
       const y = 18
       if (sprite) drawSprite(ctx, sprite, 0, x, y, { scale: 1 })
-      this._drawBar(ctx, x - 4, y - 8, t(enemy.name), enemy.hp, enemy.maxHp, null, null, 30)
+      this._drawBar(ctx, x - 4, y - 8, this._barLabel(enemy), enemy.hp, enemy.maxHp, null, null, 30)
       if (enemy === targetedEnemy) {
         ctx.font = '7px Consolas, Menlo, monospace'
         ctx.fillStyle = '#f4d35b'
@@ -423,11 +538,16 @@ export class BattleScene {
       const x = 14 + i * 44
       const y = CANVAS_HEIGHT - 70
       if (sprite && member.hp > 0) drawSprite(ctx, sprite, 0, x, y, { scale: 1 })
+      if (this.phase === 'menu' && key === this.currentActorKey) {
+        ctx.font = '8px Consolas, Menlo, monospace'
+        ctx.fillStyle = '#f4d35b'
+        ctx.fillText('▼', x + 5, y - 9)
+      }
       this._drawBar(
         ctx,
         x - 4,
         y + 36,
-        tf('{name} Lv{level}', { name: t(member.name), level: member.level }),
+        `${tf('{name} Lv{level}', { name: t(member.name), level: member.level })}${this._statusSuffix(member)}`,
         member.hp,
         member.maxHp,
         member.focus,
@@ -443,6 +563,15 @@ export class BattleScene {
     }
 
     this.dialogue.draw(ctx)
+  }
+
+  _barLabel(enemy) {
+    return `${t(enemy.name)}${this._statusSuffix(enemy)}`
+  }
+
+  _statusSuffix(unit) {
+    const tags = (unit.statusEffects || []).map((e) => STATUS_TAG[e.type] || e.type)
+    return tags.length ? ` [${tags.join(' ')}]` : ''
   }
 
   _drawBar(ctx, x, y, label, hp, maxHp, focus, maxFocus, barW = 34) {
@@ -480,8 +609,10 @@ export class BattleScene {
 
   _drawMenu(ctx) {
     const options = this._currentOptions()
-    const boxW = 70
-    const boxH = 10 + options.length * 10
+    const unit = this.party[this.currentActorKey]
+    const boxW = 76
+    const headerH = 10
+    const boxH = headerH + 6 + options.length * 10
     const x = CANVAS_WIDTH - boxW - 6
     const y = CANVAS_HEIGHT - boxH - 54
     ctx.fillStyle = '#0b0d12'
@@ -489,14 +620,28 @@ export class BattleScene {
     ctx.strokeStyle = '#e8e8e8'
     ctx.lineWidth = 1
     ctx.strokeRect(x, y, boxW, boxH)
+
+    // Whose turn it is right now — the menu only ever shows one actor's
+    // options, but it wasn't otherwise labeled whose they were.
+    ctx.font = '6px Consolas, Menlo, monospace'
+    ctx.fillStyle = '#f4d35b'
+    ctx.fillText(tf("{name}'s turn", { name: t(unit.name) }), x + 4, y + 6)
+    ctx.strokeStyle = '#3a3f4b'
+    ctx.beginPath()
+    ctx.moveTo(x + 2, y + headerH + 2)
+    ctx.lineTo(x + boxW - 2, y + headerH + 2)
+    ctx.stroke()
+
     ctx.font = '7px Consolas, Menlo, monospace'
     options.forEach((opt, i) => {
       const label =
         opt === 'item'
           ? tf('Medkit x{count}', { count: this.state.inventory.medkit || 0 })
-          : t(getMove(opt).name)
+          : opt === 'tonic'
+            ? tf('Tonic x{count}', { count: this.state.inventory.tonic || 0 })
+            : t(getMove(opt).name)
       ctx.fillStyle = i === this.menuIndex ? '#dfe3ea' : '#9ba1b4'
-      ctx.fillText(`${i === this.menuIndex ? '>' : ' '}${label}`, x + 4, y + 6 + i * 10)
+      ctx.fillText(`${i === this.menuIndex ? '>' : ' '}${label}`, x + 4, y + headerH + 8 + i * 10)
     })
   }
 }

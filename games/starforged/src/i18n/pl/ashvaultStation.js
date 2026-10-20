@@ -21,6 +21,11 @@ registerTranslations('pl', {
     `Statki, które próbowały przełamać blokadę, skończyły tutaj.`,
   [`Mind the grating — some of it's rusted clean through.`]:
     `Uważaj na ruszty — część przerdzewiała na wylot.`,
+  [`That support pillar near the middle sounds hollow when you knock it.`]:
+    `Ten filar podporowy na środku brzmi głucho, gdy się go uderzy.`,
+  [`The pillar panel pops loose — a smuggler stash!`]:
+    `Panel w filarze odskakuje — skrytka przemytników!`,
+  [`Found a medkit and a tonic!`]: `Znaleziono apteczkę i eliksir!`,
 
   // --- Docking Approach: scrap cache trigger ---
   [`A sealed supply case, wedged in the wreckage.`]:

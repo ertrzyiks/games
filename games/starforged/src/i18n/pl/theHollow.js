@@ -49,6 +49,9 @@ const pl = {
   // --- lookoutDialogue -------------------------------------------------
   [`Alarms are dead. Patrols still walk old routes.`]: `Alarmy nie działają. Patrole wciąż chodzą starymi trasami.`,
   [`Patrols sweep every few minutes. Watch the pattern.`]: `Patrol przechodzi tu co kilka minut. Obserwuj wzorzec.`,
+  [`One of the broken pillars near the west wall is hollow.`]: `Jedna ze zniszczonych kolumn przy zachodniej ścianie jest pusta w środku.`,
+  [`The pillar crumbles — a guard’s stashed kit!`]: `Kolumna się rozpada — schowany sprzęt strażnika!`,
+  [`Found a medkit and a tonic!`]: `Znaleziono apteczkę i eliksir!`,
 
   // --- outerHollow triggers ------------------------------------------------
   [`This is the Hollow — it ends here.`]: `To jest Czeluść — tu się to kończy.`,

@@ -279,6 +279,7 @@ export const rustmoorWorld = {
           y: 15,
           facing: 'up',
           spriteId: 'rustmoor_dessa',
+          watchesQuests: ['rustmoor_syndicateSigns'],
           // Plot quest giver: first sign of the Hollow Syndicate in Rustmoor.
           dialogue: (state) => {
             const q = state.quests['rustmoor_syndicateSigns']
@@ -314,6 +315,17 @@ export const rustmoorWorld = {
         { id: 'canyonScout1', x: 14, y: 10, enemyId: 'rustmoor_raiderScout', spriteId: 'rustmoor_raiderScout' },
         { id: 'canyonRaider2', x: 21, y: 13, enemyId: 'rustmoor_raider', spriteId: 'rustmoor_raider' },
       ],
+      // Hidden stash behind the boulder at (16,12) — Bram's camp gossip
+      // hints at it (see settlement NPCs below).
+      secrets: [
+        {
+          id: 'canyonBoulderStash',
+          x: 16,
+          y: 12,
+          reward: { medkit: 1, tonic: 1 },
+          dialogue: ['You shove the boulder aside...', 'A scavenger stash! (+1 medkit, +1 tonic)'],
+        },
+      ],
       warps: [{ x: 13, y: CANYON_H - 1, toMap: 'settlement', toX: 10, toY: 1 }],
       triggers: [],
     },
@@ -339,6 +351,7 @@ export const rustmoorWorld = {
           y: 5,
           facing: 'down',
           spriteId: 'rustmoor_yara',
+          watchesQuests: ['rustmoor_yaraCache'],
           // Practical quest giver: retrieve her buried medkit cache from the
           // Depths, and take her mining pick to get past the rockfall.
           dialogue: (state) => {
@@ -386,6 +399,8 @@ export const rustmoorWorld = {
           dialogue: [
             'Raiders dug in deep down there.',
             'Their captain answers to someone bigger now.',
+            "There's a boulder up in the canyon that looks shoved into place.",
+            'Scavengers hide stashes like that. Worth a look.',
           ],
         },
       ],
@@ -407,6 +422,7 @@ export const rustmoorWorld = {
           y: 10,
           facing: 'down',
           spriteId: 'rustmoor_tamsin',
+          watchesQuests: ['rustmoor_syndicateSigns'],
           dialogue: (state) => {
             const q = state.quests['rustmoor_syndicateSigns']
             if (q && q.stage >= 2) {
@@ -500,7 +516,7 @@ export const rustmoorWorld = {
             ])
             ctx.startBattle(['rustmoor_scavengerCaptain'], {
               onVictory: (state) => {
-                unlockNextWorld(state, 'rustmoor')
+                const nextWorldId = unlockNextWorld(state, 'rustmoor')
                 completeQuest(state, 'rustmoor_syndicateSigns')
                 ctx.showDialogue(
                   [
@@ -508,7 +524,7 @@ export const rustmoorWorld = {
                     "Rustmoor's shakedown is over. Wando's skiff is fueled and ready.",
                     'Head back to the Starskiff — a new world awaits.',
                   ],
-                  () => ctx.openShip()
+                  () => ctx.openShip({ preselectWorldId: nextWorldId })
                 )
               },
             })

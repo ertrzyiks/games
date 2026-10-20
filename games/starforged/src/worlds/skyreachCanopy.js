@@ -336,7 +336,11 @@ export const skyreachCanopyWorld = {
           y: 18,
           facing: 'up',
           spriteId: 'skyreach_hale',
-          dialogue: ['Hale: Gale stalkers are thick in the canopy now.', 'Hale: The refuge is north — hurry.'],
+          dialogue: [
+            'Hale: Gale stalkers are thick in the canopy now.',
+            'Hale: The refuge is north — hurry.',
+            'Hale: One of the giant trunks west of here has a false knothole.',
+          ],
         },
       ],
       enemySpawns: [
@@ -344,6 +348,15 @@ export const skyreachCanopyWorld = {
         { id: 'canopy_windReaver1', x: 18, y: 6, enemyId: 'skyreach_windReaver', spriteId: 'skyreach_windReaver' },
         { id: 'canopy_galeStalker2', x: 9, y: 12, enemyId: 'skyreach_galeStalker', spriteId: 'skyreach_galeStalker' },
         { id: 'canopy_windReaver2', x: 17, y: 12, enemyId: 'skyreach_windReaver', spriteId: 'skyreach_windReaver' },
+      ],
+      secrets: [
+        {
+          id: 'canopyTrunkStash',
+          x: 5,
+          y: 9,
+          reward: { tonic: 1 },
+          dialogue: ['The knothole is hollow — a windkin cache!', 'Found a tonic!'],
+        },
       ],
       warps: [{ x: 13, y: 1, toMap: 'skykinRefuge', toX: 10, toY: 15 }],
       triggers: [
@@ -383,6 +396,7 @@ export const skyreachCanopyWorld = {
           y: 4,
           facing: 'down',
           spriteId: 'skyreach_senna',
+          watchesQuests: [WATCH_QUEST],
           // Plot quest-giver: the Syndicate thread for this chapter.
           dialogue: (state) => {
             const q = state.quests[WATCH_QUEST]
@@ -408,6 +422,7 @@ export const skyreachCanopyWorld = {
           y: 4,
           facing: 'down',
           spriteId: 'skyreach_orin',
+          watchesQuests: [ROOST_QUEST],
           // Practical quest-giver: a "go rescue a Skykin in the Depths" quest.
           dialogue: (state) => {
             const q = state.quests[ROOST_QUEST]
@@ -427,6 +442,8 @@ export const skyreachCanopyWorld = {
           y: 13,
           facing: 'down',
           spriteId: 'skyreach_tamsin',
+          watchesQuests: [ROOST_QUEST],
+          watchesFlags: ['skyreach_hasCharm'],
           // Hands over the Windward Charm once the roost quest is active —
           // the item/flag that gates the High Reaches' inner section.
           dialogue: (state) => {
@@ -469,6 +486,7 @@ export const skyreachCanopyWorld = {
           y: 3,
           facing: 'down',
           spriteId: 'skyreach_wren',
+          watchesQuests: [ROOST_QUEST],
           dialogue: (state) => {
             const q = state.quests[ROOST_QUEST]
             if (q && !q.complete) {
@@ -574,7 +592,7 @@ export const skyreachCanopyWorld = {
               () => {
                 ctx.startBattle(['skyreach_enforcerVane'], {
                   onVictory: (state) => {
-                    unlockNextWorld(state, 'skyreachCanopy')
+                    const nextWorldId = unlockNextWorld(state, 'skyreachCanopy')
                     completeQuest(state, WATCH_QUEST)
                     ctx.showDialogue(
                       [
@@ -582,7 +600,7 @@ export const skyreachCanopyWorld = {
                         'The refuge is safe — for now.',
                         'Head back to the Starskiff. The Hollow awaits.',
                       ],
-                      () => ctx.openShip()
+                      () => ctx.openShip({ preselectWorldId: nextWorldId })
                     )
                   },
                 })

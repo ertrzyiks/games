@@ -27,7 +27,14 @@ registerMoves({
   // Wando's kit: a blaster pistol/rifle and a trick shot.
   pistolShot: { name: 'Pistol Shot', kind: 'attack', power: 6, focusCost: 0, accuracy: 0.95 },
   rifleShot: { name: 'Rifle Shot', kind: 'attack', power: 12, focusCost: 3, accuracy: 0.85 },
-  flamethrower: { name: 'Flamethrower', kind: 'attack', power: 9, focusCost: 2, accuracy: 0.8 },
+  flamethrower: {
+    name: 'Flamethrower',
+    kind: 'attack',
+    power: 9,
+    focusCost: 2,
+    accuracy: 0.8,
+    applyStatus: { type: 'burn', duration: 3, power: 3 },
+  },
 
   // Gogu's kit: Force-themed. glimmer is Gogu's free move — every party
   // member needs at least one 0-focus-cost option so the battle menu can

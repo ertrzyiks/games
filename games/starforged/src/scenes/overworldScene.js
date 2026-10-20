@@ -1,7 +1,16 @@
 import { MOVE_DURATION_MS, DIRECTIONS } from '../engine/constants.js'
 import { input } from '../engine/input.js'
 import { Dialogue } from '../engine/dialogue.js'
-import { drawMap, computeCamera, isWalkable, getNpcAt, getWarpAt, getTriggerAt, getEnemySpawnAt } from '../engine/tilemap.js'
+import {
+  drawMap,
+  computeCamera,
+  isWalkable,
+  getNpcAt,
+  getWarpAt,
+  getTriggerAt,
+  getEnemySpawnAt,
+  getSecretAt,
+} from '../engine/tilemap.js'
 import { drawSprite } from '../engine/sprite.js'
 import { heroSprite } from '../assets/sprites/hero.js'
 import { getSprite } from '../assets/sprites/registry.js'
@@ -111,11 +120,81 @@ export class OverworldScene {
 
   _tryInteract() {
     const { dx, dy } = DIRECTIONS[this.state.facing]
-    const npc = getNpcAt(this.mapDef, this.state.x + dx, this.state.y + dy)
-    if (!npc) return
-    if (npc.requiresFlag && !this.state.flags.has(npc.requiresFlag)) return
-    const lines = typeof npc.dialogue === 'function' ? npc.dialogue(this.state) : npc.dialogue
-    this.dialogue.start(lines)
+    const fx = this.state.x + dx
+    const fy = this.state.y + dy
+
+    const npc = getNpcAt(this.mapDef, fx, fy)
+    if (npc) {
+      if (npc.requiresFlag && !this.state.flags.has(npc.requiresFlag)) return
+      const lines = typeof npc.dialogue === 'function' ? npc.dialogue(this.state) : npc.dialogue
+      this.dialogue.start(lines)
+      // Compute the "seen" signature AFTER calling dialogue(), since some
+      // NPCs' dialogue functions advance quest state as a side effect of
+      // being read — the signature should reflect what the player just
+      // learned, not what was true a moment before.
+      this._markNpcSeen(npc)
+      return
+    }
+
+    const secret = getSecretAt(this.mapDef, fx, fy)
+    if (secret) this._tryRevealSecret(secret)
+  }
+
+  // --- NPC "new content" marker -------------------------------------------
+  // A lightweight "!" over an NPC's head: shown the first time the player
+  // meets them, cleared after talking, and shown again only if that NPC
+  // actually has something new to say (one of the quests it declares via
+  // `watchesQuests` has changed stage/completion since the last time the
+  // player talked to them) — not on every unrelated state change.
+
+  _npcTalkedKey(npc) {
+    return `_npc_talked_${this.state.worldId}_${this.state.mapId}_${npc.id}`
+  }
+
+  _npcSignatureKey(npc) {
+    return `${this.state.worldId}_${npc.id}`
+  }
+
+  _npcContentSignature(npc) {
+    if (!npc.watchesQuests && !npc.watchesFlags) return 'static'
+    const questPart = (npc.watchesQuests || [])
+      .map((qid) => {
+        const q = this.state.quests[qid]
+        return q ? `${q.stage}:${q.complete}` : 'none'
+      })
+      .join('|')
+    const flagPart = (npc.watchesFlags || []).map((f) => this.state.flags.has(f)).join('|')
+    return `${questPart}#${flagPart}`
+  }
+
+  _npcHasNewContent(npc) {
+    if (!this.state.flags.has(this._npcTalkedKey(npc))) return true
+    const sig = this._npcContentSignature(npc)
+    return this.state.npcSeenSignatures[this._npcSignatureKey(npc)] !== sig
+  }
+
+  _markNpcSeen(npc) {
+    this.state.flags.add(this._npcTalkedKey(npc))
+    this.state.npcSeenSignatures[this._npcSignatureKey(npc)] = this._npcContentSignature(npc)
+  }
+
+  // --- Secret walls / hidden stashes --------------------------------------
+
+  _secretFoundKey(secret) {
+    return `_secret_found_${this.state.worldId}_${this.state.mapId}_${secret.id}`
+  }
+
+  _tryRevealSecret(secret) {
+    const key = this._secretFoundKey(secret)
+    if (this.state.flags.has(key)) return
+    this.state.flags.add(key)
+    if (secret.reward) {
+      for (const [item, amount] of Object.entries(secret.reward)) {
+        this.state.inventory[item] = (this.state.inventory[item] || 0) + amount
+      }
+    }
+    this.dialogue.start(secret.dialogue && secret.dialogue.length ? secret.dialogue : ['You found a hidden stash!'])
+    saveGame(this.state)
   }
 
   _onArrive(x, y) {
@@ -138,8 +217,10 @@ export class OverworldScene {
           warpTo: (w) => this._applyWarp(w),
           // So a boss's victory dialogue can smoothly hand the player
           // straight back to the ship instead of leaving them to remember
-          // to press B themselves.
-          openShip: () => this._openShip(),
+          // to press B themselves. Pass the id unlockNextWorld() returned
+          // so the Travel list opens with the newly-unlocked world already
+          // highlighted, not whatever was first in the list.
+          openShip: (opts) => this._openShip(opts),
         })
         if (trigger.once) this.state.flags.add(key)
         if (trigger.setsFlag) this.state.flags.add(trigger.setsFlag)
@@ -157,9 +238,10 @@ export class OverworldScene {
     saveGame(this.state)
   }
 
-  _openShip() {
+  _openShip(opts = {}) {
     sceneManager.push(new ShipScene(), {
       state: this.state,
+      preselectWorldId: opts.preselectWorldId,
       onClose: () => {
         sceneManager.pop()
         this._refreshMap()
@@ -194,12 +276,18 @@ export class OverworldScene {
     const camera = computeCamera(this.mapDef, this.state.x, this.state.y)
     drawMap(ctx, this.mapDef, camera)
 
+    // NPC "!" markers are collected here and drawn in a final overlay pass
+    // (after every sprite, including the hero) so a sprite standing on an
+    // adjacent tile — e.g. the player lined up to talk — never paints over
+    // a marker on the row below/above it.
+    const markers = []
     for (const npc of this.mapDef.npcs || []) {
       if (npc.requiresFlag && !this.state.flags.has(npc.requiresFlag)) continue
       const sprite = getSprite(npc.spriteId) || getSprite('npc')
       const sx = (npc.x - camera.camX) * TILE_SIZE
       const sy = (npc.y - camera.camY) * TILE_SIZE
       drawSprite(ctx, sprite, 0, sx, sy, { scale: 1 })
+      if (this._npcHasNewContent(npc)) markers.push({ sx, sy })
     }
 
     for (const enemySpawn of this.mapDef.enemySpawns || []) {
@@ -214,6 +302,17 @@ export class OverworldScene {
     const px = (this.state.x - camera.camX) * TILE_SIZE
     const py = (this.state.y - camera.camY) * TILE_SIZE
     drawSprite(ctx, heroSprite, 0, px, py, { scale: 1, flip: this.state.facing === 'left' })
+
+    for (const { sx, sy } of markers) {
+      ctx.font = 'bold 9px Consolas, Menlo, monospace'
+      // Dark outline first so the marker stays legible even when it lands
+      // over a light sprite (e.g. the hero standing on the adjacent tile).
+      ctx.strokeStyle = '#1a1208'
+      ctx.lineWidth = 2
+      ctx.strokeText('!', sx + 6, sy - 3)
+      ctx.fillStyle = '#f4d35b'
+      ctx.fillText('!', sx + 6, sy - 3)
+    }
 
     ctx.font = '7px Consolas, Menlo, monospace'
     ctx.fillStyle = '#e8e8e8'

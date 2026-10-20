@@ -153,7 +153,14 @@ registerSprites({
 registerMoves({
   mossfen_mireGrasp: { name: 'Mire Grasp', kind: 'attack', power: 8, focusCost: 0, accuracy: 0.8 },
   mossfen_bogSlam: { name: 'Bog Slam', kind: 'attack', power: 10, focusCost: 0, accuracy: 0.82 },
-  mossfen_venomBite: { name: 'Venom Bite', kind: 'attack', power: 7, focusCost: 0, accuracy: 0.92 },
+  mossfen_venomBite: {
+    name: 'Venom Bite',
+    kind: 'attack',
+    power: 7,
+    focusCost: 0,
+    accuracy: 0.92,
+    applyStatus: { type: 'poison', duration: 3, power: 2 },
+  },
   mossfen_corruptedSurge: { name: 'Corrupted Surge', kind: 'attack', power: 15, focusCost: 0, accuracy: 0.85 },
   mossfen_mireRegen: { name: 'Mire Regeneration', kind: 'heal', power: 14, focusCost: 0, accuracy: 1 },
 })
@@ -296,6 +303,7 @@ export const mossfenReachWorld = {
           dialogue: [
             'Bog-stalkers nest past the reeds — stay on the mud.',
             "Settlement's through the north gate. Go tell the elders.",
+            "That mossy rock west of here looks hollow. Worth a look.",
           ],
         },
       ],
@@ -304,6 +312,15 @@ export const mossfenReachWorld = {
         { id: 'approach_viper1', x: 19, y: 4, enemyId: 'mossfen_reedViper', spriteId: 'mossfen_reedViper' },
         { id: 'approach_lurker1', x: 10, y: 15, enemyId: 'mossfen_mireLurker', spriteId: 'mossfen_mireLurker' },
         { id: 'approach_stalker2', x: 20, y: 16, enemyId: 'mossfen_bogStalker', spriteId: 'mossfen_bogStalker' },
+      ],
+      secrets: [
+        {
+          id: 'approachMossRockStash',
+          x: 4,
+          y: 9,
+          reward: { tonic: 1 },
+          dialogue: ['The moss-rock is hollow — someone hid a cache inside.', 'Found a tonic!'],
+        },
       ],
       warps: [{ x: 13, y: 1, toMap: 'settlement', toX: 10, toY: 13 }],
       triggers: [
@@ -339,6 +356,7 @@ export const mossfenReachWorld = {
           y: 5,
           facing: 'down',
           spriteId: 'mossfen_tracker',
+          watchesQuests: ['mossfen_lostScout'],
           dialogue: (state) => {
             const quest = state.quests['mossfen_lostScout']
             if (!quest) {
@@ -362,6 +380,7 @@ export const mossfenReachWorld = {
           y: 5,
           facing: 'down',
           spriteId: 'mossfen_elder',
+          watchesQuests: ['mossfen_syndicateTrail'],
           dialogue: (state) => {
             const quest = state.quests['mossfen_syndicateTrail']
             if (!quest) {
@@ -525,7 +544,7 @@ export const mossfenReachWorld = {
               () => {
                 ctx.startBattle(['mossfen_bogWarden'], {
                   onVictory: (state) => {
-                    unlockNextWorld(state, 'mossfenReach')
+                    const nextWorldId = unlockNextWorld(state, 'mossfenReach')
                     completeQuest(state, 'mossfen_syndicateTrail')
                     ctx.showDialogue(
                       [
@@ -533,7 +552,7 @@ export const mossfenReachWorld = {
                         'Wando finds a scorched Syndicate medallion. "There\'s a bigger station out there — Ashvault."',
                         '"Then that\'s where we go," Gogu says. Head back to the Starskiff.',
                       ],
-                      () => ctx.openShip()
+                      () => ctx.openShip({ preselectWorldId: nextWorldId })
                     )
                   },
                 })

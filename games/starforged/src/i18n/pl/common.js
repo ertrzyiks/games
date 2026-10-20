@@ -31,6 +31,7 @@ registerTranslations('pl', {
   'A: ok  B: back': 'A: ok  B: wstecz',
   'Medkit x{count}': 'Apteczka x{count}',
   '{name} Lv{level}': '{name} Poz.{level}',
+  "{name}'s turn": 'Tura: {name}',
   '{name} uses a medkit and recovers {amount} HP!': '{name} używa apteczki i odzyskuje {amount} PŻ!',
   '{name} guards.': '{name} przyjmuje postawę obronną.',
   '{name} uses {move}, guarding and restoring {amount} focus!':
@@ -43,6 +44,15 @@ registerTranslations('pl', {
   'Victory! Gained {xp} XP.': 'Zwycięstwo! Zdobyto {xp} PD.',
   '{name} leveled up to Lv.{level}!': '{name} awansuje na poziom {level}!',
   '{name} is revived with {amount} HP!': '{name} zostaje ocucony z {amount} PŻ!',
+  '{name} learned {move}!': '{name} poznaje: {move}!',
+  '{target} is {status}!': '{target}: {status}!',
+  burned: 'poparzony',
+  poisoned: 'zatruty',
+  '{name} takes {dmg} {status} damage!': '{name} otrzymuje {dmg} obrażeń ({status})!',
+  burn: 'poparzenie',
+  poison: 'trucizna',
+  '{name} drinks a tonic! Attack rises.': '{name} wypija eliksir! Atak wzrasta.',
+  'Tonic x{count}': 'Eliksir x{count}',
   'Your party has fallen...': 'Twoja drużyna poległa...',
 
   // Footer control hint (index.html)

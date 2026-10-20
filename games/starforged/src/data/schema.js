@@ -19,6 +19,19 @@
  * @property {string} spriteId   - key into assets/sprites registry
  * @property {string[]|function(state):string[]} dialogue - lines, or a function of GameState returning lines (for flag-aware dialogue)
  * @property {string} [requiresFlag] - only appears/interactable if this flag is set
+ * @property {string[]} [watchesQuests] - quest ids this NPC's dialogue branches on. Drives the "!" new-content
+ *   marker: shown the first time the player meets them, and again whenever any watched quest's stage/complete
+ *   or watched flag changes since the last conversation. Omit for NPCs with purely static dialogue (marker
+ *   just shows once).
+ * @property {string[]} [watchesFlags] - flag names this NPC's dialogue branches on (for flag-gated rather
+ *   than quest-stage-gated dialogue) — same "!" marker behavior as watchesQuests.
+ *
+ * @typedef {Object} Secret
+ * @property {string} id           - unique within the map
+ * @property {number} x
+ * @property {number} y            - usually an otherwise-unwalkable "fake wall" tile; found by pressing A while facing it (same gesture as talking to an NPC)
+ * @property {Object<string, number>} [reward] - inventory items to grant, e.g. { medkit: 2 }
+ * @property {string[]} [dialogue] - shown on discovery
  *
  * @typedef {Object} EncounterZone
  * @deprecated random encounters are disabled — OverworldScene no longer
@@ -53,6 +66,7 @@
  * @property {string[][]} tiles    - rows of tile-type ids (see assets/tiles.js)
  * @property {NPC[]} npcs
  * @property {EnemySpawn[]} enemySpawns - visible enemies on the map; walking into one starts the fight
+ * @property {Secret[]} [secrets] - hidden chests/fake walls found by pressing A while facing them
  * @property {Warp[]} warps
  * @property {Trigger[]} triggers
  *

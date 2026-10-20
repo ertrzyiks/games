@@ -19,6 +19,11 @@ registerTranslations('pl', {
     `Hale: W koronie drzew roi się teraz od wichrołazów.`,
   [`Hale: The refuge is north — hurry.`]:
     `Hale: Schronienie jest na północy — pospiesz się.`,
+  [`Hale: One of the giant trunks west of here has a false knothole.`]:
+    `Hale: Jeden z wielkich pni na zachodzie ma fałszywy sęk.`,
+  [`The knothole is hollow — a windkin cache!`]:
+    `Sęk jest wydrążony — skrytka Ludu Wiatru!`,
+  [`Found a tonic!`]: `Znaleziono eliksir!`,
 
   // --- canopyApproach: lore trigger (skyreach_approachLoreSeen) ----------
   [`A grinding hum rises from far below the clouds.`]:

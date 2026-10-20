@@ -67,6 +67,16 @@ export function getEnemySpawnAt(mapDef, x, y) {
   return (mapDef.enemySpawns || []).find((e) => e.x === x && e.y === y)
 }
 
+// Hidden chests/secret walls: usually sit on an otherwise-unwalkable tile
+// (a "fake wall") and are found by pressing A while facing them — same
+// interact gesture as talking to an NPC, just aimed at a wall instead of
+// a person. See MapDef.secrets: [{ id, x, y, reward: {medkit?, tonic?},
+// dialogue: string[] }]. Always a one-time find (no `once` flag needed —
+// overworldScene tracks found secrets the same way as defeated enemies).
+export function getSecretAt(mapDef, x, y) {
+  return (mapDef.secrets || []).find((s) => s.x === x && s.y === y)
+}
+
 export function getNpcFacing(mapDef, px, py, facing) {
   const { dx, dy } = DIRECTIONS[facing]
   return getNpcAt(mapDef, px + dx, py + dy)

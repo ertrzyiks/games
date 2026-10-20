@@ -20,18 +20,24 @@ import { t, tf, getLanguage, cycleLanguage, LANGUAGES } from '../engine/i18n.js'
  * back to a safe default of `{ x: 2, y: 2 }`.
  */
 export class ShipScene {
-  enter({ state, onClose }) {
+  enter({ state, onClose, preselectWorldId }) {
     this.state = state
     this.onClose = onClose
-    this.mode = 'main'
-    this.mainIndex = 0
 
     const ids = listWorldIds().filter((id) => state.unlockedWorlds.includes(id))
     // Rustmoor is the starting world and always unlocked, even if something
     // upstream forgot to list it in state.unlockedWorlds.
     if (!ids.includes('rustmoor')) ids.unshift('rustmoor')
     this.worldIds = ids
-    this.travelIndex = 0
+
+    // Coming straight from a boss victory: jump directly to the Travel
+    // list with the world that was just unlocked already highlighted,
+    // instead of leaving the player on the main hub menu or defaulting
+    // to whatever's first in the list.
+    const preIdx = preselectWorldId ? ids.indexOf(preselectWorldId) : -1
+    this.mode = preIdx >= 0 ? 'travel' : 'main'
+    this.mainIndex = 0
+    this.travelIndex = preIdx >= 0 ? preIdx : 0
     this.questIndex = 0
   }
 
