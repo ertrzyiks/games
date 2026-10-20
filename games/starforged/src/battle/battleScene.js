@@ -477,7 +477,7 @@ export class BattleScene {
 
   _onDefeat() {
     this.phase = 'end'
-    this.dialogue.start(['Your party has fallen...'], () => {
+    this.dialogue.start(['Your party has been defeated...'], () => {
       if (this.onEnd) this.onEnd({ victory: false })
     })
   }

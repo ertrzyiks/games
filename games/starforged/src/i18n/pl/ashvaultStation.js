@@ -118,8 +118,8 @@ registerTranslations('pl', {
     `Wando robi krok do przodu. „Spróbuj.”`,
 
   // --- Extractor Vault: boss onVictory ---
-  [`The Foreman falls — the Extractor sparks and dies.`]:
-    `Brygadzista pada — Ekstraktor iskrzy i gaśnie.`,
+  [`The Foreman gives up — the Extractor sparks and shuts down.`]:
+    `Brygadzista się poddaje — Ekstraktor iskrzy i gaśnie.`,
   [`Gogu breathes out: "It's gone quiet."`]:
     `Gogu wypuszcza powietrze: „Zrobiło się cicho.”`,
   [`Head back to the Starskiff for Skyreach Canopy.`]:

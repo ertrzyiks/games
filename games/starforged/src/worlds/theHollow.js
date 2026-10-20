@@ -219,17 +219,17 @@ export const ENTRY = { x: 9, y: 14 }
 function vexDialogue(state) {
   const quest = state.quests[FINALE_QUEST_ID]
   if (!quest || quest.stage === 0) {
-    return ["I'm Vex. I escaped the Syndicate.", 'Kill the shield relay past the courtyard before you go deeper.']
+    return ["I'm Vex. I escaped the Syndicate.", 'Shut down the shield relay past the courtyard before you go deeper.']
   }
   if (quest.stage === 1) {
-    return ["Relay's dead — good.", "They're still holding prisoners. Free them if you can."]
+    return ["Relay's down — good.", "They're still holding prisoners. Free them if you can."]
   }
   return ["You freed them. That's rare mercy down here.", "The Warden waits past the sanctum. Gogu won't face it alone."]
 }
 
 function lookoutDialogue(state) {
   if (state.flags.has('hollow_relayDisabled')) {
-    return ['Alarms are dead. Patrols still walk old routes.', 'One of the broken pillars near the west wall is hollow.']
+    return ['Alarms are down. Patrols still walk old routes.', 'One of the broken pillars near the west wall is hollow.']
   }
   return ['Patrols sweep every few minutes. Watch the pattern.', 'One of the broken pillars near the west wall is hollow.']
 }
@@ -296,7 +296,7 @@ const outerHollowMap = {
       onEnter(ctx) {
         startQuest(ctx.state, FINALE_QUEST_ID, FINALE_QUEST_NAME)
         setQuestStage(ctx.state, FINALE_QUEST_ID, 1)
-        ctx.showDialogue(['The shield relay hums before you.', 'Wando cuts it dead — the alarms go silent.'])
+        ctx.showDialogue(['The shield relay hums before you.', 'Wando shuts it down — the alarms go silent.'])
       },
     },
   ],
@@ -335,7 +335,7 @@ function rellDialogue(state) {
   if (state.flags.has('hollow_rellFreed')) {
     return ["Real air. I'd forgotten the feel.", 'Go finish this, Wando.']
   }
-  return ['...Wando? They said you were dead.', "Free me and I'll tell you about Gogu."]
+  return ['...Wando? They said you were gone for good.', "Free me and I'll tell you about Gogu."]
 }
 
 function junDialogue(state) {
@@ -471,7 +471,7 @@ const wardenChamberMap = {
         ctx.showDialogue([
           "The corridor opens onto a floor etched in cold red runes — the same sigils from Ashvault's vault, from the Bog Warden's hollow, all of it tracing back here.",
           'At the center, wreathed in Syndicate light, the Warden rises to meet you.',
-          '"The little psychic comes to us after all," it rasps. "Every world you crossed to get here, and it ends the same. Kneel, armorer, and he lives."',
+          '"The little psychic comes to us after all," it rasps. "Every world you crossed to get here, and it ends the same. Kneel, armorer, and hand him over."',
           'Wando plants his feet, shield raised. "Gogu — stay behind me. This ends now. Not with him."',
         ])
         ctx.startBattle(['hollow_syndicateWarden'], {
@@ -480,7 +480,7 @@ const wardenChamberMap = {
             state.flags.add('gameCompleted')
             ctx.showDialogue(
               [
-                'The Warden falls still. The rune-light flickers, dims, and finally goes dark — the Hollow has nothing left to throw at you.',
+                'The Warden sinks down, beaten. The rune-light flickers, dims, and finally goes dark — the Hollow has nothing left to throw at you.',
                 'Gogu steps out from behind Wando, small fingers finding his armored hand. "...It\'s quiet. I\'ve never felt it this quiet before."',
                 'Wando kneels to his level. "That\'s the Current settling. Nobody\'s hunting it anymore — not here, not in the Reach, not anywhere we\'ve been."',
                 "Rell, and everyone else the Syndicate dragged down here, will walk out into daylight they didn't expect to see again.",

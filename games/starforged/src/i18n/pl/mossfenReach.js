@@ -44,7 +44,7 @@ registerTranslations('pl', {
 
   // --- settlement: finnTheTracker ---
   [`Finn grips his spear. "My kin Wick is missing in the Mire."`]:
-    `Finn zaciska dłoń na włóczni. "Moja krewna Wick zginęła w Mokradłach."`,
+    `Finn zaciska dłoń na włóczni. "Moja krewna Wick zaginęła w Mokradłach."`,
   [`"Please — find her."`]:
     `"Proszę — znajdź ją."`,
   [`Wick's home safe, telling everyone her story.`]:
