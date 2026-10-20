@@ -299,6 +299,12 @@ setTile(wardenLairTiles, 2, 2, 'mossfen_ruins')
 setTile(wardenLairTiles, 9, 2, 'mossfen_ruins')
 setTile(wardenLairTiles, 8, 4, 'mossfen_mossRock')
 setTile(wardenLairTiles, 3, 4, 'mossfen_rootTangle')
+// Exit door, one tile past where the player walks in from the Deep Mire —
+// without it this was a dead end: there was no way back out at all, even
+// before reaching the boss. Warps back to the Deep Mire corridor just
+// short of its own door tile (not onto it), so the two warps don't
+// immediately bounce the player back and forth.
+setTile(wardenLairTiles, 5, 11, 'door')
 
 // Entry point near where the starskiff sets down on the fringe of the
 // bog. Open mud tile, walkable, clear of NPCs/triggers/enemySpawns.
@@ -553,7 +559,7 @@ export const mossfenReachWorld = {
       tiles: wardenLairTiles,
       npcs: [],
       enemySpawns: [],
-      warps: [],
+      warps: [{ x: 5, y: 11, toMap: 'deepMire', toX: 22, toY: 12 }],
       triggers: [
         // Mandatory boss encounter: the single tile connecting the
         // corridor to the grotto room, so it cannot be bypassed (see map
