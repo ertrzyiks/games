@@ -46,6 +46,27 @@ export class OverworldScene {
   _refreshMap() {
     this.world = getWorld(this.state.worldId)
     this.mapDef = this.world.maps[this.state.mapId]
+    this._reapplyFoundSecretTileChanges()
+  }
+
+  // Map tile grids are plain arrays created once at module load time, so a
+  // secret's opensTiles mutation (applied live in _tryRevealSecret) only
+  // persists for the rest of this browser session — a page reload
+  // re-evaluates the world module from scratch and rebuilds an unmutated
+  // grid. The found-flag itself DOES persist (it's part of saved state), so
+  // on every map (re)entry we re-derive the tile mutations from any secret
+  // that's already flagged as found, keeping a previously-opened passage
+  // open across reloads without re-granting its reward or replaying its
+  // dialogue (both stay gated behind the found-flag check in
+  // _tryRevealSecret).
+  _reapplyFoundSecretTileChanges() {
+    for (const secret of this.mapDef.secrets || []) {
+      if (!secret.opensTiles) continue
+      if (!this.state.flags.has(this._secretFoundKey(secret))) continue
+      for (const { x, y, tileId } of secret.opensTiles) {
+        this.mapDef.tiles[y][x] = tileId
+      }
+    }
   }
 
   _triggerKey(x, y) {
@@ -97,11 +118,21 @@ export class OverworldScene {
       return
     }
 
-    // Same idea for secrets: walking straight into a "fake wall" reveals it
-    // immediately, same as bumping into an NPC starts a conversation — no
-    // need to also stop, turn to face it exactly, and press "a".
+    // Walking straight into a secret's fake-wall tile reveals it
+    // immediately, same as walking into an NPC or enemy — no A-press
+    // needed. _tryInteract's A-press path is kept as a fallback for a
+    // secret the player is already standing adjacent to and facing
+    // without having just stepped toward it this frame.
+    //
+    // Only take this branch while the secret is still unfound: getSecretAt
+    // is a plain coordinate lookup that doesn't know about found-state, so
+    // once a secret with opensTiles has turned its own tile walkable, this
+    // check must stop intercepting movement there — otherwise the player
+    // could never actually walk through a passage they already opened,
+    // since this branch never advances this.state.x/y itself (it only
+    // reveals). Falling through lets the normal isWalkable move happen.
     const secret = getSecretAt(this.mapDef, nx, ny)
-    if (secret) {
+    if (secret && !this.state.flags.has(this._secretFoundKey(secret))) {
       this.moveCooldown = BUMP_COOLDOWN_MS
       this._tryRevealSecret(secret)
       return
@@ -193,8 +224,9 @@ export class OverworldScene {
       return
     }
 
-    // Secrets are deliberately disguised as normal terrain and must stay an
-    // explicit A-press action — auto-triggering on approach would spoil them.
+    // Kept as a fallback alongside update()'s bump-to-reveal: it lets the
+    // player reveal a secret they're already standing adjacent to and
+    // facing, without needing to step back and walk into it again.
     const secret = getSecretAt(this.mapDef, fx, fy)
     if (secret) this._tryRevealSecret(secret)
   }
@@ -250,6 +282,11 @@ export class OverworldScene {
     if (secret.reward) {
       for (const [item, amount] of Object.entries(secret.reward)) {
         this.state.inventory[item] = (this.state.inventory[item] || 0) + amount
+      }
+    }
+    if (secret.opensTiles) {
+      for (const { x, y, tileId } of secret.opensTiles) {
+        this.mapDef.tiles[y][x] = tileId
       }
     }
     this.dialogue.start(secret.dialogue && secret.dialogue.length ? secret.dialogue : ['You found a hidden stash!'])

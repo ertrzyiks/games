@@ -29,9 +29,12 @@
  * @typedef {Object} Secret
  * @property {string} id           - unique within the map
  * @property {number} x
- * @property {number} y            - usually an otherwise-unwalkable "fake wall" tile; found by pressing A while facing it (same gesture as talking to an NPC)
+ * @property {number} y            - usually an otherwise-unwalkable "fake wall" tile; found by walking into it (bump-to-reveal) or, as a fallback, by pressing A while facing it
  * @property {Object<string, number>} [reward] - inventory items to grant, e.g. { medkit: 2 }
  * @property {string[]} [dialogue] - shown on discovery
+ * @property {Array<{x: number, y: number, tileId: string}>} [opensTiles] - tiles on the
+ *   same map to mutate once this secret is found (e.g. turning the fake-wall tile and a
+ *   short corridor into walkable floor to open a hidden passage/chamber)
  *
  * @typedef {Object} EncounterZone
  * @deprecated random encounters are disabled — OverworldScene no longer
