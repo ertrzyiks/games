@@ -18,11 +18,14 @@ registerTranslations('pl', {
     `Błotne czyhacze gnieżdżą się za trzcinami — trzymaj się błota.`,
   [`Settlement's through the north gate. Go tell the elders.`]:
     `Osada jest za północną bramą. Powiedz starszyźnie.`,
-  [`That mossy rock west of here looks hollow. Worth a look.`]:
-    `Ten omszały głaz na zachodzie wygląda na wydrążony. Warto zerknąć.`,
-  [`The moss-rock is hollow — someone hid a cache inside.`]:
-    `Omszały głaz jest wydrążony — ktoś skrył w nim skrytkę.`,
-  [`Found a tonic!`]: `Znaleziono eliksir!`,
+  [`That mossy rock east of here looks hollow. Worth a look.`]:
+    `Ten omszały głaz na wschodzie wygląda na wydrążony. Warto zerknąć.`,
+  [`The moss-rock grinds aside, revealing a hidden passage!`]:
+    `Omszały głaz odsuwa się, odkrywając skryte przejście!`,
+  [`You push through into a small hollow...`]:
+    `Wchodzisz do niewielkiej wnęki...`,
+  [`Found a tonic and a medkit!`]:
+    `Znaleziono eliksir i apteczkę!`,
 
   // --- approach: lore trigger ---
   [`Gogu goes still. "I was born here."`]:

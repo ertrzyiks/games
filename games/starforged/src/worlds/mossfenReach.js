@@ -234,6 +234,27 @@ setTile(approachTiles, 24, 6, 'mossfen_rootTangle')
 setTile(approachTiles, 16, 5, 'mossfen_rootTangle')
 setTile(approachTiles, 13, 1, 'door')
 
+// Hidden passage walling (secret: see secrets[] below) — a 4x4 pocket at
+// x19-22,y6-9, otherwise unused open mud this far from any other content on
+// this map. The ring is unwalkable decorative tiles on every side except
+// (19,8), the fake-wall entrance; (20,7)/(21,7)/(20,8)/(21,8) are left as
+// the default mossfen_mud from the base fillRect above and serve as the
+// hidden chamber floor — already "open" terrain, just unreachable until
+// the entrance opens. Found-state (post-reveal) just turns (19,8) itself
+// into mud; see the secret's opensTiles.
+setTile(approachTiles, 19, 6, 'mossfen_deadTree')
+setTile(approachTiles, 20, 6, 'mossfen_deadTree')
+setTile(approachTiles, 21, 6, 'mossfen_deadTree')
+setTile(approachTiles, 22, 6, 'mossfen_rootTangle')
+setTile(approachTiles, 19, 7, 'mossfen_rootTangle')
+setTile(approachTiles, 22, 7, 'mossfen_deadTree')
+setTile(approachTiles, 19, 8, 'mossfen_mossRock') // the fake wall / secret entrance
+setTile(approachTiles, 22, 8, 'mossfen_rootTangle')
+setTile(approachTiles, 19, 9, 'mossfen_deadTree')
+setTile(approachTiles, 20, 9, 'mossfen_rootTangle')
+setTile(approachTiles, 21, 9, 'mossfen_rootTangle')
+setTile(approachTiles, 22, 9, 'mossfen_deadTree')
+
 // === Map 2: Fenling Settlement (21x18) — hub. A glow-floor patch at its
 // heart marks where the old shrine light still lingers. ===
 const settlementTiles = buildGrid(21, 18, 'mossfen_hutWall')
@@ -303,7 +324,7 @@ export const mossfenReachWorld = {
           dialogue: [
             'Bog-stalkers nest past the reeds — stay on the mud.',
             "Settlement's through the north gate. Go tell the elders.",
-            "That mossy rock west of here looks hollow. Worth a look.",
+            'That mossy rock east of here looks hollow. Worth a look.',
           ],
         },
       ],
@@ -315,11 +336,16 @@ export const mossfenReachWorld = {
       ],
       secrets: [
         {
-          id: 'approachMossRockStash',
-          x: 4,
-          y: 9,
-          reward: { tonic: 1 },
-          dialogue: ['The moss-rock is hollow — someone hid a cache inside.', 'Found a tonic!'],
+          id: 'approachHiddenPassage',
+          x: 19,
+          y: 8,
+          reward: { tonic: 1, medkit: 1 },
+          opensTiles: [{ x: 19, y: 8, tileId: 'mossfen_mud' }],
+          dialogue: [
+            'The moss-rock grinds aside, revealing a hidden passage!',
+            'You push through into a small hollow...',
+            'Found a tonic and a medkit!',
+          ],
         },
       ],
       warps: [{ x: 13, y: 1, toMap: 'settlement', toX: 10, toY: 13 }],
