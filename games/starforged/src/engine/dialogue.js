@@ -1,4 +1,5 @@
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from './constants.js'
+import { t } from './i18n.js'
 
 const BOX_HEIGHT = 48
 const PADDING = 6
@@ -21,7 +22,10 @@ export class Dialogue {
 
   start(lines, onDone) {
     this.active = true
-    this.lines = Array.isArray(lines) ? lines : [lines]
+    // Translate here, once, so every dialogue source across the game (NPC
+    // conversations, quest text, battle messages) gets localized for free
+    // without any world/content file needing to call t() itself.
+    this.lines = (Array.isArray(lines) ? lines : [lines]).map(t)
     this.lineIndex = 0
     this.charIndex = 0
     this.timer = 0

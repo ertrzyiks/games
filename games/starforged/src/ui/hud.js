@@ -1,4 +1,5 @@
 import { CANVAS_WIDTH } from '../engine/constants.js'
+import { t } from '../engine/i18n.js'
 
 /**
  * Small, unobtrusive party status readout drawn in the top-right corner of
@@ -30,7 +31,7 @@ export function drawHud(ctx, state) {
     const rowY = y + padding + (i + 1) * lineH - 2
     const alive = member.hp > 0
     ctx.fillStyle = alive ? '#e8e8e8' : '#e0564b'
-    ctx.fillText(`${member.name} L${member.level}`, x + padding, rowY)
+    ctx.fillText(`${t(member.name)} L${member.level}`, x + padding, rowY)
     ctx.fillStyle = alive ? '#9ba1b4' : '#e0564b'
     ctx.fillText(`${member.hp}/${member.maxHp}`, x + padding + 30, rowY)
   })

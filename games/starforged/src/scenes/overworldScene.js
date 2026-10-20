@@ -12,6 +12,7 @@ import { BattleScene } from '../battle/battleScene.js'
 import { saveGame } from '../engine/save.js'
 import { ShipScene } from './shipScene.js'
 import { drawHud } from '../ui/hud.js'
+import { t } from '../engine/i18n.js'
 
 const BUMP_COOLDOWN_MS = 90
 
@@ -112,6 +113,10 @@ export class OverworldScene {
           startBattle: (enemyIds, callbacks) => this.startBattle(enemyIds, callbacks),
           showDialogue: (lines, cb) => this.dialogue.start(lines, cb),
           warpTo: (w) => this._applyWarp(w),
+          // So a boss's victory dialogue can smoothly hand the player
+          // straight back to the ship instead of leaving them to remember
+          // to press B themselves.
+          openShip: () => this._openShip(),
         })
         if (trigger.once) this.state.flags.add(key)
         if (trigger.setsFlag) this.state.flags.add(trigger.setsFlag)
@@ -192,7 +197,7 @@ export class OverworldScene {
 
     ctx.font = '7px monospace'
     ctx.fillStyle = '#e8e8e8'
-    ctx.fillText(this.world.name, 4, 10)
+    ctx.fillText(t(this.world.name), 4, 10)
 
     drawHud(ctx, this.state)
 

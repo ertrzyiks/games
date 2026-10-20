@@ -4,6 +4,7 @@ import { drawSprite } from '../engine/sprite.js'
 import { input } from '../engine/input.js'
 import { getMove } from './moves.js'
 import { getEnemy } from './enemies.js'
+import { t, tf } from '../engine/i18n.js'
 import { getSprite } from '../assets/sprites/registry.js'
 import { heroSprite } from '../assets/sprites/hero.js'
 import { mossSprite } from '../assets/sprites/moss.js'
@@ -34,8 +35,8 @@ export class BattleScene {
     this.menuIndex = 0
     this.queuedActions = []
 
-    const names = this.enemies.map((e) => e.name).join(' and ')
-    this.dialogue.start([`${names} appeared!`], () => this._beginSelection())
+    const names = this.enemies.map((e) => t(e.name)).join(` ${t('and')} `)
+    this.dialogue.start([tf('{names} appeared!', { names })], () => this._beginSelection())
   }
 
   exit() {}
@@ -193,7 +194,9 @@ export class BattleScene {
       if (action.special === 'item') {
         const before = action.unit.hp
         action.unit.hp = Math.min(action.unit.maxHp, action.unit.hp + ITEM_HEAL_AMOUNT)
-        lines.push(`${action.name} uses a medkit and recovers ${action.unit.hp - before} HP!`)
+        lines.push(
+          tf('{name} uses a medkit and recovers {amount} HP!', { name: t(action.name), amount: action.unit.hp - before })
+        )
         continue
       }
       const move = getMove(action.moveId)
@@ -205,11 +208,15 @@ export class BattleScene {
           const restored = action.unit.focus - before
           lines.push(
             restored > 0
-              ? `${action.name} uses ${move.name}, guarding and restoring ${restored} focus!`
-              : `${action.name} guards.`
+              ? tf('{name} uses {move}, guarding and restoring {amount} focus!', {
+                  name: t(action.name),
+                  move: t(move.name),
+                  amount: restored,
+                })
+              : tf('{name} guards.', { name: t(action.name) })
           )
         } else {
-          lines.push(`${action.name} guards.`)
+          lines.push(tf('{name} guards.', { name: t(action.name) }))
         }
       } else {
         rest.push(action)
@@ -237,7 +244,14 @@ export class BattleScene {
       if (!target) return lines
       const before = target.hp
       target.hp = Math.min(target.maxHp, target.hp + move.power)
-      lines.push(`${action.name} uses ${move.name} on ${target.name}, healing ${target.hp - before} HP!`)
+      lines.push(
+        tf('{name} uses {move} on {target}, healing {amount} HP!', {
+          name: t(action.name),
+          move: t(move.name),
+          target: t(target.name),
+          amount: target.hp - before,
+        })
+      )
       return lines
     }
 
@@ -258,24 +272,31 @@ export class BattleScene {
     }
 
     if (Math.random() > move.accuracy) {
-      lines.push(`${action.name} uses ${move.name} but misses!`)
+      lines.push(tf('{name} uses {move} but misses!', { name: t(action.name), move: t(move.name) }))
       return lines
     }
 
     let dmg = Math.max(1, Math.round(move.power + action.unit.atk - target.def * 0.5))
     if (target.guarding) dmg = Math.max(1, Math.round(dmg / 2))
     target.hp = Math.max(0, target.hp - dmg)
-    lines.push(`${action.name} uses ${move.name}! ${target.name} takes ${dmg} damage.`)
+    lines.push(
+      tf('{name} uses {move}! {target} takes {dmg} damage.', {
+        name: t(action.name),
+        move: t(move.name),
+        target: t(target.name),
+        dmg,
+      })
+    )
 
     if (move.lifesteal) {
       const healAmt = Math.max(1, Math.round(dmg / 2))
       const before = action.unit.hp
       action.unit.hp = Math.min(action.unit.maxHp, action.unit.hp + healAmt)
       const healed = action.unit.hp - before
-      if (healed > 0) lines.push(`${action.name} drains ${healed} HP!`)
+      if (healed > 0) lines.push(tf('{name} drains {amount} HP!', { name: t(action.name), amount: healed }))
     }
 
-    if (target.hp <= 0) lines.push(`${target.name} is defeated!`)
+    if (target.hp <= 0) lines.push(tf('{target} is defeated!', { target: t(target.name) }))
     return lines
   }
 
@@ -298,11 +319,11 @@ export class BattleScene {
   _onVictory() {
     this.phase = 'end'
     const xpTotal = this.enemies.reduce((sum, e) => sum + e.xpReward, 0)
-    const lines = [`Victory! Gained ${xpTotal} XP.`]
+    const lines = [tf('Victory! Gained {xp} XP.', { xp: xpTotal })]
     for (const member of Object.values(this.party)) {
       if (member.hp <= 0) continue
       const leveledUp = grantXp(member, xpTotal)
-      if (leveledUp) lines.push(`${member.name} leveled up to Lv.${member.level}!`)
+      if (leveledUp) lines.push(tf('{name} leveled up to Lv.{level}!', { name: t(member.name), level: member.level }))
     }
     this.dialogue.start(lines, () => {
       if (this.onEnd) this.onEnd({ victory: true })
@@ -363,7 +384,7 @@ export class BattleScene {
       const x = 60 + i * 36
       const y = 18
       if (sprite) drawSprite(ctx, sprite, 0, x, y, { scale: 1 })
-      this._drawBar(ctx, x - 4, y - 8, enemy.name, enemy.hp, enemy.maxHp, null, null, 30)
+      this._drawBar(ctx, x - 4, y - 8, t(enemy.name), enemy.hp, enemy.maxHp, null, null, 30)
       if (enemy === targetedEnemy) {
         ctx.font = '7px monospace'
         ctx.fillStyle = '#f4d35b'
@@ -376,7 +397,17 @@ export class BattleScene {
       const x = 14 + i * 44
       const y = CANVAS_HEIGHT - 70
       if (sprite && member.hp > 0) drawSprite(ctx, sprite, 0, x, y, { scale: 1 })
-      this._drawBar(ctx, x - 4, y + 36, `${member.name} Lv${member.level}`, member.hp, member.maxHp, member.focus, member.maxFocus, 34)
+      this._drawBar(
+        ctx,
+        x - 4,
+        y + 36,
+        tf('{name} Lv{level}', { name: t(member.name), level: member.level }),
+        member.hp,
+        member.maxHp,
+        member.focus,
+        member.maxFocus,
+        34
+      )
     })
 
     if (this.phase === 'menu' && !this.dialogue.active) {
@@ -416,9 +447,9 @@ export class BattleScene {
     ctx.strokeRect(x, y, boxW, boxH)
     ctx.font = '7px monospace'
     ctx.fillStyle = '#dfe3ea'
-    ctx.fillText('Choose target', x + 4, y + 7)
+    ctx.fillText(t('Choose target'), x + 4, y + 7)
     ctx.fillStyle = '#9ba1b4'
-    ctx.fillText('A: ok  B: back', x + 4, y + 16)
+    ctx.fillText(t('A: ok  B: back'), x + 4, y + 16)
   }
 
   _drawMenu(ctx) {
@@ -434,7 +465,10 @@ export class BattleScene {
     ctx.strokeRect(x, y, boxW, boxH)
     ctx.font = '7px monospace'
     options.forEach((opt, i) => {
-      const label = opt === 'item' ? `Medkit x${this.state.inventory.medkit || 0}` : getMove(opt).name
+      const label =
+        opt === 'item'
+          ? tf('Medkit x{count}', { count: this.state.inventory.medkit || 0 })
+          : t(getMove(opt).name)
       ctx.fillStyle = i === this.menuIndex ? '#dfe3ea' : '#9ba1b4'
       ctx.fillText(`${i === this.menuIndex ? '>' : ' '}${label}`, x + 4, y + 6 + i * 10)
     })

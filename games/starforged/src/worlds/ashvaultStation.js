@@ -569,11 +569,15 @@ export const ashvaultStationWorld = {
                   onVictory: (state) => {
                     unlockNextWorld(state, 'ashvaultStation')
                     completeQuest(state, 'ashvault_extractorSabotage')
-                    ctx.showDialogue([
-                      'The Foreman crashes against the conduits — the Extractor sparks, cracks, and dies in a shower of slag.',
-                      'Moss exhales, shoulders dropping like a held breath finally let go. "It\'s gone quiet. Whatever it wanted from me... it\'s gone."',
-                      'Kade lowers his hammer. "Then Ashvault\'s done with us. Skyreach Canopy waits past the ridge — let\'s see what else the Syndicate\'s reaching for."',
-                    ])
+                    ctx.showDialogue(
+                      [
+                        'The Foreman crashes against the conduits — the Extractor sparks, cracks, and dies in a shower of slag.',
+                        'Moss exhales, shoulders dropping like a held breath finally let go. "It\'s gone quiet. Whatever it wanted from me... it\'s gone."',
+                        'Kade lowers his hammer. "Then Ashvault\'s done with us. Skyreach Canopy waits past the ridge — let\'s see what else the Syndicate\'s reaching for."',
+                        'Head back to the Starskiff to set course for Skyreach Canopy.',
+                      ],
+                      () => ctx.openShip()
+                    )
                   },
                 })
               }

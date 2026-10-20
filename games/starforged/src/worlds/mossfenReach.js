@@ -542,13 +542,17 @@ export const mossfenReachWorld = {
                   onVictory: (state) => {
                     unlockNextWorld(state, 'mossfenReach')
                     completeQuest(state, 'mossfen_syndicateTrail')
-                    ctx.showDialogue([
-                      'The corrupted plating cracks and sloughs away; the light bleeds out of the creature until only still water remains.',
-                      'Moss kneels at the water\'s edge. "It\'s free. Whatever they did to it... it\'s finally free."',
-                      'Kade pulls a scorched Syndicate medallion from the wreckage — the same mark from the siphon rig in the mire.',
-                      '"This isn\'t the only place they\'ve been digging," Kade says grimly. "There\'s a station out past the reach, Ashvault — word is they\'re building something bigger there. A Current Extractor, they call it."',
-                      '"Then that\'s where we go next," Moss says, steadier now. "Before they finish it."',
-                    ])
+                    ctx.showDialogue(
+                      [
+                        'The corrupted plating cracks and sloughs away; the light bleeds out of the creature until only still water remains.',
+                        'Moss kneels at the water\'s edge. "It\'s free. Whatever they did to it... it\'s finally free."',
+                        'Kade pulls a scorched Syndicate medallion from the wreckage — the same mark from the siphon rig in the mire.',
+                        '"This isn\'t the only place they\'ve been digging," Kade says grimly. "There\'s a station out past the reach, Ashvault — word is they\'re building something bigger there. A Current Extractor, they call it."',
+                        '"Then that\'s where we go next," Moss says, steadier now. "Before they finish it."',
+                        'Head back to the Starskiff to set course for Ashvault Station.',
+                      ],
+                      () => ctx.openShip()
+                    )
                   },
                 })
               }

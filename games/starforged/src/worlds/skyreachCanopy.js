@@ -589,14 +589,18 @@ export const skyreachCanopyWorld = {
                   onVictory: (state) => {
                     unlockNextWorld(state, 'skyreachCanopy')
                     completeQuest(state, WATCH_QUEST)
-                    ctx.showDialogue([
-                      'Enforcer Vane crashes against the arena rail, her glider-rig sparking out.',
-                      '"...the Hollow... will still..." Her voice fades as the stolen Current-charge bleeds out of her armor.',
-                      "Senna's voice carries up from below: the refuge is safe, for now.",
-                      "With the enforcer fallen, the location the old scout's map once marked is confirmed — the Hollow itself, buried beneath the Drift's deepest clouds.",
-                      'Kade looks to Moss. "That\'s where they want to take you. So that\'s where we end it."',
-                      'The way down into the Hollow lies open. The final confrontation awaits.',
-                    ])
+                    ctx.showDialogue(
+                      [
+                        'Enforcer Vane crashes against the arena rail, her glider-rig sparking out.',
+                        '"...the Hollow... will still..." Her voice fades as the stolen Current-charge bleeds out of her armor.',
+                        "Senna's voice carries up from below: the refuge is safe, for now.",
+                        "With the enforcer fallen, the location the old scout's map once marked is confirmed — the Hollow itself, buried beneath the Drift's deepest clouds.",
+                        'Kade looks to Moss. "That\'s where they want to take you. So that\'s where we end it."',
+                        'The way down into the Hollow lies open. The final confrontation awaits.',
+                        'Head back to the Starskiff to set course for the Hollow.',
+                      ],
+                      () => ctx.openShip()
+                    )
                   },
                 })
               }

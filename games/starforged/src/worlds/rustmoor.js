@@ -437,11 +437,15 @@ export const rustmoorWorld = {
               onVictory: (state) => {
                 unlockNextWorld(state, 'rustmoor')
                 completeQuest(state, 'rustmoor_syndicateSigns')
-                ctx.showDialogue([
-                  "The captain collapses amid his own scrap-metal trophies, a Syndicate contact's sigil-coin rolling free of his coat.",
-                  "With Rustmoor's shakedown broken, the settlement makes good on its word — Kade's skiff sits fueled and ready at the canyon's edge.",
-                  'But the sigil-coin is proof enough: the Hollow Syndicate is real, and it is already moving through the Drift.',
-                ])
+                ctx.showDialogue(
+                  [
+                    "The captain collapses amid his own scrap-metal trophies, a Syndicate contact's sigil-coin rolling free of his coat.",
+                    "With Rustmoor's shakedown broken, the settlement makes good on its word — Kade's skiff sits fueled and ready at the canyon's edge.",
+                    'But the sigil-coin is proof enough: the Hollow Syndicate is real, and it is already moving through the Drift.',
+                    'Head back to the Starskiff — a new world on the Drift is ready to chart.',
+                  ],
+                  () => ctx.openShip()
+                )
               },
             })
           },

@@ -416,14 +416,18 @@ const wardenChamberMap = {
           onVictory: (state) => {
             completeQuest(state, FINALE_QUEST_ID)
             state.flags.add('gameCompleted')
-            ctx.showDialogue([
-              'The Warden falls still. The rune-light flickers, dims, and finally goes dark — the Hollow has nothing left to throw at you.',
-              'Moss steps out from behind Kade, small fingers finding his armored hand. "...It\'s quiet. I\'ve never felt it this quiet before."',
-              'Kade kneels to his level. "That\'s the Current settling. Nobody\'s hunting it anymore — not here, not in the Reach, not anywhere we\'ve been."',
-              "Rell, and everyone else the Syndicate dragged down here, will walk out into daylight they didn't expect to see again.",
-              "Kade thinks of the forge-clan that exiled him, a raider's canyon, a drowned bog shrine, a station full of smoke, a refuge in the clouds — every place this road ran through to get here.",
-              '"Come on, Moss," he says, straightening up. "Let\'s go see what the Drift looks like without the Hollow watching it."',
-            ])
+            ctx.showDialogue(
+              [
+                'The Warden falls still. The rune-light flickers, dims, and finally goes dark — the Hollow has nothing left to throw at you.',
+                'Moss steps out from behind Kade, small fingers finding his armored hand. "...It\'s quiet. I\'ve never felt it this quiet before."',
+                'Kade kneels to his level. "That\'s the Current settling. Nobody\'s hunting it anymore — not here, not in the Reach, not anywhere we\'ve been."',
+                "Rell, and everyone else the Syndicate dragged down here, will walk out into daylight they didn't expect to see again.",
+                "Kade thinks of the forge-clan that exiled him, a raider's canyon, a drowned bog shrine, a station full of smoke, a refuge in the clouds — every place this road ran through to get here.",
+                '"Come on, Moss," he says, straightening up. "Let\'s go see what the Drift looks like without the Hollow watching it."',
+                'THE END — head back to the Starskiff to revisit any world of the Drift.',
+              ],
+              () => ctx.openShip()
+            )
           },
         })
       },

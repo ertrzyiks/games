@@ -3,12 +3,11 @@ import { input } from '../engine/input.js'
 import { getWorld, listWorldIds } from '../worlds/registry.js'
 import { saveGame } from '../engine/save.js'
 import { playBlip, playConfirm, playCancel } from '../engine/audio.js'
-
-const MAIN_OPTIONS = ['Travel', 'Quest Log', 'Close']
+import { t, tf, getLanguage, cycleLanguage, LANGUAGES } from '../engine/i18n.js'
 
 /**
  * Ship / pause screen, reached from the overworld via the B button.
- * Top-level hub: Travel (world-select) / Quest Log / Close.
+ * Top-level hub: Travel (world-select) / Quest Log / Language / Close.
  *
  * World-entry contract: this scene only talks to worlds through the
  * registry (`getWorld`/`listWorldIds`), so it stays decoupled from exactly
@@ -38,6 +37,16 @@ export class ShipScene {
 
   exit() {}
 
+  get mainOptions() {
+    const current = LANGUAGES.find((l) => l.code === getLanguage()) || LANGUAGES[0]
+    return [
+      { id: 'travel', label: t('Travel') },
+      { id: 'questlog', label: t('Quest Log') },
+      { id: 'language', label: tf('{label}: {value}', { label: t('Language'), value: current.label }) },
+      { id: 'close', label: t('Close') },
+    ]
+  }
+
   get questList() {
     return Object.values(this.state.quests || {})
   }
@@ -64,23 +73,27 @@ export class ShipScene {
 
   update() {
     if (this.mode === 'main') {
+      const options = this.mainOptions
       if (input.wasPressed('down')) {
-        this.mainIndex = (this.mainIndex + 1) % MAIN_OPTIONS.length
+        this.mainIndex = (this.mainIndex + 1) % options.length
         playBlip()
       }
       if (input.wasPressed('up')) {
-        this.mainIndex = (this.mainIndex - 1 + MAIN_OPTIONS.length) % MAIN_OPTIONS.length
+        this.mainIndex = (this.mainIndex - 1 + options.length) % options.length
         playBlip()
       }
       if (input.wasPressed('b')) this._close()
       if (input.wasPressed('a')) {
-        const choice = MAIN_OPTIONS[this.mainIndex]
-        if (choice === 'Travel') {
+        const choice = options[this.mainIndex]
+        if (choice.id === 'travel') {
           this.mode = 'travel'
           playConfirm()
-        } else if (choice === 'Quest Log') {
+        } else if (choice.id === 'questlog') {
           this.mode = 'questlog'
           playConfirm()
+        } else if (choice.id === 'language') {
+          cycleLanguage()
+          playBlip()
         } else {
           this._close()
         }
@@ -130,11 +143,12 @@ export class ShipScene {
     ctx.fillStyle = '#e8e8e8'
     ctx.fillText('STARSKIFF', 6, 14)
 
+    const options = this.mainOptions
     const boxX = 6
     const boxY = 28
     const boxW = CANVAS_WIDTH - 12
     const rowH = 14
-    const boxH = MAIN_OPTIONS.length * rowH + 8
+    const boxH = options.length * rowH + 8
     ctx.fillStyle = '#0b0d12'
     ctx.fillRect(boxX, boxY, boxW, boxH)
     ctx.strokeStyle = '#e8e8e8'
@@ -142,21 +156,21 @@ export class ShipScene {
     ctx.strokeRect(boxX, boxY, boxW, boxH)
 
     ctx.font = '7px monospace'
-    MAIN_OPTIONS.forEach((opt, i) => {
+    options.forEach((opt, i) => {
       const selected = i === this.mainIndex
       ctx.fillStyle = selected ? '#dfe3ea' : '#9ba1b4'
-      ctx.fillText(`${selected ? '>' : ' '} ${opt}`, boxX + 4, boxY + 10 + i * rowH)
+      ctx.fillText(`${selected ? '>' : ' '} ${opt.label}`, boxX + 4, boxY + 10 + i * rowH)
     })
 
     ctx.font = '6px monospace'
     ctx.fillStyle = '#52586a'
-    ctx.fillText('A: Select   B: Close', boxX + 4, CANVAS_HEIGHT - 6)
+    ctx.fillText(t('A: Select   B: Close'), boxX + 4, CANVAS_HEIGHT - 6)
   }
 
   _drawTravel(ctx) {
     ctx.font = '7px monospace'
     ctx.fillStyle = '#9ba1b4'
-    ctx.fillText('Select a world', 6, 12)
+    ctx.fillText(t('Select a world'), 6, 12)
 
     const boxX = 6
     const boxY = 20
@@ -174,25 +188,25 @@ export class ShipScene {
     ctx.font = '7px monospace'
     if (this.worldIds.length === 0) {
       ctx.fillStyle = '#9ba1b4'
-      ctx.fillText('No worlds unlocked yet.', boxX + 4, boxY + 10)
+      ctx.fillText(t('No worlds unlocked yet.'), boxX + 4, boxY + 10)
     } else {
       this.worldIds.forEach((id, i) => {
         const world = getWorld(id)
         const selected = i === this.travelIndex
         ctx.fillStyle = selected ? '#dfe3ea' : '#9ba1b4'
-        ctx.fillText(`${selected ? '>' : ' '} ${world.name}`, boxX + 4, boxY + 10 + i * rowH)
+        ctx.fillText(`${selected ? '>' : ' '} ${t(world.name)}`, boxX + 4, boxY + 10 + i * rowH)
       })
     }
 
     ctx.font = '6px monospace'
     ctx.fillStyle = '#52586a'
-    ctx.fillText('A: Travel   B: Back', boxX + 4, CANVAS_HEIGHT - 6)
+    ctx.fillText(t('A: Travel   B: Back'), boxX + 4, CANVAS_HEIGHT - 6)
   }
 
   _drawQuestLog(ctx) {
     ctx.font = '7px monospace'
     ctx.fillStyle = '#9ba1b4'
-    ctx.fillText('Quest Log', 6, 12)
+    ctx.fillText(t('Quest Log'), 6, 12)
 
     const boxX = 6
     const boxY = 20
@@ -208,19 +222,19 @@ export class ShipScene {
     ctx.font = '6px monospace'
     if (quests.length === 0) {
       ctx.fillStyle = '#9ba1b4'
-      ctx.fillText('No quests yet. Talk to people!', boxX + 4, boxY + 10)
+      ctx.fillText(t('No quests yet. Talk to people!'), boxX + 4, boxY + 10)
     } else {
       quests.forEach((q, i) => {
         const y = boxY + 10 + i * 10
         if (y > boxY + boxH - 4) return
         ctx.fillStyle = q.complete ? '#5bd17a' : '#dfe3ea'
-        const status = q.complete ? '[done]' : `[${q.stage}]`
-        ctx.fillText(`${status} ${q.name}`, boxX + 4, y)
+        const status = q.complete ? t('[done]') : `[${q.stage}]`
+        ctx.fillText(`${status} ${t(q.name)}`, boxX + 4, y)
       })
     }
 
     ctx.font = '6px monospace'
     ctx.fillStyle = '#52586a'
-    ctx.fillText('A/B: Back', boxX + 4, CANVAS_HEIGHT - 6)
+    ctx.fillText(t('A/B: Back'), boxX + 4, CANVAS_HEIGHT - 6)
   }
 }

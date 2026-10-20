@@ -8,6 +8,7 @@ import { drawSprite } from '../engine/sprite.js'
 import { heroSprite } from '../assets/sprites/hero.js'
 import { mossSprite } from '../assets/sprites/moss.js'
 import { playBlip, playConfirm } from '../engine/audio.js'
+import { t, tf, getLanguage, cycleLanguage, LANGUAGES } from '../engine/i18n.js'
 
 export class TitleScene {
   enter() {
@@ -18,7 +19,12 @@ export class TitleScene {
   exit() {}
 
   get options() {
-    return this.hasSave ? ['Continue', 'New Game'] : ['New Game']
+    const entries = []
+    if (this.hasSave) entries.push({ id: 'continue', label: t('Continue') })
+    entries.push({ id: 'newGame', label: t('New Game') })
+    const current = LANGUAGES.find((l) => l.code === getLanguage()) || LANGUAGES[0]
+    entries.push({ id: 'language', label: tf('{label}: {value}', { label: t('Language'), value: current.label }) })
+    return entries
   }
 
   update() {
@@ -32,10 +38,15 @@ export class TitleScene {
       playBlip()
     }
     if (input.wasPressed('a')) {
-      playConfirm()
       const choice = opts[this.menuIndex]
+      if (choice.id === 'language') {
+        cycleLanguage()
+        playBlip()
+        return
+      }
+      playConfirm()
       let state
-      if (choice === 'Continue') {
+      if (choice.id === 'continue') {
         state = loadGame() || createInitialState()
       } else {
         clearSave()
@@ -58,12 +69,12 @@ export class TitleScene {
     ctx.fillText('STARFORGED', CANVAS_WIDTH / 2, 90)
     ctx.font = '7px monospace'
     ctx.fillStyle = '#9ba1b4'
-    ctx.fillText('a tale of the Drift', CANVAS_WIDTH / 2, 102)
+    ctx.fillText(t('a tale of the Drift'), CANVAS_WIDTH / 2, 102)
 
     const opts = this.options
     opts.forEach((opt, i) => {
       ctx.fillStyle = i === this.menuIndex ? '#dfe3ea' : '#52586a'
-      ctx.fillText(`${i === this.menuIndex ? '> ' : ''}${opt}`, CANVAS_WIDTH / 2, 120 + i * 12)
+      ctx.fillText(`${i === this.menuIndex ? '> ' : ''}${opt.label}`, CANVAS_WIDTH / 2, 120 + i * 12)
     })
     ctx.textAlign = 'left'
   }
