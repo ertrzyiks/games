@@ -1,3 +1,6 @@
+# Claude Code agent worktrees (isolated copies for background subagents)
+.claude/worktrees/
+
 # Logs
 logs
 *.log
