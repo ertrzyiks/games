@@ -101,9 +101,22 @@ export class OverworldScene {
       this.state.x = nx
       this.state.y = ny
       this.moveCooldown = MOVE_DURATION_MS
+      this._regenFocusOnStep()
       this._onArrive(nx, ny)
     } else {
       this.moveCooldown = BUMP_COOLDOWN_MS
+    }
+  }
+
+  // Energy regenerates while exploring: each tile walked restores roughly a
+  // third of a living party member's max focus, so after a few steps on the
+  // map it's back to full without needing to rest or use items. Capped at
+  // maxFocus; knocked-out members don't regen (nothing to spend it on).
+  _regenFocusOnStep() {
+    for (const member of Object.values(this.state.party)) {
+      if (member.hp <= 0) continue
+      const restore = Math.ceil(member.maxFocus / 3)
+      member.focus = Math.min(member.maxFocus, member.focus + restore)
     }
   }
 

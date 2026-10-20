@@ -54,11 +54,11 @@ export function createInitialState() {
         spd: 6,
         xp: 0,
         // Gogu starts with just the free Force Spark; Force Push and Force
-        // Heal unlock later — see MOVE_UNLOCKS below.
+        // Heal unlock at level 2 — see MOVE_UNLOCKS below.
         moves: ['glimmer'],
       },
     },
-    inventory: { medkit: 2, tonic: 1 },
+    inventory: { medkit: 2 },
     flags: new Set(),
     // Only Rustmoor is reachable at the start. Each world's finale boss
     // trigger unlocks the next one on victory (see worlds/registry.js's
@@ -90,18 +90,23 @@ export function completeQuest(state, id) {
 
 // Steeper than a flat linear curve so higher levels — and the bigger
 // stat/damage numbers that come with them — take meaningfully longer to
-// reach, instead of snowballing after just a few fights.
+// reach, instead of snowballing after just a few fights. The flat base is
+// kept low (rather than scaled with the rest of the curve) specifically so
+// level 1->2 only takes about two early fights — the exponential term
+// still makes every level after that progressively longer.
 export function xpToNextLevel(level) {
-  return Math.round(24 + level * 16 * Math.pow(1.08, level))
+  return Math.round(6 + level * 16 * Math.pow(1.08, level))
 }
 
 // Weapons/techniques unlock as a character levels up, rather than all
 // being available from level 1. Additive only (old moves are never
 // removed) — every character keeps a guaranteed free 0-focus-cost move,
-// so the battle menu can never end up with nothing selectable.
+// so the battle menu can never end up with nothing selectable. A level's
+// value can be a single move id or an array of move ids (e.g. Gogu learns
+// both Force Push and Force Heal the moment he hits level 2).
 const MOVE_UNLOCKS = {
   kade: { 2: 'rifleShot', 5: 'flamethrower' },
-  moss: { 2: 'push', 5: 'mend' },
+  moss: { 2: ['push', 'mend'] },
 }
 
 export function grantXp(member, amount) {
@@ -120,10 +125,13 @@ export function grantXp(member, amount) {
     if (member.level % 3 === 0) member.spd += 1
     leveledUp = true
 
-    const unlockedMoveId = MOVE_UNLOCKS[member.id]?.[member.level]
-    if (unlockedMoveId && !member.moves.includes(unlockedMoveId)) {
-      member.moves.push(unlockedMoveId)
-      unlockedMoves.push(unlockedMoveId)
+    const unlock = MOVE_UNLOCKS[member.id]?.[member.level]
+    const toUnlock = Array.isArray(unlock) ? unlock : unlock ? [unlock] : []
+    for (const unlockedMoveId of toUnlock) {
+      if (!member.moves.includes(unlockedMoveId)) {
+        member.moves.push(unlockedMoveId)
+        unlockedMoves.push(unlockedMoveId)
+      }
     }
   }
   return { leveledUp, unlockedMoves }
