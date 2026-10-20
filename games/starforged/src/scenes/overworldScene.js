@@ -85,17 +85,19 @@ export class OverworldScene {
     const nx = this.state.x + dx
     const ny = this.state.y + dy
 
-    // Enemies are visible on the map (no random encounter rolls) — walking
-    // into a living one's tile starts the fight immediately instead of
-    // moving onto it.
-    const enemySpawn = getEnemySpawnAt(this.mapDef, nx, ny)
-    if (enemySpawn && !this.state.flags.has(this._enemyDefeatedKey(enemySpawn))) {
+    // Walking into a living NPC's tile starts their dialogue immediately,
+    // the same way walking into an enemy starts a fight — no need to also
+    // press the "a" action. The NPC's own gating (requiresFlag) is handled
+    // inside _talkToNpc, so an invisible/gated NPC just blocks the tile
+    // (bump cooldown) without opening anything, same as before.
+    const npc = getNpcAt(this.mapDef, nx, ny)
+    if (npc) {
       this.moveCooldown = BUMP_COOLDOWN_MS
-      this._engageEnemySpawn(enemySpawn)
+      this._talkToNpc(npc)
       return
     }
 
-    if (isWalkable(this.mapDef, nx, ny) && !getNpcAt(this.mapDef, nx, ny)) {
+    if (isWalkable(this.mapDef, nx, ny)) {
       this.state.x = nx
       this.state.y = ny
       this.moveCooldown = MOVE_DURATION_MS
@@ -109,6 +111,31 @@ export class OverworldScene {
     return `_enemy_defeated_${this.state.worldId}_${this.state.mapId}_${enemySpawn.id}`
   }
 
+  // Enemies are visible on the map (no random encounter rolls) and attack
+  // eagerly: as soon as the player's move leaves them adjacent (one tile
+  // away, 4-directionally) to a living enemy spawn, the fight starts right
+  // away instead of waiting for the player to step onto the enemy's exact
+  // tile. This subsumes the old "step onto the enemy's tile" contact check:
+  // under 4-directional grid movement you always pass through the adjacent
+  // tile first, and the battle (which blocks further input) fires there —
+  // so the player never actually reaches the enemy's own tile while it's
+  // still alive.
+  //
+  // Deliberately NOT called from enter()/resume(): after a lost battle the
+  // enemy is healed-but-not-flagged-defeated and the player's (x,y) hasn't
+  // moved, so checking adjacency there would instantly re-engage the same
+  // fight the moment control returns to the overworld. Only a move that
+  // actually changes the player's position may trigger this.
+  _adjacentLiveEnemySpawn(x, y) {
+    for (const { dx, dy } of Object.values(DIRECTIONS)) {
+      const enemySpawn = getEnemySpawnAt(this.mapDef, x + dx, y + dy)
+      if (enemySpawn && !this.state.flags.has(this._enemyDefeatedKey(enemySpawn))) {
+        return enemySpawn
+      }
+    }
+    return null
+  }
+
   _engageEnemySpawn(enemySpawn) {
     const key = this._enemyDefeatedKey(enemySpawn)
     this.startBattle([enemySpawn.enemyId], {
@@ -118,24 +145,33 @@ export class OverworldScene {
     })
   }
 
+  _talkToNpc(npc) {
+    if (npc.requiresFlag && !this.state.flags.has(npc.requiresFlag)) return
+    const lines = typeof npc.dialogue === 'function' ? npc.dialogue(this.state) : npc.dialogue
+    this.dialogue.start(lines)
+    // Compute the "seen" signature AFTER calling dialogue(), since some
+    // NPCs' dialogue functions advance quest state as a side effect of
+    // being read — the signature should reflect what the player just
+    // learned, not what was true a moment before.
+    this._markNpcSeen(npc)
+  }
+
   _tryInteract() {
     const { dx, dy } = DIRECTIONS[this.state.facing]
     const fx = this.state.x + dx
     const fy = this.state.y + dy
 
+    // Kept as an explicit A-press path even though approach now auto-talks:
+    // it lets the player reopen dialogue with an NPC they're already
+    // standing next to without stepping back and re-approaching.
     const npc = getNpcAt(this.mapDef, fx, fy)
     if (npc) {
-      if (npc.requiresFlag && !this.state.flags.has(npc.requiresFlag)) return
-      const lines = typeof npc.dialogue === 'function' ? npc.dialogue(this.state) : npc.dialogue
-      this.dialogue.start(lines)
-      // Compute the "seen" signature AFTER calling dialogue(), since some
-      // NPCs' dialogue functions advance quest state as a side effect of
-      // being read — the signature should reflect what the player just
-      // learned, not what was true a moment before.
-      this._markNpcSeen(npc)
+      this._talkToNpc(npc)
       return
     }
 
+    // Secrets are deliberately disguised as normal terrain and must stay an
+    // explicit A-press action — auto-triggering on approach would spoil them.
     const secret = getSecretAt(this.mapDef, fx, fy)
     if (secret) this._tryRevealSecret(secret)
   }
@@ -198,6 +234,15 @@ export class OverworldScene {
   }
 
   _onArrive(x, y) {
+    // Eager aggro: a move that just left the player adjacent to a living
+    // enemy starts the fight immediately, before any warp/trigger on this
+    // tile resolves.
+    const enemySpawn = this._adjacentLiveEnemySpawn(x, y)
+    if (enemySpawn) {
+      this._engageEnemySpawn(enemySpawn)
+      return
+    }
+
     const warp = getWarpAt(this.mapDef, x, y)
     if (warp) {
       this._applyWarp(warp)
