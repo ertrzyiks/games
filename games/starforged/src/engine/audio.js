@@ -71,3 +71,18 @@ export function playConfirm() {
 export function playCancel() {
   playTone(220, 90, { type: 'sine', volume: 0.04 })
 }
+
+/** Quick high zap for firing a laser (travel minigame). */
+export function playLaser() {
+  playTone(1600, 35, { type: 'sawtooth', volume: 0.04 })
+}
+
+/** Low thud for an enemy/asteroid getting destroyed (travel minigame). */
+export function playExplosion() {
+  playTone(90, 160, { type: 'square', volume: 0.06 })
+}
+
+/** Dull rumble for the player's ship taking a hit (travel minigame). */
+export function playImpact() {
+  playTone(140, 120, { type: 'triangle', volume: 0.05 })
+}

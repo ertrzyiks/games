@@ -24,6 +24,10 @@ registerTranslations('pl', {
   '[done]': '[gotowe]',
   'A/B: Back': 'A/B: Wstecz',
 
+  // Travel minigame
+  'Asteroid run!': 'Lot przez asteroidy!',
+  '{s}s left': 'Zostało {s}s',
+
   // Battle chrome
   and: 'i',
   '{names} appeared!': 'Pojawia się: {names}!',
