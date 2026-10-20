@@ -15,6 +15,13 @@ const LINE_HEIGHT_RATIO = 1.25
 // the blinking "continue" ▼ indicator in the box's bottom-right corner.
 const BOTTOM_RESERVE = 2
 
+// Any of these freshly-pressed inputs advances the dialogue (completes the
+// typewriter reveal, then on a subsequent press moves to the next line /
+// closes). Direction keys are included so mashing arrows/WASD works just
+// like A/B, since wasPressed() is edge-triggered and won't rapid-fire while
+// a key is held.
+const ADVANCE_ACTIONS = ['a', 'b', 'up', 'down', 'left', 'right']
+
 /**
  * A reusable GB-style textbox. Any scene can own one instance, feed it
  * `.start(lines, onDone)`, call `.update(dt, input)` + `.draw(ctx)` while
@@ -72,7 +79,8 @@ export class Dialogue {
       }
     }
 
-    if (input.wasPressed('a') || input.wasPressed('b')) {
+    const advancePressed = ADVANCE_ACTIONS.some((action) => input.wasPressed(action))
+    if (advancePressed) {
       if (!this.isLineFullyShown) {
         this.charIndex = this.currentLine.length
         return
