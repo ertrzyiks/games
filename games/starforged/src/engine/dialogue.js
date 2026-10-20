@@ -77,7 +77,7 @@ export class Dialogue {
     ctx.strokeRect(4, boxY, CANVAS_WIDTH - 8, BOX_HEIGHT)
 
     ctx.fillStyle = '#e8e8e8'
-    ctx.font = '8px monospace'
+    ctx.font = '8px Consolas, Menlo, monospace'
     ctx.textBaseline = 'top'
     const text = this.currentLine.slice(0, this.charIndex)
     wrapText(ctx, text, 4 + PADDING, boxY + PADDING, CANVAS_WIDTH - 8 - PADDING * 2, 10)

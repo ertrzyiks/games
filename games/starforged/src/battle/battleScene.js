@@ -184,53 +184,72 @@ export class BattleScene {
     return targets[Math.floor(Math.random() * targets.length)]
   }
 
+  // Processes the round's actions ONE AT A TIME, synced to the dialogue:
+  // each action's state mutation (HP/focus change) happens exactly when
+  // its message starts displaying, not all upfront for the whole round
+  // (that used to let the HP bar already show the round's end state while
+  // the player was still reading the first message).
   _buildMessages() {
     for (const unit of [...Object.values(this.party), ...this.enemies]) unit.guarding = false
 
-    const lines = []
-    const rest = []
-    for (const action of this.queuedActions) {
-      if (action.unit.hp <= 0) continue
-      if (action.special === 'item') {
-        const before = action.unit.hp
-        action.unit.hp = Math.min(action.unit.maxHp, action.unit.hp + ITEM_HEAL_AMOUNT)
-        lines.push(
-          tf('{name} uses a medkit and recovers {amount} HP!', { name: t(action.name), amount: action.unit.hp - before })
-        )
-        continue
-      }
-      const move = getMove(action.moveId)
-      if (move.kind === 'buff') {
-        action.unit.guarding = true
-        if (move.focusRestore) {
-          const before = action.unit.focus
-          action.unit.focus = Math.min(action.unit.maxFocus, action.unit.focus + move.focusRestore)
-          const restored = action.unit.focus - before
-          lines.push(
-            restored > 0
-              ? tf('{name} uses {move}, guarding and restoring {amount} focus!', {
-                  name: t(action.name),
-                  move: t(move.name),
-                  amount: restored,
-                })
-              : tf('{name} guards.', { name: t(action.name) })
-          )
-        } else {
-          lines.push(tf('{name} guards.', { name: t(action.name) }))
-        }
-      } else {
-        rest.push(action)
-      }
+    const live = this.queuedActions.filter((a) => a.unit.hp > 0)
+    // Guard's *protective* flag still has to be set before anything else
+    // this round resolves (so it correctly halves incoming damage no
+    // matter the speed order) — but its message/focus-restore are shown
+    // in their normal sequence position, synced like everything else.
+    const isBuff = (a) => a.special !== 'item' && getMove(a.moveId).kind === 'buff'
+    for (const action of live) {
+      if (isBuff(action)) action.unit.guarding = true
     }
 
-    rest.sort((a, b) => b.speed - a.speed)
-    for (const action of rest) {
-      lines.push(...this._resolveAction(action))
-      if (this._battleOver()) break
-    }
+    const buffs = live.filter(isBuff)
+    const rest = live.filter((a) => !isBuff(a)).sort((a, b) => b.speed - a.speed)
+    this._actionQueue = [...buffs, ...rest]
+    this._processNextQueuedAction()
+  }
 
+  _processNextQueuedAction() {
+    if (this._battleOver() || this._actionQueue.length === 0) {
+      this._afterResolve()
+      return
+    }
+    const action = this._actionQueue.shift()
+    if (action.unit.hp <= 0) {
+      this._processNextQueuedAction()
+      return
+    }
+    const lines = this._resolveSingleAction(action)
     this.phase = 'resolving'
-    this.dialogue.start(lines.length ? lines : ['...'], () => this._afterResolve())
+    this.dialogue.start(lines.length ? lines : ['...'], () => this._processNextQueuedAction())
+  }
+
+  _resolveSingleAction(action) {
+    if (action.special === 'item') {
+      const before = action.unit.hp
+      action.unit.hp = Math.min(action.unit.maxHp, action.unit.hp + ITEM_HEAL_AMOUNT)
+      return [
+        tf('{name} uses a medkit and recovers {amount} HP!', { name: t(action.name), amount: action.unit.hp - before }),
+      ]
+    }
+    const move = getMove(action.moveId)
+    if (move.kind === 'buff') {
+      if (move.focusRestore) {
+        const before = action.unit.focus
+        action.unit.focus = Math.min(action.unit.maxFocus, action.unit.focus + move.focusRestore)
+        const restored = action.unit.focus - before
+        return [
+          restored > 0
+            ? tf('{name} uses {move}, guarding and restoring {amount} focus!', {
+                name: t(action.name),
+                move: t(move.name),
+                amount: restored,
+              })
+            : tf('{name} guards.', { name: t(action.name) }),
+        ]
+      }
+      return [tf('{name} guards.', { name: t(action.name) })]
+    }
+    return this._resolveAction(action)
   }
 
   _resolveAction(action) {
@@ -321,7 +340,14 @@ export class BattleScene {
     const xpTotal = this.enemies.reduce((sum, e) => sum + e.xpReward, 0)
     const lines = [tf('Victory! Gained {xp} XP.', { xp: xpTotal })]
     for (const member of Object.values(this.party)) {
-      if (member.hp <= 0) continue
+      if (member.hp <= 0) {
+        // The rest of the party carried them through — revive a fallen
+        // ally at half HP rather than leaving them knocked out after a
+        // battle the team actually won.
+        member.hp = Math.ceil(member.maxHp / 2)
+        lines.push(tf('{name} is revived with {amount} HP!', { name: t(member.name), amount: member.hp }))
+        continue
+      }
       const leveledUp = grantXp(member, xpTotal)
       if (leveledUp) lines.push(tf('{name} leveled up to Lv.{level}!', { name: t(member.name), level: member.level }))
     }
@@ -386,7 +412,7 @@ export class BattleScene {
       if (sprite) drawSprite(ctx, sprite, 0, x, y, { scale: 1 })
       this._drawBar(ctx, x - 4, y - 8, t(enemy.name), enemy.hp, enemy.maxHp, null, null, 30)
       if (enemy === targetedEnemy) {
-        ctx.font = '7px monospace'
+        ctx.font = '7px Consolas, Menlo, monospace'
         ctx.fillStyle = '#f4d35b'
         ctx.fillText('▶', x - 11, y - 2)
       }
@@ -420,7 +446,7 @@ export class BattleScene {
   }
 
   _drawBar(ctx, x, y, label, hp, maxHp, focus, maxFocus, barW = 34) {
-    ctx.font = '6px monospace'
+    ctx.font = '6px Consolas, Menlo, monospace'
     ctx.fillStyle = '#e8e8e8'
     ctx.fillText(label, x, y)
     ctx.fillStyle = '#2a2d36'
@@ -445,7 +471,7 @@ export class BattleScene {
     ctx.strokeStyle = '#e8e8e8'
     ctx.lineWidth = 1
     ctx.strokeRect(x, y, boxW, boxH)
-    ctx.font = '7px monospace'
+    ctx.font = '7px Consolas, Menlo, monospace'
     ctx.fillStyle = '#dfe3ea'
     ctx.fillText(t('Choose target'), x + 4, y + 7)
     ctx.fillStyle = '#9ba1b4'
@@ -463,7 +489,7 @@ export class BattleScene {
     ctx.strokeStyle = '#e8e8e8'
     ctx.lineWidth = 1
     ctx.strokeRect(x, y, boxW, boxH)
-    ctx.font = '7px monospace'
+    ctx.font = '7px Consolas, Menlo, monospace'
     options.forEach((opt, i) => {
       const label =
         opt === 'item'

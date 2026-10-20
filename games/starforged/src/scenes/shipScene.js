@@ -139,7 +139,7 @@ export class ShipScene {
   }
 
   _drawMain(ctx) {
-    ctx.font = '8px monospace'
+    ctx.font = '8px Consolas, Menlo, monospace'
     ctx.fillStyle = '#e8e8e8'
     ctx.fillText('STARSKIFF', 6, 14)
 
@@ -155,20 +155,20 @@ export class ShipScene {
     ctx.lineWidth = 1
     ctx.strokeRect(boxX, boxY, boxW, boxH)
 
-    ctx.font = '7px monospace'
+    ctx.font = '7px Consolas, Menlo, monospace'
     options.forEach((opt, i) => {
       const selected = i === this.mainIndex
       ctx.fillStyle = selected ? '#dfe3ea' : '#9ba1b4'
       ctx.fillText(`${selected ? '>' : ' '} ${opt.label}`, boxX + 4, boxY + 10 + i * rowH)
     })
 
-    ctx.font = '6px monospace'
+    ctx.font = '6px Consolas, Menlo, monospace'
     ctx.fillStyle = '#52586a'
     ctx.fillText(t('A: Select   B: Close'), boxX + 4, CANVAS_HEIGHT - 6)
   }
 
   _drawTravel(ctx) {
-    ctx.font = '7px monospace'
+    ctx.font = '7px Consolas, Menlo, monospace'
     ctx.fillStyle = '#9ba1b4'
     ctx.fillText(t('Select a world'), 6, 12)
 
@@ -185,7 +185,7 @@ export class ShipScene {
     ctx.lineWidth = 1
     ctx.strokeRect(boxX, boxY, boxW, boxH)
 
-    ctx.font = '7px monospace'
+    ctx.font = '7px Consolas, Menlo, monospace'
     if (this.worldIds.length === 0) {
       ctx.fillStyle = '#9ba1b4'
       ctx.fillText(t('No worlds unlocked yet.'), boxX + 4, boxY + 10)
@@ -198,13 +198,13 @@ export class ShipScene {
       })
     }
 
-    ctx.font = '6px monospace'
+    ctx.font = '6px Consolas, Menlo, monospace'
     ctx.fillStyle = '#52586a'
     ctx.fillText(t('A: Travel   B: Back'), boxX + 4, CANVAS_HEIGHT - 6)
   }
 
   _drawQuestLog(ctx) {
-    ctx.font = '7px monospace'
+    ctx.font = '7px Consolas, Menlo, monospace'
     ctx.fillStyle = '#9ba1b4'
     ctx.fillText(t('Quest Log'), 6, 12)
 
@@ -219,7 +219,7 @@ export class ShipScene {
     ctx.strokeRect(boxX, boxY, boxW, boxH)
 
     const quests = this.questList
-    ctx.font = '6px monospace'
+    ctx.font = '6px Consolas, Menlo, monospace'
     if (quests.length === 0) {
       ctx.fillStyle = '#9ba1b4'
       ctx.fillText(t('No quests yet. Talk to people!'), boxX + 4, boxY + 10)
@@ -233,7 +233,7 @@ export class ShipScene {
       })
     }
 
-    ctx.font = '6px monospace'
+    ctx.font = '6px Consolas, Menlo, monospace'
     ctx.fillStyle = '#52586a'
     ctx.fillText(t('A/B: Back'), boxX + 4, CANVAS_HEIGHT - 6)
   }

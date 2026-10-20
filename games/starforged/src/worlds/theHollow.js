@@ -182,8 +182,8 @@ function vexDialogue(state) {
   const quest = state.quests[FINALE_QUEST_ID]
   if (!quest || quest.stage === 0) {
     return [
-      "You're Kade. The armorer. Word travels even down here.",
-      "I'm Vex — ran courier for the Syndicate until I saw what they actually want Moss for.",
+      "You're Wando. The armorer. Word travels even down here.",
+      "I'm Vex — ran courier for the Syndicate until I saw what they actually want Gogu for.",
       "The Warden's shield relay is still live, up past the courtyard. Knock it out before you push deeper, or every alarm in the Hollow finds you at once.",
     ]
   }
@@ -195,7 +195,7 @@ function vexDialogue(state) {
   }
   return [
     'You freed them. That\'s more mercy than the Hollow\'s shown anyone in years.',
-    "The Warden's past the sanctum, in the old rune chamber. Whatever happens in there — Moss doesn't face it alone.",
+    "The Warden's past the sanctum, in the old rune chamber. Whatever happens in there — Gogu doesn't face it alone.",
   ]
 }
 
@@ -241,7 +241,7 @@ const outerHollowMap = {
         startQuest(ctx.state, FINALE_QUEST_ID, FINALE_QUEST_NAME)
         ctx.showDialogue([
           'This is it — the Hollow itself. Every road since Rustmoor led here.',
-          'Moss presses close to Kade\'s side. "I can feel it. Whatever they built to use me... it\'s close."',
+          'Gogu presses close to Wando\'s side. "I can feel it. Whatever they built to use me... it\'s close."',
           "Cut their defenses, get anyone they're still holding, and we go straight for the one in charge.",
         ])
       },
@@ -258,7 +258,7 @@ const outerHollowMap = {
         setQuestStage(ctx.state, FINALE_QUEST_ID, 1)
         ctx.showDialogue([
           'A humming console, half-buried in rune conduit — the shield relay.',
-          'Kade jams a blade into the housing. The hum dies. Somewhere deep in the Hollow, an alarm that never got to ring goes quiet.',
+          'Wando jams a blade into the housing. The hum dies. Somewhere deep in the Hollow, an alarm that never got to ring goes quiet.',
         ])
       },
     },
@@ -283,12 +283,12 @@ function rellDialogue(state) {
   if (state.flags.has('hollow_rellFreed')) {
     return [
       "Air. Real air. I'd almost forgotten what that felt like.",
-      "Go, Kade — finish this. I've got people to find and a long walk out of here.",
+      "Go, Wando — finish this. I've got people to find and a long walk out of here.",
     ]
   }
   return [
-    '...Kade? They said you\'d be dead by Ashvault.',
-    "Get this chain off and I'll tell you everything I heard them say about Moss.",
+    '...Wando? They said you\'d be dead by Ashvault.',
+    "Get this chain off and I'll tell you everything I heard them say about Gogu.",
   ]
 }
 
@@ -355,7 +355,7 @@ const innerSanctumMap = {
         setQuestStage(ctx.state, FINALE_QUEST_ID, 2)
         ctx.showDialogue([
           'Chains shatter at a touch — these were never meant to hold against a real fight.',
-          'Rell slumps forward, then catches herself. "...Kade. You actually came."',
+          'Rell slumps forward, then catches herself. "...Wando. You actually came."',
         ])
       },
     },
@@ -410,7 +410,7 @@ const wardenChamberMap = {
           "The corridor opens onto a floor etched in cold red runes — the same sigils from Ashvault's vault, from the Bog Warden's hollow, all of it tracing back here.",
           'At the center, wreathed in Syndicate light, the Warden rises to meet you.',
           '"The little psychic comes to us after all," it rasps. "Every world you crossed to get here, and it ends the same. Kneel, armorer, and he lives."',
-          'Kade plants his feet, shield raised. "Moss — stay behind me. This ends now. Not with him."',
+          'Wando plants his feet, shield raised. "Gogu — stay behind me. This ends now. Not with him."',
         ])
         ctx.startBattle(['hollow_syndicateWarden'], {
           onVictory: (state) => {
@@ -419,11 +419,11 @@ const wardenChamberMap = {
             ctx.showDialogue(
               [
                 'The Warden falls still. The rune-light flickers, dims, and finally goes dark — the Hollow has nothing left to throw at you.',
-                'Moss steps out from behind Kade, small fingers finding his armored hand. "...It\'s quiet. I\'ve never felt it this quiet before."',
-                'Kade kneels to his level. "That\'s the Current settling. Nobody\'s hunting it anymore — not here, not in the Reach, not anywhere we\'ve been."',
+                'Gogu steps out from behind Wando, small fingers finding his armored hand. "...It\'s quiet. I\'ve never felt it this quiet before."',
+                'Wando kneels to his level. "That\'s the Current settling. Nobody\'s hunting it anymore — not here, not in the Reach, not anywhere we\'ve been."',
                 "Rell, and everyone else the Syndicate dragged down here, will walk out into daylight they didn't expect to see again.",
-                "Kade thinks of the forge-clan that exiled him, a raider's canyon, a drowned bog shrine, a station full of smoke, a refuge in the clouds — every place this road ran through to get here.",
-                '"Come on, Moss," he says, straightening up. "Let\'s go see what the Drift looks like without the Hollow watching it."',
+                "Wando thinks of the forge-clan that exiled him, a raider's canyon, a drowned bog shrine, a station full of smoke, a refuge in the clouds — every place this road ran through to get here.",
+                '"Come on, Gogu," he says, straightening up. "Let\'s go see what the Drift looks like without the Hollow watching it."',
                 'THE END — head back to the Starskiff to revisit any world of the Drift.',
               ],
               () => ctx.openShip()

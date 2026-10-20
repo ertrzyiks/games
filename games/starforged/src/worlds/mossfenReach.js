@@ -11,8 +11,8 @@ function fillRow(width, id) {
 }
 
 /**
- * World 2 — Mossfen Reach: Moss's homeworld. The fenling kin here were
- * already raided once by the Hollow Syndicate before Kade and Moss arrive;
+ * World 2 — Mossfen Reach: Gogu's homeworld. The fenling kin here were
+ * already raided once by the Hollow Syndicate before Wando and Gogu arrive;
  * a corrupted "Bog Warden" now guards whatever the Syndicate was digging
  * out of the old shrine grounds. Four connected maps: an outdoor Reach
  * Approach (encounter zone) -> the Fenling Settlement hub -> the Deep
@@ -279,8 +279,8 @@ export const mossfenReachWorld = {
           spriteId: 'mossfen_sentry',
           dialogue: [
             "Stay off the deep mud past the reeds — bog-stalkers nest thick this close to the settlement gate.",
-            "Moss's kin have kept watch here since the Syndicate cutters first came through. We don't forget a face like that.",
-            "Settlement's through the north gate. Tell the elders Kade Ironhelm walks with the boy now — they'll want to see that for themselves.",
+            "Gogu's kin have kept watch here since the Syndicate cutters first came through. We don't forget a face like that.",
+            "Settlement's through the north gate. Tell the elders Wando Ironhelm walks with the boy now — they'll want to see that for themselves.",
           ],
         },
       ],
@@ -297,7 +297,7 @@ export const mossfenReachWorld = {
           setsFlag: 'mossfen_loreSeen',
           onEnter: (ctx) => {
             ctx.showDialogue([
-              'Moss goes still, eyes fixed on the dark water.',
+              'Gogu goes still, eyes fixed on the dark water.',
               '"This place... I was born here. Before the nets, before the running."',
               '"The Syndicate came for the Current in the mud. We were the first they hunted."',
             ])
@@ -339,7 +339,7 @@ export const mossfenReachWorld = {
             if (quest.complete) {
               return [
                 "Wick's back at her mother's fire, telling the story to anyone who'll sit still long enough.",
-                "I won't forget this, Kade. Any kin of yours is kin of the Reach now.",
+                "I won't forget this, Wando. Any kin of yours is kin of the Reach now.",
               ]
             }
             if (quest.stage >= 1) {
@@ -365,13 +365,13 @@ export const mossfenReachWorld = {
               startQuest(state, 'mossfen_syndicateTrail', 'What the Syndicate Took')
               return [
                 "The reeds remember the night the sky cracked and the Syndicate's cutters came hunting fenling kin.",
-                'Moss was not the only child born to the Current here — the others were taken, or ran deep into the mire and never came back.',
+                'Gogu was not the only child born to the Current here — the others were taken, or ran deep into the mire and never came back.',
                 "They didn't just take our kin. They were digging for something in the old shrine grounds, deep in the mire. I need to know what.",
               ]
             }
             if (quest.complete) {
               return [
-                "The Warden's gone quiet, and the mire breathes easier for it. But Kade — whatever they built with what they learned here, it's still running somewhere out there.",
+                "The Warden's gone quiet, and the mire breathes easier for it. But Wando — whatever they built with what they learned here, it's still running somewhere out there.",
                 "Watch the sky when you leave the Reach. The Syndicate doesn't stop just because one guard dog falls.",
               ]
             }
@@ -392,9 +392,9 @@ export const mossfenReachWorld = {
           facing: 'down',
           spriteId: 'mossfen_fenling',
           dialogue: [
-            "You feel it too, don't you? The hum under the ground — that's the Current, same as what sings in Moss.",
+            "You feel it too, don't you? The hum under the ground — that's the Current, same as what sings in Gogu.",
             'Our kin used to gather at the old shrine, before the Hollow Syndicate started dragging nets through the bog.',
-            'Tell Moss the Reach still waits for him, whenever the running stops.',
+            'Tell Gogu the Reach still waits for him, whenever the running stops.',
           ],
         },
         {
@@ -534,8 +534,8 @@ export const mossfenReachWorld = {
               [
                 'The corridor opens onto a sunken grotto, Current-light flickering sick and green through cracked root walls.',
                 'At its center, half-fused with corroded Syndicate plating, something that was once a guardian of the Reach turns to face you.',
-                '"Bog Warden... no." Moss\'s voice shakes. "That used to watch over the shrine. What did they do to it?"',
-                'Kade raises his shield. "Whatever it is now, it\'s standing between us and answers. Moss — stay close."',
+                '"Bog Warden... no." Gogu\'s voice shakes. "That used to watch over the shrine. What did they do to it?"',
+                'Wando raises his shield. "Whatever it is now, it\'s standing between us and answers. Gogu — stay close."',
               ],
               () => {
                 ctx.startBattle(['mossfen_bogWarden'], {
@@ -545,10 +545,10 @@ export const mossfenReachWorld = {
                     ctx.showDialogue(
                       [
                         'The corrupted plating cracks and sloughs away; the light bleeds out of the creature until only still water remains.',
-                        'Moss kneels at the water\'s edge. "It\'s free. Whatever they did to it... it\'s finally free."',
-                        'Kade pulls a scorched Syndicate medallion from the wreckage — the same mark from the siphon rig in the mire.',
-                        '"This isn\'t the only place they\'ve been digging," Kade says grimly. "There\'s a station out past the reach, Ashvault — word is they\'re building something bigger there. A Current Extractor, they call it."',
-                        '"Then that\'s where we go next," Moss says, steadier now. "Before they finish it."',
+                        'Gogu kneels at the water\'s edge. "It\'s free. Whatever they did to it... it\'s finally free."',
+                        'Wando pulls a scorched Syndicate medallion from the wreckage — the same mark from the siphon rig in the mire.',
+                        '"This isn\'t the only place they\'ve been digging," Wando says grimly. "There\'s a station out past the reach, Ashvault — word is they\'re building something bigger there. A Current Extractor, they call it."',
+                        '"Then that\'s where we go next," Gogu says, steadier now. "Before they finish it."',
                         'Head back to the Starskiff to set course for Ashvault Station.',
                       ],
                       () => ctx.openShip()

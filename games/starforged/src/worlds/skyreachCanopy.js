@@ -335,9 +335,9 @@ export const skyreachCanopyWorld = {
           onEnter: (ctx) => {
             ctx.showDialogue([
               'A gust off the canopy carries a low, grinding hum from far below the clouds.',
-              'Moss presses close to Kade, trembling. "That sound... it comes from where they want to take me."',
+              'Gogu presses close to Wando, trembling. "That sound... it comes from where they want to take me."',
               'Somewhere beneath the Drift, the Hollow Syndicate waits in their stronghold — the Hollow itself.',
-              "Kade tightens the straps on his plate. Whatever's happening up ahead, it's already found this place.",
+              "Wando tightens the straps on his plate. Whatever's happening up ahead, it's already found this place.",
             ])
           },
         },
@@ -371,7 +371,7 @@ export const skyreachCanopyWorld = {
             if (!q) {
               startQuest(state, WATCH_QUEST, 'Shroud the Current-Well')
               return [
-                'Senna: Kade. Moss. You feel it too — the hum under our floor is louder every day.',
+                'Senna: Wando. Gogu. You feel it too — the hum under our floor is louder every day.',
                 "Senna: The Syndicate tracks the Current like a hound tracks blood. Our well up in the High Reaches is singing right to them.",
                 'Senna: An enforcer is already climbing toward us. If we shroud the well before she arrives, we buy the refuge time.',
                 'Senna: Go. Find the well in the High Reaches and still it, before they find us first.',
@@ -380,14 +380,14 @@ export const skyreachCanopyWorld = {
             if (q.complete) {
               return [
                 'Senna: The enforcer is gone, and the refuge is still standing. We owe you both more than words.',
-                'Senna: The Hollow waits below the clouds, same as the map showed. End what they started, Kade.',
+                'Senna: The Hollow waits below the clouds, same as the map showed. End what they started, Wando.',
               ]
             }
             if (q.stage >= 1) {
               return [
                 'Senna: You stilled it. Thank the Current, you stilled it.',
                 'Senna: One of our scouts escaped Syndicate hands years back. Before she died, she drew us a map — she swore it marked their stronghold. The Hollow.',
-                "Senna: I never thought we'd need it. Keep it close, Kade. If the enforcer falls here, you'll have somewhere to carry the fight next.",
+                "Senna: I never thought we'd need it. Keep it close, Wando. If the enforcer falls here, you'll have somewhere to carry the fight next.",
                 'Senna: But first — she is almost here. Stand with us.',
               ]
             }
@@ -414,7 +414,7 @@ export const skyreachCanopyWorld = {
             if (q.complete) {
               return [
                 "Orin: Wren told me what you did up there. The Reaches feel steadier with them back.",
-                'Orin: Whatever happens with the enforcer — you have our wings at your back, Kade.',
+                'Orin: Whatever happens with the enforcer — you have our wings at your back, Wando.',
               ]
             }
             return ["Orin: Please, hurry. I keep listening for wingbeats that aren't Wren's."]
@@ -453,8 +453,8 @@ export const skyreachCanopyWorld = {
           facing: 'down',
           spriteId: 'skyreach_fenn',
           dialogue: [
-            'Fenn: Are you really Kade Ironhelm? The forge-clan exile with the Current-touched kid?',
-            "Fenn: Moss doesn't look scary at all. Everyone up here talks about the Current like it's a monster, but Moss just looks like... a kid.",
+            'Fenn: Are you really Wando Ironhelm? The forge-clan exile with the Current-touched kid?',
+            "Fenn: Gogu doesn't look scary at all. Everyone up here talks about the Current like it's a monster, but Gogu just looks like... a kid.",
             "Fenn: I hope the enforcer doesn't come. But if she does, I hope you're as tough as the stories say.",
           ],
         },
@@ -488,11 +488,11 @@ export const skyreachCanopyWorld = {
               moss.maxFocus += 1
               moss.focus = moss.maxFocus
               return [
-                'Wren: Kade?! You actually came all the way up here.',
+                'Wren: Wando?! You actually came all the way up here.',
                 "Wren: I got turned around chasing an enforcer's scout past the vine-locks. Thought I'd be stuck roosting here till the Current went quiet for good.",
-                'Wren: Here — let me show Moss how we steady the Current up in the high air. It might help in a real fight.',
-                "Wren: (Moss feels something settle, like a held breath finally let go. Moss's Focus capacity increased!)",
-                "Wren: Tell Orin I'm alright. And Kade — that enforcer's close. Be ready.",
+                'Wren: Here — let me show Gogu how we steady the Current up in the high air. It might help in a real fight.',
+                "Wren: (Gogu feels something settle, like a held breath finally let go. Gogu's Focus capacity increased!)",
+                "Wren: Tell Orin I'm alright. And Wando — that enforcer's close. Be ready.",
               ]
             }
             if (state.flags.has('skyreach_wrenRescued')) {
@@ -541,7 +541,7 @@ export const skyreachCanopyWorld = {
               setQuestStage(ctx.state, WATCH_QUEST, 1)
               ctx.showDialogue([
                 'A squat lantern-well pulses with raw Current-light, humming loud enough to feel in your teeth.',
-                'Moss reaches out and the hum drops to nothing. "There. They can\'t hear it anymore."',
+                'Gogu reaches out and the hum drops to nothing. "There. They can\'t hear it anymore."',
               ])
               return
             }
@@ -582,7 +582,7 @@ export const skyreachCanopyWorld = {
                 'The arena floor opens beneath the high towers, wind screaming through broken rafters.',
                 'A figure drops from above on a glider-rig, armor humming with stolen Current-charge.',
                 '"Enforcer Vane," she says, landing light as a blade. "The refuge ends its hiding today."',
-                'Kade steps between her and Moss. "Not today. Not while I\'m standing."',
+                'Wando steps between her and Gogu. "Not today. Not while I\'m standing."',
               ],
               () => {
                 ctx.startBattle(['skyreach_enforcerVane'], {
@@ -595,7 +595,7 @@ export const skyreachCanopyWorld = {
                         '"...the Hollow... will still..." Her voice fades as the stolen Current-charge bleeds out of her armor.',
                         "Senna's voice carries up from below: the refuge is safe, for now.",
                         "With the enforcer fallen, the location the old scout's map once marked is confirmed — the Hollow itself, buried beneath the Drift's deepest clouds.",
-                        'Kade looks to Moss. "That\'s where they want to take you. So that\'s where we end it."',
+                        'Wando looks to Gogu. "That\'s where they want to take you. So that\'s where we end it."',
                         'The way down into the Hollow lies open. The final confrontation awaits.',
                         'Head back to the Starskiff to set course for the Hollow.',
                       ],

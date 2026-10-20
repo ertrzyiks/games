@@ -42,22 +42,30 @@ registerTranslations('pl', {
   '{target} is defeated!': '{target} zostaje pokonany!',
   'Victory! Gained {xp} XP.': 'Zwycięstwo! Zdobyto {xp} PD.',
   '{name} leveled up to Lv.{level}!': '{name} awansuje na poziom {level}!',
+  '{name} is revived with {amount} HP!': '{name} zostaje ocucony z {amount} PŻ!',
   'Your party has fallen...': 'Twoja drużyna poległa...',
 
   // Footer control hint (index.html)
   'Arrows/WASD to move · Z/Enter = A · X/Esc = B': 'Strzałki/WASD - ruch · Z/Enter = A · X/Esc = B',
 
-  // Base moves (battle/moves.js)
+  // Base moves (battle/moves.js) - still used by various enemies
   Strike: 'Uderzenie',
   'Forge Slam': 'Kuźniany Cios',
   Guard: 'Osłona',
-  Push: 'Pchnięcie',
-  Mend: 'Ulecz',
   'Rusty Slash': 'Zardzewiałe Cięcie',
-  Glimmer: 'Błysk',
   'Heavy Slam': 'Ciężki Cios',
   Drain: 'Wyssanie',
   Rally: 'Mobilizacja',
+
+  // Wando's kit (blaster-themed)
+  'Pistol Shot': 'Strzał z Pistoletu',
+  'Rifle Shot': 'Strzał z Karabinu',
+  Flamethrower: 'Miotacz Ognia',
+
+  // Gogu's kit (Force-themed)
+  'Force Push': 'Pchnięcie Mocą',
+  'Force Heal': 'Uzdrowienie Mocą',
+  'Force Spark': 'Iskra Mocy',
 
   // Base enemy (battle/enemies.js)
   'Rustmoor Scavenger': 'Padlinożerca z Rustmoor',

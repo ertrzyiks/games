@@ -60,6 +60,13 @@ export function getNpcAt(mapDef, x, y) {
   return (mapDef.npcs || []).find((n) => n.x === x && n.y === y)
 }
 
+// Visible overworld enemies: standing on the map like an NPC, battle
+// starts the moment the player walks into their tile (no random encounter
+// rolls). See MapDef.enemySpawns: [{ id, x, y, enemyId, spriteId }].
+export function getEnemySpawnAt(mapDef, x, y) {
+  return (mapDef.enemySpawns || []).find((e) => e.x === x && e.y === y)
+}
+
 export function getNpcFacing(mapDef, px, py, facing) {
   const { dx, dy } = DIRECTIONS[facing]
   return getNpcAt(mapDef, px + dx, py + dy)

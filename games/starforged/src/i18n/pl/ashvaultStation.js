@@ -44,14 +44,14 @@ registerTranslations('pl', {
   // --- Habitation Ring: technician NPC (Current Extractor quest) ---
   [`There's a device down in the core they call the Extractor. Built to pull the Current out of someone and hold it.`]:
     `W jądrze mają urządzenie, które nazywają Ekstraktorem. Zbudowane, by wyciągnąć z kogoś Prąd i go uwięzić.`,
-  [`Moss goes pale just hearing the word. Find their schematics console, confirm what it does before you touch anything.`]:
-    `Moss blednie na samo wspomnienie tej nazwy. Znajdź ich konsolę ze schematami, potwierdź, co to robi, zanim czegokolwiek dotkniesz.`,
-  [`The Extractor's slag now, and the foreman with it. Whatever they meant to do to Moss, it dies here.`]:
-    `Ekstraktor to teraz złom, a brygadzista razem z nim. Cokolwiek planowali zrobić Moss, umiera to tutaj.`,
+  [`Gogu goes pale just hearing the word. Find their schematics console, confirm what it does before you touch anything.`]:
+    `Gogu blednie na samo wspomnienie tej nazwy. Znajdź ich konsolę ze schematami, potwierdź, co to robi, zanim czegokolwiek dotkniesz.`,
+  [`The Extractor's slag now, and the foreman with it. Whatever they meant to do to Gogu, it dies here.`]:
+    `Ekstraktor to teraz złom, a brygadzista razem z nim. Cokolwiek planowali zrobić Gogu, umiera to tutaj.`,
   [`Skyreach Canopy is further out past the ridge — if the Syndicate was hunting this hard, they will be there too.`]:
     `Skyreach Canopy leży dalej, za grzbietem — jeśli Syndykat polował tak zapamiętale, będą tam też.`,
-  [`You read the schematics? Then you know — that thing was built to drain Moss dry, not just study the Current.`]:
-    `Przeczytałeś schematy? Więc wiesz — to coś zbudowano, by wyssać Moss do suchej nitki, a nie tylko badać Prąd.`,
+  [`You read the schematics? Then you know — that thing was built to drain Gogu dry, not just study the Current.`]:
+    `Przeczytałeś schematy? Więc wiesz — to coś zbudowano, by wyssać Gogu do suchej nitki, a nie tylko badać Prąd.`,
   [`The vault blast door should answer to the console now. Finish it before the foreman calls in more troopers.`]:
     `Pancerne drzwi skarbca powinny teraz reagować na konsolę. Dokończ to, zanim brygadzista ściągnie więcej żołdaków.`,
   [`Find the console in the core's control chamber. Don't touch the Extractor itself until you know what it does.`]:
@@ -90,10 +90,10 @@ registerTranslations('pl', {
     `„Idź, zanim zauważą! Sama znajdę wyjście.”`,
 
   // --- Engine Core: schematics console / Extractor confirmed trigger ---
-  [`The console lights up with schematics — a Current Extractor, keyed to a single signature. Moss's.`]:
-    `Konsola rozświetla się schematami — Ekstraktor Prądu, dostrojony do jednej, konkretnej sygnatury. Moss.`,
-  [`Moss grips Kade's sleeve. "That's... that's for me. They built that for me."`]:
-    `Moss zaciska palce na rękawie Kade'a. „To... to jest dla mnie. Zbudowali to dla mnie.”`,
+  [`The console lights up with schematics — a Current Extractor, keyed to a single signature. Gogu's.`]:
+    `Konsola rozświetla się schematami — Ekstraktor Prądu, dostrojony do jednej, konkretnej sygnatury. Gogu.`,
+  [`Gogu grips Wando's sleeve. "That's... that's for me. They built that for me."`]:
+    `Gogu zaciska palce na rękawie Wando'a. „To... to jest dla mnie. Zbudowali to dla mnie.”`,
   [`The blast door down the corridor should answer to this console now.`]:
     `Pancerne drzwi w głębi korytarza powinny teraz reagować na tę konsolę.`,
 
@@ -110,16 +110,16 @@ registerTranslations('pl', {
     `Obok niego brygadzista Syndykatu odwraca się od sterów, wizjer rozświetlony żarem wpatrzony w ciebie.`,
   [`"Scrap and a boy," he growls. "The device stays. You don't."`]:
     `„Złom i chłopak” — warczy. „Urządzenie zostaje. Wy nie.”`,
-  [`Kade steps between him and Moss, plate grinding against the deck. "Try it."`]:
-    `Kade staje między nim i Moss, płyty zbroi skrzypią o pokład. „Spróbuj.”`,
+  [`Wando steps between him and Gogu, plate grinding against the deck. "Try it."`]:
+    `Wando staje między nim i Gogu, płyty zbroi skrzypią o pokład. „Spróbuj.”`,
 
   // --- Extractor Vault: boss onVictory ---
   [`The Foreman crashes against the conduits — the Extractor sparks, cracks, and dies in a shower of slag.`]:
     `Brygadzista wali się na przewody — Ekstraktor iskrzy, trzeszczy i gaśnie w deszczu żużlu.`,
-  [`Moss exhales, shoulders dropping like a held breath finally let go. "It's gone quiet. Whatever it wanted from me... it's gone."`]:
-    `Moss wypuszcza powietrze, ramiona opadają jak wstrzymywany od dawna oddech. „Zrobiło się cicho. Czegokolwiek ono chciało ze mnie... już go nie ma.”`,
-  [`Kade lowers his hammer. "Then Ashvault's done with us. Skyreach Canopy waits past the ridge — let's see what else the Syndicate's reaching for."`]:
-    `Kade opuszcza młot. „Więc Ashvault ma już z nami koniec. Skyreach Canopy czeka za grzbietem — zobaczmy, po co jeszcze sięga Syndykat.”`,
+  [`Gogu exhales, shoulders dropping like a held breath finally let go. "It's gone quiet. Whatever it wanted from me... it's gone."`]:
+    `Gogu wypuszcza powietrze, ramiona opadają jak wstrzymywany od dawna oddech. „Zrobiło się cicho. Czegokolwiek ono chciało ze mnie... już go nie ma.”`,
+  [`Wando lowers his hammer. "Then Ashvault's done with us. Skyreach Canopy waits past the ridge — let's see what else the Syndicate's reaching for."`]:
+    `Wando opuszcza młot. „Więc Ashvault ma już z nami koniec. Skyreach Canopy czeka za grzbietem — zobaczmy, po co jeszcze sięga Syndykat.”`,
   [`Head back to the Starskiff to set course for Skyreach Canopy.`]:
     `Wróć na Starskiff, by wytyczyć kurs na Skyreach Canopy.`,
 })

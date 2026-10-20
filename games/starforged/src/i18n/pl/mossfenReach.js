@@ -16,14 +16,14 @@ registerTranslations('pl', {
   // --- approach: juro ---
   [`Stay off the deep mud past the reeds — bog-stalkers nest thick this close to the settlement gate.`]:
     `Trzymaj się z daleka od głębokiego bagna za trzcinami — błotne czyhacze gnieżdżą się tu gęsto, tak blisko bram osady.`,
-  [`Moss's kin have kept watch here since the Syndicate cutters first came through. We don't forget a face like that.`]:
+  [`Gogu's kin have kept watch here since the Syndicate cutters first came through. We don't forget a face like that.`]:
     `Krewni Mossa trzymają tu wartę od dnia, gdy pierwsze krążowniki Syndykatu się tu zjawiły. Takiej twarzy się nie zapomina.`,
-  [`Settlement's through the north gate. Tell the elders Kade Ironhelm walks with the boy now — they'll want to see that for themselves.`]:
-    `Osada jest za północną bramą. Powiedz starszyźnie, że Kade Ironhelm teraz idzie u boku chłopca — będą chcieli zobaczyć to na własne oczy.`,
+  [`Settlement's through the north gate. Tell the elders Wando Ironhelm walks with the boy now — they'll want to see that for themselves.`]:
+    `Osada jest za północną bramą. Powiedz starszyźnie, że Wando Ironhelm teraz idzie u boku chłopca — będą chcieli zobaczyć to na własne oczy.`,
 
   // --- approach: lore trigger (4,4) ---
-  [`Moss goes still, eyes fixed on the dark water.`]:
-    `Moss zamiera, nie odrywając wzroku od czarnej wody.`,
+  [`Gogu goes still, eyes fixed on the dark water.`]:
+    `Gogu zamiera, nie odrywając wzroku od czarnej wody.`,
   [`"This place... I was born here. Before the nets, before the running."`]:
     `"To miejsce... urodziłem się tutaj. Przed sieciami, przed ucieczką."`,
   [`"The Syndicate came for the Current in the mud. We were the first they hunted."`]:
@@ -44,8 +44,8 @@ registerTranslations('pl', {
     `"Czyhacze stały się śmielsze od czasu napadu. Jeśli i tak idziesz w głąb mokradeł... proszę, poszukaj jej."`,
   [`Wick's back at her mother's fire, telling the story to anyone who'll sit still long enough.`]:
     `Wick wróciła do ogniska matki i opowiada tę historię każdemu, kto usiedzi w miejscu dość długo, by jej wysłuchać.`,
-  [`I won't forget this, Kade. Any kin of yours is kin of the Reach now.`]:
-    `Nie zapomnę tego, Kade. Każdy twój bliski jest teraz bliskim Rozlewiska.`,
+  [`I won't forget this, Wando. Any kin of yours is kin of the Reach now.`]:
+    `Nie zapomnę tego, Wando. Każdy twój bliski jest teraz bliskim Rozlewiska.`,
   [`Finn's shoulders drop the moment he sees you. "You found her. You actually found her."`]:
     `Finnowi opadają ramiona, gdy cię widzi. "Znalazłeś ją. Naprawdę ją znalazłeś."`,
   [`He presses a medkit into your hands. "Take this for the road — least I can do."`]:
@@ -56,12 +56,12 @@ registerTranslations('pl', {
   // --- settlement: birchKeeper ---
   [`The reeds remember the night the sky cracked and the Syndicate's cutters came hunting fenling kin.`]:
     `Trzciny pamiętają noc, gdy niebo pękło i krążowniki Syndykatu przybyły polować na fenlingów.`,
-  [`Moss was not the only child born to the Current here — the others were taken, or ran deep into the mire and never came back.`]:
-    `Moss nie był jedynym dzieckiem zrodzonym tu z Nurtu — inne zostały zabrane albo uciekły w głąb mokradeł i nigdy nie wróciły.`,
+  [`Gogu was not the only child born to the Current here — the others were taken, or ran deep into the mire and never came back.`]:
+    `Gogu nie był jedynym dzieckiem zrodzonym tu z Nurtu — inne zostały zabrane albo uciekły w głąb mokradeł i nigdy nie wróciły.`,
   [`They didn't just take our kin. They were digging for something in the old shrine grounds, deep in the mire. I need to know what.`]:
     `Nie zabrali tylko naszych bliskich. Kopali po coś na terenach starej świątyni, głęboko w mokradłach. Muszę wiedzieć, po co.`,
-  [`The Warden's gone quiet, and the mire breathes easier for it. But Kade — whatever they built with what they learned here, it's still running somewhere out there.`]:
-    `Strażnik ucichł i mokradła oddychają teraz lżej. Ale Kade — to, co zbudowali z tego, czego się tu nauczyli, wciąż działa gdzieś tam, na zewnątrz.`,
+  [`The Warden's gone quiet, and the mire breathes easier for it. But Wando — whatever they built with what they learned here, it's still running somewhere out there.`]:
+    `Strażnik ucichł i mokradła oddychają teraz lżej. Ale Wando — to, co zbudowali z tego, czego się tu nauczyli, wciąż działa gdzieś tam, na zewnątrz.`,
   [`Watch the sky when you leave the Reach. The Syndicate doesn't stop just because one guard dog falls.`]:
     `Pilnuj nieba, gdy opuścisz Rozlewisko. Syndykat nie przestaje działać tylko dlatego, że padł jeden pies stróżujący.`,
   [`A siphon rig, you say — and notes on 'mossroot nodes.' That's the Current itself they were after, pulled straight out of the bog.`]:
@@ -74,11 +74,11 @@ registerTranslations('pl', {
     `Idź ścieżką do świątyni w głąb Głębokich Mokradeł. Jeśli coś po sobie zostawili, będzie tam.`,
 
   // --- settlement: mireChild ---
-  [`You feel it too, don't you? The hum under the ground — that's the Current, same as what sings in Moss.`]:
+  [`You feel it too, don't you? The hum under the ground — that's the Current, same as what sings in Gogu.`]:
     `Ty też to czujesz, prawda? Ten pomruk pod ziemią — to Nurt, ten sam, który śpiewa w Mossie.`,
   [`Our kin used to gather at the old shrine, before the Hollow Syndicate started dragging nets through the bog.`]:
     `Nasi bliscy zbierali się przy starej świątyni, zanim Syndykat Hollow zaczął ciągnąć sieci przez bagno.`,
-  [`Tell Moss the Reach still waits for him, whenever the running stops.`]:
+  [`Tell Gogu the Reach still waits for him, whenever the running stops.`]:
     `Powiedz Mossowi, że Rozlewisko wciąż na niego czeka, kiedy tylko ucieczka się skończy.`,
 
   // --- settlement: selaNetmender ---
@@ -128,22 +128,22 @@ registerTranslations('pl', {
     `Korytarz otwiera się na zatopioną grotę, gdzie chorobliwie zielone światło Nurtu migocze przez popękane korzeniowe ściany.`,
   [`At its center, half-fused with corroded Syndicate plating, something that was once a guardian of the Reach turns to face you.`]:
     `W jej centrum, na wpół zrośnięte ze skorodowanym pancerzem Syndykatu, coś, co kiedyś było strażnikiem Rozlewiska, odwraca się, by stanąć z tobą twarzą w twarz.`,
-  [`"Bog Warden... no." Moss's voice shakes. "That used to watch over the shrine. What did they do to it?"`]:
+  [`"Bog Warden... no." Gogu's voice shakes. "That used to watch over the shrine. What did they do to it?"`]:
     `"Strażnik Bagna... nie." Głos Mossa drży. "To dawniej czuwało nad świątynią. Co mu zrobili?"`,
-  [`Kade raises his shield. "Whatever it is now, it's standing between us and answers. Moss — stay close."`]:
-    `Kade podnosi tarczę. "Kimkolwiek teraz jest, stoi między nami i odpowiedziami. Moss — trzymaj się blisko."`,
+  [`Wando raises his shield. "Whatever it is now, it's standing between us and answers. Gogu — stay close."`]:
+    `Wando podnosi tarczę. "Kimkolwiek teraz jest, stoi między nami i odpowiedziami. Gogu — trzymaj się blisko."`,
 
   // --- wardenLair: boss onVictory ---
   [`The corrupted plating cracks and sloughs away; the light bleeds out of the creature until only still water remains.`]:
     `Skażony pancerz pęka i osypuje się; światło wycieka z istoty, aż pozostaje jedynie spokojna woda.`,
-  [`Moss kneels at the water's edge. "It's free. Whatever they did to it... it's finally free."`]:
-    `Moss klęka na brzegu wody. "Jest wolne. Cokolwiek mu zrobili... wreszcie jest wolne."`,
-  [`Kade pulls a scorched Syndicate medallion from the wreckage — the same mark from the siphon rig in the mire.`]:
-    `Kade wyciąga z wraku osmolony medalion Syndykatu — ten sam znak, co na instalacji ssącej w mokradłach.`,
-  [`"This isn't the only place they've been digging," Kade says grimly. "There's a station out past the reach, Ashvault — word is they're building something bigger there. A Current Extractor, they call it."`]:
-    `"To nie jedyne miejsce, w którym kopali," mówi Kade ponuro. "Jest stacja daleko za Rozlewiskiem, Ashvault — mówią, że budują tam coś większego. Ekstraktor Nurtu, tak to nazywają."`,
-  [`"Then that's where we go next," Moss says, steadier now. "Before they finish it."`]:
-    `"Więc tam wyruszamy," mówi Moss, już spokojniejszy. "Zanim to dokończą."`,
+  [`Gogu kneels at the water's edge. "It's free. Whatever they did to it... it's finally free."`]:
+    `Gogu klęka na brzegu wody. "Jest wolne. Cokolwiek mu zrobili... wreszcie jest wolne."`,
+  [`Wando pulls a scorched Syndicate medallion from the wreckage — the same mark from the siphon rig in the mire.`]:
+    `Wando wyciąga z wraku osmolony medalion Syndykatu — ten sam znak, co na instalacji ssącej w mokradłach.`,
+  [`"This isn't the only place they've been digging," Wando says grimly. "There's a station out past the reach, Ashvault — word is they're building something bigger there. A Current Extractor, they call it."`]:
+    `"To nie jedyne miejsce, w którym kopali," mówi Wando ponuro. "Jest stacja daleko za Rozlewiskiem, Ashvault — mówią, że budują tam coś większego. Ekstraktor Nurtu, tak to nazywają."`,
+  [`"Then that's where we go next," Gogu says, steadier now. "Before they finish it."`]:
+    `"Więc tam wyruszamy," mówi Gogu, już spokojniejszy. "Zanim to dokończą."`,
   [`Head back to the Starskiff to set course for Ashvault Station.`]:
     `Wracaj na Starskiffa, by wyznaczyć kurs na Stację Ashvault.`,
 })

@@ -1,7 +1,7 @@
 import { MOVE_DURATION_MS, DIRECTIONS } from '../engine/constants.js'
 import { input } from '../engine/input.js'
 import { Dialogue } from '../engine/dialogue.js'
-import { drawMap, computeCamera, isWalkable, getNpcAt, getWarpAt, getTriggerAt } from '../engine/tilemap.js'
+import { drawMap, computeCamera, isWalkable, getNpcAt, getWarpAt, getTriggerAt, getEnemySpawnAt } from '../engine/tilemap.js'
 import { drawSprite } from '../engine/sprite.js'
 import { heroSprite } from '../assets/sprites/hero.js'
 import { getSprite } from '../assets/sprites/registry.js'
@@ -76,6 +76,16 @@ export class OverworldScene {
     const nx = this.state.x + dx
     const ny = this.state.y + dy
 
+    // Enemies are visible on the map (no random encounter rolls) — walking
+    // into a living one's tile starts the fight immediately instead of
+    // moving onto it.
+    const enemySpawn = getEnemySpawnAt(this.mapDef, nx, ny)
+    if (enemySpawn && !this.state.flags.has(this._enemyDefeatedKey(enemySpawn))) {
+      this.moveCooldown = BUMP_COOLDOWN_MS
+      this._engageEnemySpawn(enemySpawn)
+      return
+    }
+
     if (isWalkable(this.mapDef, nx, ny) && !getNpcAt(this.mapDef, nx, ny)) {
       this.state.x = nx
       this.state.y = ny
@@ -84,6 +94,19 @@ export class OverworldScene {
     } else {
       this.moveCooldown = BUMP_COOLDOWN_MS
     }
+  }
+
+  _enemyDefeatedKey(enemySpawn) {
+    return `_enemy_defeated_${this.state.worldId}_${this.state.mapId}_${enemySpawn.id}`
+  }
+
+  _engageEnemySpawn(enemySpawn) {
+    const key = this._enemyDefeatedKey(enemySpawn)
+    this.startBattle([enemySpawn.enemyId], {
+      onVictory: (state) => {
+        state.flags.add(key)
+      },
+    })
   }
 
   _tryInteract() {
@@ -123,18 +146,6 @@ export class OverworldScene {
       }
     }
 
-    this._maybeEncounter(x, y)
-  }
-
-  _maybeEncounter(x, y) {
-    for (const zone of this.mapDef.encounterZones || []) {
-      if (x < zone.x || x >= zone.x + zone.w || y < zone.y || y >= zone.y + zone.h) continue
-      if (Math.random() < zone.chance) {
-        const enemyId = zone.enemyIds[Math.floor(Math.random() * zone.enemyIds.length)]
-        this.startBattle([enemyId])
-        return
-      }
-    }
   }
 
   _applyWarp(warp) {
@@ -191,11 +202,20 @@ export class OverworldScene {
       drawSprite(ctx, sprite, 0, sx, sy, { scale: 1 })
     }
 
+    for (const enemySpawn of this.mapDef.enemySpawns || []) {
+      if (this.state.flags.has(this._enemyDefeatedKey(enemySpawn))) continue
+      const sprite = getSprite(enemySpawn.spriteId)
+      if (!sprite) continue
+      const sx = (enemySpawn.x - camera.camX) * TILE_SIZE
+      const sy = (enemySpawn.y - camera.camY) * TILE_SIZE
+      drawSprite(ctx, sprite, 0, sx, sy, { scale: 1 })
+    }
+
     const px = (this.state.x - camera.camX) * TILE_SIZE
     const py = (this.state.y - camera.camY) * TILE_SIZE
     drawSprite(ctx, heroSprite, 0, px, py, { scale: 1, flip: this.state.facing === 'left' })
 
-    ctx.font = '7px monospace'
+    ctx.font = '7px Consolas, Menlo, monospace'
     ctx.fillStyle = '#e8e8e8'
     ctx.fillText(t(this.world.name), 4, 10)
 

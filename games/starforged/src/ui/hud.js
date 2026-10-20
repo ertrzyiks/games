@@ -26,7 +26,7 @@ export function drawHud(ctx, state) {
   ctx.lineWidth = 1
   ctx.strokeRect(x, y, boxW, boxH)
 
-  ctx.font = '6px monospace'
+  ctx.font = '6px Consolas, Menlo, monospace'
   members.forEach((member, i) => {
     const rowY = y + padding + (i + 1) * lineH - 2
     const alive = member.hp > 0

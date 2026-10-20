@@ -16,15 +16,25 @@ export function getMove(id) {
 }
 
 registerMoves({
+  // Still used by various enemies/bosses across world files by id — kept
+  // as-is even though Wando's own loadout moved to the blaster-themed
+  // moves below, so nothing else needs to change.
   strike: { name: 'Strike', kind: 'attack', power: 6, focusCost: 0, accuracy: 0.95 },
   forgeSlam: { name: 'Forge Slam', kind: 'attack', power: 11, focusCost: 3, accuracy: 0.85 },
   guard: { name: 'Guard', kind: 'buff', power: 0, focusCost: 0, accuracy: 1 },
-  push: { name: 'Push', kind: 'attack', power: 7, focusCost: 2, accuracy: 0.9 },
-  mend: { name: 'Mend', kind: 'heal', power: 10, focusCost: 4, accuracy: 1 },
   scavengerSlash: { name: 'Rusty Slash', kind: 'attack', power: 5, focusCost: 0, accuracy: 0.85 },
-  // Moss's free move — every party member needs at least one 0-focus-cost
-  // option so the battle menu can never be left with nothing selectable.
-  glimmer: { name: 'Glimmer', kind: 'attack', power: 4, focusCost: 0, accuracy: 0.95 },
+
+  // Wando's kit: a blaster pistol/rifle and a trick shot.
+  pistolShot: { name: 'Pistol Shot', kind: 'attack', power: 6, focusCost: 0, accuracy: 0.95 },
+  rifleShot: { name: 'Rifle Shot', kind: 'attack', power: 12, focusCost: 3, accuracy: 0.85 },
+  flamethrower: { name: 'Flamethrower', kind: 'attack', power: 9, focusCost: 2, accuracy: 0.8 },
+
+  // Gogu's kit: Force-themed. glimmer is Gogu's free move — every party
+  // member needs at least one 0-focus-cost option so the battle menu can
+  // never be left with nothing selectable.
+  push: { name: 'Force Push', kind: 'attack', power: 7, focusCost: 2, accuracy: 0.9 },
+  mend: { name: 'Force Heal', kind: 'heal', power: 10, focusCost: 4, accuracy: 1 },
+  glimmer: { name: 'Force Spark', kind: 'attack', power: 4, focusCost: 0, accuracy: 0.95 },
 
   // Boss-tier / reusable additions. Other worlds' enemy/move files may
   // reference these by id, or not — fully opt-in, doesn't affect existing

@@ -12,13 +12,13 @@ function fillRow(width, id) {
 }
 
 /**
- * World 1 — Rustmoor: Kade's exile canyon, and Moss's introduction. Four
+ * World 1 — Rustmoor: Wando's exile canyon, and Gogu's introduction. Four
  * connected maps: an outdoor Canyon Approach (encounter zone, ship landing
  * site), the Settlement hub (3-4 NPCs including Yara), the Depths (old mine
  * tunnels — maze-like, gated behind Yara's mining pick), and the boss arena
  * as the Depths' final chamber, reached through a one-tile chokepoint in
  * the same style as theHollow.js. Beating the Scavenger Captain here is
- * what gets Kade's skiff fueled to leave Rustmoor.
+ * what gets Wando's skiff fueled to leave Rustmoor.
  */
 
 // --- Tile types (namespaced 'rustmoor_') ---------------------------------
@@ -267,7 +267,7 @@ export const rustmoorWorld = {
           spriteId: 'npc',
           dialogue: [
             "Rustmoor's held on through worse than raiders, but this captain's bleeding us slow.",
-            "Kade — if you and the boy can deal with him, I'll see your skiff gets fueled myself.",
+            "Wando — if you and the boy can deal with him, I'll see your skiff gets fueled myself.",
             'Yara and Dessa both have their ears to the ground. Talk to them before you head into the tunnels.',
           ],
         },
@@ -300,7 +300,7 @@ export const rustmoorWorld = {
               return [
                 "You found it! Half-crushed, but the kits inside are still good.",
                 "Here — take a share, and keep the rest. That old armor of yours could use the extra plating too.",
-                '(You gained 2 medkits and Kade\'s defense increased!)',
+                '(You gained 2 medkits and Wando\'s defense increased!)',
               ]
             }
             return ["The rockfall's past the mid chamber, east side. My pick should break through — look for the gap in the tunnel wall."]
@@ -313,7 +313,7 @@ export const rustmoorWorld = {
           facing: 'down',
           spriteId: 'rustmoor_pip',
           dialogue: [
-            'Moss! Are you a Current-touched too? My gran says that\'s why the lights flicker when you\'re near.',
+            'Gogu! Are you a Current-touched too? My gran says that\'s why the lights flicker when you\'re near.',
             "Don't go past the rockfall in the tunnels without a grown-up. That's where the scary raider boss lives!",
           ],
         },
@@ -431,7 +431,7 @@ export const rustmoorWorld = {
             ctx.showDialogue([
               'The tunnel opens into a wide, torch-lit chamber — scrap armor piled like trophies against the walls.',
               '"Another fool wandered into my canyon," a scarred raider sneers, hefting a jagged blade. "The Syndicate pays well for Current-touched brats. Hand him over."',
-              'Kade steps between them, shield raised. "Not a chance."',
+              'Wando steps between them, shield raised. "Not a chance."',
             ])
             ctx.startBattle(['rustmoor_scavengerCaptain'], {
               onVictory: (state) => {
@@ -440,7 +440,7 @@ export const rustmoorWorld = {
                 ctx.showDialogue(
                   [
                     "The captain collapses amid his own scrap-metal trophies, a Syndicate contact's sigil-coin rolling free of his coat.",
-                    "With Rustmoor's shakedown broken, the settlement makes good on its word — Kade's skiff sits fueled and ready at the canyon's edge.",
+                    "With Rustmoor's shakedown broken, the settlement makes good on its word — Wando's skiff sits fueled and ready at the canyon's edge.",
                     'But the sigil-coin is proof enough: the Hollow Syndicate is real, and it is already moving through the Drift.',
                     'Head back to the Starskiff — a new world on the Drift is ready to chart.',
                   ],

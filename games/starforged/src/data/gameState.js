@@ -27,7 +27,7 @@ export function createInitialState() {
     party: {
       kade: {
         id: 'kade',
-        name: 'Kade',
+        name: 'Wando',
         level: 1,
         hp: 28,
         maxHp: 28,
@@ -37,11 +37,11 @@ export function createInitialState() {
         def: 5,
         spd: 4,
         xp: 0,
-        moves: ['strike', 'guard', 'forgeSlam'],
+        moves: ['pistolShot', 'rifleShot', 'flamethrower'],
       },
       moss: {
         id: 'moss',
-        name: 'Moss',
+        name: 'Gogu',
         level: 1,
         hp: 16,
         maxHp: 16,

@@ -21,12 +21,23 @@
  * @property {string} [requiresFlag] - only appears/interactable if this flag is set
  *
  * @typedef {Object} EncounterZone
+ * @deprecated random encounters are disabled — OverworldScene no longer
+ *   rolls against encounterZones. Use EnemySpawn (visible, map-placed
+ *   enemies) instead. Left here only so old data doesn't throw; new map
+ *   content should not add encounterZones.
  * @property {number} x
  * @property {number} y
  * @property {number} w
  * @property {number} h
- * @property {number} chance       - 0..1 probability per step inside the zone
- * @property {string[]} enemyIds   - possible enemy ids (battle/enemies.js) for this zone
+ * @property {number} chance
+ * @property {string[]} enemyIds
+ *
+ * @typedef {Object} EnemySpawn
+ * @property {string} id           - unique within the map, used to remember it's been defeated
+ * @property {number} x
+ * @property {number} y
+ * @property {string} enemyId      - id from battle/enemies.js
+ * @property {string} spriteId     - id from assets/sprites/registry.js
  *
  * @typedef {Object} Trigger
  * @property {number} x
@@ -34,14 +45,14 @@
  * @property {boolean} once
  * @property {string} [requiresFlag]
  * @property {string} [setsFlag]
- * @property {function(ctx):void} onEnter - ctx: { state, startBattle, showDialogue, warpTo }
+ * @property {function(ctx):void} onEnter - ctx: { state, startBattle, showDialogue, warpTo, openShip }
  *
  * @typedef {Object} MapDef
  * @property {number} width
  * @property {number} height
  * @property {string[][]} tiles    - rows of tile-type ids (see assets/tiles.js)
  * @property {NPC[]} npcs
- * @property {EncounterZone[]} encounterZones
+ * @property {EnemySpawn[]} enemySpawns - visible enemies on the map; walking into one starts the fight
  * @property {Warp[]} warps
  * @property {Trigger[]} triggers
  *

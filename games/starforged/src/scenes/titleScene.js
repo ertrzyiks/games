@@ -65,9 +65,9 @@ export class TitleScene {
 
     ctx.textAlign = 'center'
     ctx.fillStyle = '#e8e8e8'
-    ctx.font = '12px monospace'
+    ctx.font = '12px Consolas, Menlo, monospace'
     ctx.fillText('STARFORGED', CANVAS_WIDTH / 2, 90)
-    ctx.font = '7px monospace'
+    ctx.font = '7px Consolas, Menlo, monospace'
     ctx.fillStyle = '#9ba1b4'
     ctx.fillText(t('a tale of the Drift'), CANVAS_WIDTH / 2, 102)
 

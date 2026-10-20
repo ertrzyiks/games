@@ -12,7 +12,7 @@ function fillRow(width, id) {
 
 /**
  * World 3 — Ashvault Station: the Hollow Syndicate's industrial foothold,
- * where they are building a "Current Extractor" to drain Moss's power at
+ * where they are building a "Current Extractor" to drain Gogu's power at
  * scale. Four connected maps: an exterior ship-graveyard approach, a
  * habitation ring (hub) of workers living under Syndicate control, a
  * maze-like engine core with a quest-gated vault corridor, and the
@@ -395,18 +395,18 @@ export const ashvaultStationWorld = {
               startQuest(state, 'ashvault_extractorSabotage', 'The Current Extractor')
               return [
                 "There's a device down in the core they call the Extractor. Built to pull the Current out of someone and hold it.",
-                "Moss goes pale just hearing the word. Find their schematics console, confirm what it does before you touch anything.",
+                "Gogu goes pale just hearing the word. Find their schematics console, confirm what it does before you touch anything.",
               ]
             }
             if (quest.complete) {
               return [
-                "The Extractor's slag now, and the foreman with it. Whatever they meant to do to Moss, it dies here.",
+                "The Extractor's slag now, and the foreman with it. Whatever they meant to do to Gogu, it dies here.",
                 'Skyreach Canopy is further out past the ridge — if the Syndicate was hunting this hard, they will be there too.',
               ]
             }
             if (quest.stage >= 1) {
               return [
-                "You read the schematics? Then you know — that thing was built to drain Moss dry, not just study the Current.",
+                "You read the schematics? Then you know — that thing was built to drain Gogu dry, not just study the Current.",
                 "The vault blast door should answer to the console now. Finish it before the foreman calls in more troopers.",
               ]
             }
@@ -512,8 +512,8 @@ export const ashvaultStationWorld = {
             }
             setQuestStage(ctx.state, 'ashvault_extractorSabotage', 1)
             ctx.showDialogue([
-              "The console lights up with schematics — a Current Extractor, keyed to a single signature. Moss's.",
-              'Moss grips Kade\'s sleeve. "That\'s... that\'s for me. They built that for me."',
+              "The console lights up with schematics — a Current Extractor, keyed to a single signature. Gogu's.",
+              'Gogu grips Wando\'s sleeve. "That\'s... that\'s for me. They built that for me."',
               'The blast door down the corridor should answer to this console now.',
             ])
           },
@@ -562,7 +562,7 @@ export const ashvaultStationWorld = {
                 'The corridor opens into a vaulted chamber humming with contained Current — the Extractor, half-built, chained in conduits.',
                 "Beside it, the Syndicate Foreman turns from the controls, ember-lit visor fixed on you.",
                 '"Scrap and a boy," he growls. "The device stays. You don\'t."',
-                'Kade steps between him and Moss, plate grinding against the deck. "Try it."',
+                'Wando steps between him and Gogu, plate grinding against the deck. "Try it."',
               ],
               () => {
                 ctx.startBattle(['ashvault_foreman'], {
@@ -572,8 +572,8 @@ export const ashvaultStationWorld = {
                     ctx.showDialogue(
                       [
                         'The Foreman crashes against the conduits — the Extractor sparks, cracks, and dies in a shower of slag.',
-                        'Moss exhales, shoulders dropping like a held breath finally let go. "It\'s gone quiet. Whatever it wanted from me... it\'s gone."',
-                        'Kade lowers his hammer. "Then Ashvault\'s done with us. Skyreach Canopy waits past the ridge — let\'s see what else the Syndicate\'s reaching for."',
+                        'Gogu exhales, shoulders dropping like a held breath finally let go. "It\'s gone quiet. Whatever it wanted from me... it\'s gone."',
+                        'Wando lowers his hammer. "Then Ashvault\'s done with us. Skyreach Canopy waits past the ridge — let\'s see what else the Syndicate\'s reaching for."',
                         'Head back to the Starskiff to set course for Skyreach Canopy.',
                       ],
                       () => ctx.openShip()
