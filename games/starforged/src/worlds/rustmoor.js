@@ -272,6 +272,7 @@ export const rustmoorWorld = {
   entry: ENTRY,
   maps: {
     canyonApproach: {
+      name: 'Canyon',
       width: CANYON_W,
       height: CANYON_H,
       tiles: canyonTiles,
@@ -333,6 +334,7 @@ export const rustmoorWorld = {
       triggers: [],
     },
     settlement: {
+      name: 'Settlement',
       width: SETTLEMENT_W,
       height: SETTLEMENT_H,
       tiles: settlementTiles,
@@ -415,6 +417,7 @@ export const rustmoorWorld = {
       triggers: [],
     },
     depths: {
+      name: 'Depths',
       width: DEPTHS_W,
       height: DEPTHS_H,
       tiles: depthsTiles,

@@ -290,6 +290,7 @@ export const mossfenReachWorld = {
   entry: ENTRY,
   maps: {
     approach: {
+      name: 'Reach Approach',
       width: 26,
       height: 20,
       tiles: approachTiles,
@@ -346,6 +347,7 @@ export const mossfenReachWorld = {
       ],
     },
     settlement: {
+      name: 'Settlement',
       width: 21,
       height: 18,
       tiles: settlementTiles,
@@ -433,6 +435,7 @@ export const mossfenReachWorld = {
       triggers: [],
     },
     deepMire: {
+      name: 'Deep Mire',
       width: 24,
       height: 24,
       tiles: deepMireTiles,
@@ -518,6 +521,7 @@ export const mossfenReachWorld = {
       ],
     },
     wardenLair: {
+      name: "Warden's Lair",
       width: 12,
       height: 12,
       tiles: wardenLairTiles,

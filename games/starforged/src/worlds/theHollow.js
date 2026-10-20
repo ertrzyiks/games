@@ -235,6 +235,7 @@ function lookoutDialogue(state) {
 }
 
 const outerHollowMap = {
+  name: 'Outer Hollow',
   width: OUTER_W,
   height: OUTER_H,
   tiles: outerHollowTiles,
@@ -345,6 +346,7 @@ function junDialogue(state) {
 }
 
 const innerSanctumMap = {
+  name: 'Inner Sanctum',
   width: INNER_W,
   height: INNER_H,
   tiles: innerSanctumTiles,
@@ -443,6 +445,7 @@ for (const [x, y] of [[3, 13], [5, 13]]) {
 }
 
 const wardenChamberMap = {
+  name: "Warden's Chamber",
   width: WC_W,
   height: WC_H,
   tiles: wardenChamberTiles,

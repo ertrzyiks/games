@@ -358,6 +358,7 @@ export const ashvaultStationWorld = {
   entry: ENTRY,
   maps: {
     dockingApproach: {
+      name: 'Docking Approach',
       width: 26,
       height: 20,
       tiles: dockingApproachTiles,
@@ -405,6 +406,7 @@ export const ashvaultStationWorld = {
       ],
     },
     habitationRing: {
+      name: 'Habitation Ring',
       width: 20,
       height: 18,
       tiles: habitationRingTiles,
@@ -479,6 +481,7 @@ export const ashvaultStationWorld = {
       triggers: [],
     },
     engineCore: {
+      name: 'Engine Core',
       width: 24,
       height: 24,
       tiles: engineCoreTiles,
@@ -566,6 +569,7 @@ export const ashvaultStationWorld = {
       ],
     },
     extractorVault: {
+      name: 'Extractor Vault',
       width: 15,
       height: 14,
       tiles: extractorVaultTiles,

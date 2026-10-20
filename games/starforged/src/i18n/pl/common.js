@@ -6,6 +6,9 @@ import { registerTranslations } from '../../engine/i18n.js'
 // translations live in their own sibling files (rustmoor.js etc.) —
 // kept separate so this file and those never touch the same lines.
 registerTranslations('pl', {
+  // Overworld HUD
+  '{world} - {map}': '{world} - {map}',
+
   // Title screen
   Continue: 'Kontynuuj',
   'New Game': 'Nowa Gra',

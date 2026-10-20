@@ -21,6 +21,11 @@
 import { registerTranslations } from '../../engine/i18n.js'
 
 registerTranslations('pl', {
+  // Map segment names, shown in the HUD as "Rustmoor - {name}".
+  Canyon: 'Kanion',
+  Settlement: 'Osada',
+  Depths: 'Głębiny',
+
   'Raiders hit us at dawn — Hollow Syndicate markings on their wagon.': 'Rajderzy napadli o świcie — znaki Syndykatu Pustki na ich wozie.',
   'Find proof deep in the old mine tunnels.': 'Znajdź dowody głęboko w starych tunelach kopalni.',
   "Rustmoor's safe from that captain's crew.": 'Rustmoor jest bezpieczne przed załogą tego kapitana.',

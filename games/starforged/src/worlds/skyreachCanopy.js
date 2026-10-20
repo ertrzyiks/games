@@ -329,6 +329,7 @@ export const skyreachCanopyWorld = {
   entry: ENTRY,
   maps: {
     canopyApproach: {
+      name: 'Canopy',
       width: CANOPY_W,
       height: CANOPY_H,
       tiles: canopyApproachTiles,
@@ -389,6 +390,7 @@ export const skyreachCanopyWorld = {
     },
 
     skykinRefuge: {
+      name: 'Skykin Refuge',
       width: REFUGE_W,
       height: REFUGE_H,
       tiles: skykinRefugeTiles,
@@ -479,6 +481,7 @@ export const skyreachCanopyWorld = {
     },
 
     highReaches: {
+      name: 'High Reaches',
       width: REACHES_W,
       height: REACHES_H,
       tiles: highReachesTiles,
@@ -571,6 +574,7 @@ export const skyreachCanopyWorld = {
     },
 
     enforcerArena: {
+      name: 'Enforcer Arena',
       width: ARENA_W,
       height: ARENA_H,
       tiles: enforcerArenaTiles,

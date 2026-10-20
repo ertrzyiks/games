@@ -38,6 +38,11 @@ const pl = {
   // --- World name --------------------------------------------------------
   [`The Hollow`]: `Czeluść`,
 
+  // --- Map segment names, shown in the HUD as "Czeluść - {name}" ---------
+  [`Outer Hollow`]: `Zewnętrzna Czeluść`,
+  [`Inner Sanctum`]: `Wewnętrzne Sanktuarium`,
+  [`Warden's Chamber`]: `Komnata Strażnika`,
+
   // --- vexDialogue ---------------------------------------------------------
   [`I'm Vex. I escaped the Syndicate.`]: `Jestem Vex. Uciekłam z Syndykatu.`,
   [`Kill the shield relay past the courtyard before you go deeper.`]: `Zniszcz przekaźnik osłon za dziedzińcem, zanim pójdziesz dalej.`,

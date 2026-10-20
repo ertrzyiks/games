@@ -21,7 +21,7 @@ import { BattleScene } from '../battle/battleScene.js'
 import { saveGame } from '../engine/save.js'
 import { ShipScene } from './shipScene.js'
 import { drawHud } from '../ui/hud.js'
-import { t } from '../engine/i18n.js'
+import { t, tf } from '../engine/i18n.js'
 
 const BUMP_COOLDOWN_MS = 90
 
@@ -374,7 +374,14 @@ export class OverworldScene {
 
     ctx.font = '7px Consolas, Menlo, monospace'
     ctx.fillStyle = '#e8e8e8'
-    ctx.fillText(t(this.world.name), 4, 10)
+    // Show which segment of the world the player is in (e.g. "Rustmoor -
+    // Canyon") so it's clear where you are after a warp, not just which
+    // world/planet. Falls back to just the world name if a map is missing
+    // one (shouldn't happen once every map has a `name`, but stay safe).
+    const title = this.mapDef.name
+      ? tf('{world} - {map}', { world: t(this.world.name), map: t(this.mapDef.name) })
+      : t(this.world.name)
+    ctx.fillText(title, 4, 10)
 
     drawHud(ctx, this.state)
 

@@ -13,6 +13,12 @@
 import { registerTranslations } from '../../engine/i18n.js'
 
 registerTranslations('pl', {
+  // Map segment names, shown in the HUD as "Mossfen Reach - {name}".
+  'Reach Approach': 'Podejście do Mateczni',
+  Settlement: 'Osada',
+  'Deep Mire': 'Głębokie Mokradła',
+  "Warden's Lair": 'Legowisko Strażnika',
+
   // --- approach: juro ---
   [`Bog-stalkers nest past the reeds — stay on the mud.`]:
     `Błotne czyhacze gnieżdżą się za trzcinami — trzymaj się błota.`,

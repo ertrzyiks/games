@@ -16,6 +16,12 @@ import { registerTranslations } from '../../engine/i18n.js'
  * also left as-is.
  */
 registerTranslations('pl', {
+  // Map segment names, shown in the HUD as "Ashvault Station - {name}".
+  'Docking Approach': 'Podejście do Doku',
+  'Habitation Ring': 'Pierścień Mieszkalny',
+  'Engine Core': 'Rdzeń Silnika',
+  'Extractor Vault': 'Skarbiec Ekstraktora',
+
   // --- Docking Approach: scrapRunner NPC ---
   [`Ships that ran the blockade didn't make it past this yard.`]:
     `Statki, które próbowały przełamać blokadę, skończyły tutaj.`,

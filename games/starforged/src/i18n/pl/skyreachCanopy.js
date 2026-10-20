@@ -14,6 +14,12 @@ import { registerTranslations } from '../../engine/i18n.js'
 // exactly.
 
 registerTranslations('pl', {
+  // Map segment names, shown in the HUD as "Skyreach Canopy - {name}".
+  Canopy: 'Korona Drzew',
+  'Skykin Refuge': 'Schronienie Ludu Nieba',
+  'High Reaches': 'Wysokie Rubieże',
+  'Enforcer Arena': 'Arena Egzekutora',
+
   // --- canopyApproach: Hale -----------------------------------------------
   [`Hale: Gale stalkers are thick in the canopy now.`]:
     `Hale: W koronie drzew roi się teraz od wichrołazów.`,

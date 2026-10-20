@@ -61,6 +61,7 @@
  * @property {function(ctx):void} onEnter - ctx: { state, startBattle, showDialogue, warpTo, openShip }
  *
  * @typedef {Object} MapDef
+ * @property {string} [name] - human-readable segment label shown in the HUD as "{world} - {name}"
  * @property {number} width
  * @property {number} height
  * @property {string[][]} tiles    - rows of tile-type ids (see assets/tiles.js)
