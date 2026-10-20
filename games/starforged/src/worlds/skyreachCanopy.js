@@ -3,7 +3,14 @@ import { registerTileTypes } from '../assets/tiles.js'
 import { registerSprites } from '../assets/sprites/registry.js'
 import { registerEnemies } from '../battle/enemies.js'
 import { registerMoves } from '../battle/moves.js'
-import { HUMANOID_TEMPLATE, CHILD_TEMPLATE, CREATURE_TEMPLATE, ARMORED_TEMPLATE, buildSprite } from '../assets/spriteTemplates.js'
+import {
+  HUMANOID_TEMPLATE,
+  CHILD_TEMPLATE,
+  CREATURE_TEMPLATE,
+  ARMORED_TEMPLATE,
+  LAMP_TEMPLATE,
+  buildSprite,
+} from '../assets/spriteTemplates.js'
 import { startQuest, setQuestStage, completeQuest } from '../data/gameState.js'
 
 // --- Small grid-building helpers (local to this file) ---------------------
@@ -156,6 +163,16 @@ const enforcerVaneSprite = buildSprite(ARMORED_TEMPLATE, {
   L: '#17121f',
 })
 
+// Current-well beacon (highReaches, 8,15): the plot quest's objective,
+// literally described in its own flavor text as "a dim lantern-well." Same
+// LAMP_TEMPLATE shape as Mossfen's cozy kinlight, but re-skinned eerie
+// purple/teal to read as "ominous Syndicate-tracked tech," not a rescue.
+const currentWellBeaconSprite = buildSprite(LAMP_TEMPLATE, {
+  F: '#241c08',
+  G: '#39c6b0',
+  P: '#17121f',
+})
+
 registerSprites({
   skyreach_senna: sennaSprite,
   skyreach_orin: orinSprite,
@@ -167,6 +184,7 @@ registerSprites({
   skyreach_windReaver: windReaverSprite,
   skyreach_rootLurker: rootLurkerSprite,
   skyreach_enforcerVane: enforcerVaneSprite,
+  skyreach_currentWellBeacon: currentWellBeaconSprite,
 })
 
 // --- Moves -----------------------------------------------------------------
@@ -519,6 +537,9 @@ export const skyreachCanopyWorld = {
         { id: 'reaches_rootLurker2', x: 7, y: 18, enemyId: 'skyreach_rootLurker', spriteId: 'skyreach_rootLurker' },
         { id: 'reaches_galeStalker2', x: 15, y: 18, enemyId: 'skyreach_galeStalker', spriteId: 'skyreach_galeStalker' },
       ],
+      // Visible marker for the Current-well beacon, same tile as its
+      // (unchanged) Trigger below.
+      items: [{ id: 'currentWellBeacon', x: 8, y: 15, spriteId: 'skyreach_currentWellBeacon' }],
       warps: [
         { x: 11, y: 22, toMap: 'skykinRefuge', toX: 10, toY: 2 },
         { x: 15, y: 4, toMap: 'enforcerArena', toX: 7, toY: 11 },

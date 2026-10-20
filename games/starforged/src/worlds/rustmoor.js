@@ -3,7 +3,7 @@ import { registerTileTypes } from '../assets/tiles.js'
 import { registerSprites } from '../assets/sprites/registry.js'
 import { registerEnemies } from '../battle/enemies.js'
 import { registerMoves } from '../battle/moves.js'
-import { HUMANOID_TEMPLATE, CHILD_TEMPLATE, ARMORED_TEMPLATE, buildSprite } from '../assets/spriteTemplates.js'
+import { HUMANOID_TEMPLATE, CHILD_TEMPLATE, ARMORED_TEMPLATE, CACHE_TEMPLATE, buildSprite } from '../assets/spriteTemplates.js'
 import { PALETTE } from '../assets/palette.js'
 import { startQuest, setQuestStage, completeQuest } from '../data/gameState.js'
 
@@ -91,6 +91,15 @@ const captainSprite = buildSprite(ARMORED_TEMPLATE, {
   L: '#1a0e0e',
 })
 
+// Yara's buried cache (depths, 19,11): the physical payoff of "Yara's
+// Buried Cache" — found before any reward is granted (the medkits/DEF
+// bonus come later, back at the settlement), so the tile itself had no
+// visual at all. Worn crate colors.
+const yaraCacheSprite = buildSprite(CACHE_TEMPLATE, {
+  C: '#6a4a32',
+  B: '#3a3228',
+})
+
 registerSprites({
   rustmoor_dessa: dessaSprite,
   rustmoor_yara: yaraSprite,
@@ -99,6 +108,7 @@ registerSprites({
   rustmoor_raider: raiderSprite,
   rustmoor_raiderScout: raiderScoutSprite,
   rustmoor_scavengerCaptain: captainSprite,
+  rustmoor_yaraCache: yaraCacheSprite,
 })
 
 // --- Moves (namespaced) ----------------------------------------------------
@@ -460,6 +470,9 @@ export const rustmoorWorld = {
         { id: 'depthsScout1', x: 8, y: 9, enemyId: 'rustmoor_raiderScout', spriteId: 'rustmoor_raiderScout' },
         { id: 'depthsRaider2', x: 14, y: 11, enemyId: 'rustmoor_raider', spriteId: 'rustmoor_raider' },
       ],
+      // Visible marker for Yara's buried cache, same tile as its
+      // (unchanged) Trigger below.
+      items: [{ id: 'yaraCache', x: 19, y: 11, spriteId: 'rustmoor_yaraCache' }],
       warps: [{ x: 11, y: 1, toMap: 'settlement', toX: 10, toY: SETTLEMENT_H - 2 }],
       triggers: [
         // Syndicate scout sign — advances the plot quest once it has been

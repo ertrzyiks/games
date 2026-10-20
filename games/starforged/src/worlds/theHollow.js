@@ -3,7 +3,7 @@ import { registerTileTypes } from '../assets/tiles.js'
 import { registerSprites } from '../assets/sprites/registry.js'
 import { registerEnemies } from '../battle/enemies.js'
 import { registerMoves } from '../battle/moves.js'
-import { HUMANOID_TEMPLATE, ARMORED_TEMPLATE, buildSprite } from '../assets/spriteTemplates.js'
+import { HUMANOID_TEMPLATE, ARMORED_TEMPLATE, CONSOLE_TEMPLATE, buildSprite } from '../assets/spriteTemplates.js'
 import { startQuest, setQuestStage, completeQuest } from '../data/gameState.js'
 
 /**
@@ -116,6 +116,15 @@ const wardenSprite = buildSprite(ARMORED_TEMPLATE, {
   L: '#120a0e',
 })
 
+// Shield relay (outerHollow, 9,3): already marked with a distinct
+// hollow_rune floor tile, but still had no object sprite of its own.
+// Console re-skin in the same dark-red/rune palette as that floor tile.
+const shieldRelaySprite = buildSprite(CONSOLE_TEMPLATE, {
+  B: '#2e0f16',
+  S: '#8a1526',
+  L: '#e0564b',
+})
+
 registerSprites({
   hollow_rell: rellSprite,
   hollow_vex: vexSprite,
@@ -124,6 +133,7 @@ registerSprites({
   hollow_eliteGuard: eliteGuardSprite,
   hollow_shadowAgent: shadowAgentSprite,
   hollow_syndicateWarden: wardenSprite,
+  hollow_shieldRelay: shieldRelaySprite,
 })
 
 // --- Moves -------------------------------------------------------------
@@ -274,6 +284,9 @@ const outerHollowMap = {
       dialogue: ['The pillar crumbles — a guard’s stashed kit!', 'Found a medkit and a tonic!'],
     },
   ],
+  // Visible marker for the shield relay, same tile as its (unchanged)
+  // Trigger below.
+  items: [{ id: 'shieldRelay', x: 9, y: 3, spriteId: 'hollow_shieldRelay' }],
   warps: [{ x: 9, y: 1, toMap: 'innerSanctum', toX: 8, toY: 13 }],
   triggers: [
     // Fires on the first step away from the entry — kicks off the finale

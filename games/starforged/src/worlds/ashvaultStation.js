@@ -1,7 +1,7 @@
 import { registerWorld, unlockNextWorld } from './registry.js'
 import { registerTileTypes } from '../assets/tiles.js'
 import { registerSprites } from '../assets/sprites/registry.js'
-import { buildSprite, HUMANOID_TEMPLATE, ARMORED_TEMPLATE, ROBOT_TEMPLATE } from '../assets/spriteTemplates.js'
+import { buildSprite, HUMANOID_TEMPLATE, ARMORED_TEMPLATE, ROBOT_TEMPLATE, CONSOLE_TEMPLATE } from '../assets/spriteTemplates.js'
 import { registerEnemies } from '../battle/enemies.js'
 import { registerMoves } from '../battle/moves.js'
 import { startQuest, setQuestStage, completeQuest } from '../data/gameState.js'
@@ -157,6 +157,25 @@ const reclaimerDroneSprite = buildSprite(ROBOT_TEMPLATE, {
   L: VOID_BLACK,
 })
 
+// Schematics console (engineCore, 4,13): the identification device that
+// confirms the Extractor is keyed to Gogu. Cold steel casing, coolant-teal
+// screen — reads as "station tech you're meant to use."
+const schematicsConsoleSprite = buildSprite(CONSOLE_TEMPLATE, {
+  B: '#3d434d',
+  S: COOLANT_TEAL,
+  L: WARNING_YELLOW,
+})
+
+// Release switch (engineCore, 4,10): the device that frees Tamsin, named
+// explicitly by both the dock hand and Tamsin herself ("the release
+// switch"/"a release switch south of here"). Status-green to read as
+// "safe to use," distinct from the schematics console's cooler teal.
+const releaseSwitchSprite = buildSprite(CONSOLE_TEMPLATE, {
+  B: '#3a3f47',
+  S: '#2f6b4a',
+  L: '#9adf8a',
+})
+
 registerSprites({
   ashvault_dockHand: dockHandSprite,
   ashvault_technician: technicianSprite,
@@ -168,6 +187,8 @@ registerSprites({
   ashvault_ventTech: ventTechSprite,
   ashvault_scrapLurker: scrapLurkerSprite,
   ashvault_reclaimerDrone: reclaimerDroneSprite,
+  ashvault_schematicsConsole: schematicsConsoleSprite,
+  ashvault_releaseSwitch: releaseSwitchSprite,
 })
 
 // --- Moves ---
@@ -518,6 +539,12 @@ export const ashvaultStationWorld = {
         { id: 'core_drone1', x: 16, y: 9, enemyId: 'ashvault_reclaimerDrone', spriteId: 'ashvault_reclaimerDrone' },
         { id: 'core_cinder2', x: 8, y: 14, enemyId: 'ashvault_cinderTrooper', spriteId: 'ashvault_cinderTrooper' },
         { id: 'core_lurker2', x: 18, y: 18, enemyId: 'ashvault_scrapLurker', spriteId: 'ashvault_scrapLurker' },
+      ],
+      // Visible markers for this map's two quest-critical devices, same
+      // tiles as their (unchanged) Trigger definitions below.
+      items: [
+        { id: 'releaseSwitch', x: 4, y: 10, spriteId: 'ashvault_releaseSwitch' },
+        { id: 'schematicsConsole', x: 4, y: 13, spriteId: 'ashvault_schematicsConsole' },
       ],
       warps: [
         { x: 1, y: 1, toMap: 'habitationRing', toX: 18, toY: 8 },

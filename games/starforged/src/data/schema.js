@@ -36,6 +36,16 @@
  *   same map to mutate once this secret is found (e.g. turning the fake-wall tile and a
  *   short corridor into walkable floor to open a hidden passage/chamber)
  *
+ * @typedef {Object} MapItem
+ * @property {string} id           - unique within the map
+ * @property {number} x
+ * @property {number} y            - same tile as the Trigger (if any) it visually marks; purely cosmetic and
+ *   does not participate in collision/interaction — it does not need to match a Trigger at all, though in
+ *   practice it always sits on one for this game's quest/story items.
+ * @property {string} spriteId     - id from assets/sprites/registry.js. Rendered every frame like an NPC or
+ *   EnemySpawn, plus a pulsing golden aura glow behind it (see OverworldScene._drawGoldenAura) so important
+ *   story/quest objects (a lamp, a console, ...) are never just invisible floor.
+ *
  * @typedef {Object} EncounterZone
  * @deprecated random encounters are disabled — OverworldScene no longer
  *   rolls against encounterZones. Use EnemySpawn (visible, map-placed
@@ -71,6 +81,9 @@
  * @property {NPC[]} npcs
  * @property {EnemySpawn[]} enemySpawns - visible enemies on the map; walking into one starts the fight
  * @property {Secret[]} [secrets] - hidden chests/fake walls found by pressing A while facing them
+ * @property {MapItem[]} [items] - visible markers for important story/quest objects (lamps, consoles, ...);
+ *   rendering-only, see MapItem. Collision/interaction still comes entirely from Trigger/Warp/NPC at the
+ *   same coordinates — adding an entry here never changes gameplay, only what's drawn.
  * @property {Warp[]} warps
  * @property {Trigger[]} triggers
  *
