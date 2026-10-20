@@ -1,9 +1,11 @@
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../engine/constants.js'
 import { input } from '../engine/input.js'
+import { sceneManager } from '../engine/sceneManager.js'
 import { getWorld, listWorldIds } from '../worlds/registry.js'
 import { saveGame } from '../engine/save.js'
 import { playBlip, playConfirm, playCancel } from '../engine/audio.js'
 import { t, tf, getLanguage, cycleLanguage, LANGUAGES } from '../engine/i18n.js'
+import { TravelMinigameScene } from './travelMinigameScene.js'
 
 /**
  * Ship / pause screen, reached from the overworld via the B button.
@@ -63,13 +65,22 @@ export class ShipScene {
     const world = getWorld(id)
     if (!world.maps[world.startMap]) return
 
-    this.state.worldId = id
-    this.state.mapId = world.startMap
-    this.state.x = world.entry?.x ?? 2
-    this.state.y = world.entry?.y ?? 2
-    saveGame(this.state)
     playConfirm()
-    if (this.onClose) this.onClose()
+    // The minigame owns deciding when it's done (same convention as
+    // BattleScene) - it always calls onDone after its full 15s run, no
+    // matter how the player did, so the world transition below is
+    // guaranteed to happen.
+    sceneManager.push(new TravelMinigameScene(), {
+      onDone: () => {
+        sceneManager.pop()
+        this.state.worldId = id
+        this.state.mapId = world.startMap
+        this.state.x = world.entry?.x ?? 2
+        this.state.y = world.entry?.y ?? 2
+        saveGame(this.state)
+        if (this.onClose) this.onClose()
+      },
+    })
   }
 
   _close() {
