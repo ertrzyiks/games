@@ -17,6 +17,14 @@ export function getEnemy(id) {
   return def
 }
 
+// Read-only snapshot of every registered enemy, in registration order. Used
+// by the wiki package to document enemies straight from this registry
+// instead of hand-duplicating the data — battle code has no need for this,
+// so it's additive only.
+export function getAllEnemies() {
+  return [...registry.values()]
+}
+
 registerEnemies({
   scavenger: {
     name: 'Rustmoor Scavenger',

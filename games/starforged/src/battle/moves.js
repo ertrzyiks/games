@@ -15,6 +15,14 @@ export function getMove(id) {
   return registry.get(id)
 }
 
+// Read-only snapshot of every registered move, in registration order. Used
+// by the wiki package to document moves straight from this registry instead
+// of hand-duplicating the data — battle code has no need for this, so it's
+// additive only.
+export function getAllMoves() {
+  return [...registry.values()]
+}
+
 registerMoves({
   // Still used by various enemies/bosses across world files by id — kept
   // as-is even though Wando's own loadout moved to the blaster-themed
