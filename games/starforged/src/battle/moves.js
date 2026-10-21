@@ -25,8 +25,8 @@ registerMoves({
   scavengerSlash: { name: 'Rusty Slash', kind: 'attack', power: 5, focusCost: 0, accuracy: 0.85 },
 
   // Wando's kit: a blaster pistol/rifle and a trick shot.
-  pistolShot: { name: 'Pistol Shot', kind: 'attack', power: 6, focusCost: 0, accuracy: 0.95 },
-  rifleShot: { name: 'Rifle Shot', kind: 'attack', power: 12, focusCost: 3, accuracy: 0.85 },
+  pistolShot: { name: 'Pistol Shot', kind: 'attack', power: 6, focusCost: 0, accuracy: 0.98 },
+  rifleShot: { name: 'Rifle Shot', kind: 'attack', power: 12, focusCost: 3, accuracy: 0.7 },
   flamethrower: {
     name: 'Flamethrower',
     kind: 'attack',

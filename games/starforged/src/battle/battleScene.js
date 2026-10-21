@@ -16,7 +16,7 @@ const PARTY_SPRITES = { kade: heroSprite, moss: mossSprite }
 // visually consistent.
 const MENU_FONT_BIG = 7
 const MENU_FONT_SMALL = 5
-const ITEM_HEAL_AMOUNT = 15
+const ITEM_HEAL_AMOUNT = 22
 const TONIC_ATK_BOOST = 5
 const TONIC_DURATION = 3
 // Short on-screen tags for active status effects, shown next to a unit's
