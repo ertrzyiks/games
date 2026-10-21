@@ -4,6 +4,7 @@ import { drawSprite } from '../engine/sprite.js'
 import { input } from '../engine/input.js'
 import { getMove } from './moves.js'
 import { getEnemy } from './enemies.js'
+import { healWithMedkit } from './items.js'
 import { t, tf } from '../engine/i18n.js'
 import { getSprite } from '../assets/sprites/registry.js'
 import { heroSprite } from '../assets/sprites/hero.js'
@@ -16,7 +17,6 @@ const PARTY_SPRITES = { kade: heroSprite, moss: mossSprite }
 // visually consistent.
 const MENU_FONT_BIG = 7
 const MENU_FONT_SMALL = 5
-const ITEM_HEAL_AMOUNT = 22
 const TONIC_ATK_BOOST = 5
 const TONIC_DURATION = 3
 // Short on-screen tags for active status effects, shown next to a unit's
@@ -254,11 +254,8 @@ export class BattleScene {
 
   _resolveSingleAction(action) {
     if (action.special === 'item') {
-      const before = action.unit.hp
-      action.unit.hp = Math.min(action.unit.maxHp, action.unit.hp + ITEM_HEAL_AMOUNT)
-      return [
-        tf('{name} uses a medkit and recovers {amount} HP!', { name: t(action.name), amount: action.unit.hp - before }),
-      ]
+      const healed = healWithMedkit(action.unit)
+      return [tf('{name} uses a medkit and recovers {amount} HP!', { name: t(action.name), amount: healed })]
     }
     if (action.special === 'tonic') {
       this._applyStatus(action.unit, { type: 'boostAtk', duration: TONIC_DURATION, power: TONIC_ATK_BOOST })

@@ -6,10 +6,11 @@ import { saveGame } from '../engine/save.js'
 import { playBlip, playConfirm, playCancel } from '../engine/audio.js'
 import { t, tf, getLanguage, cycleLanguage, LANGUAGES } from '../engine/i18n.js'
 import { TravelMinigameScene } from './travelMinigameScene.js'
+import { HeroScreen } from './heroScreen.js'
 
 /**
  * Ship / pause screen, reached from the overworld via the B button.
- * Top-level hub: Travel (world-select) / Quest Log / Language / Close.
+ * Top-level hub: Travel (world-select) / Quest Log / Heroes / Language / Close.
  *
  * World-entry contract: this scene only talks to worlds through the
  * registry (`getWorld`/`listWorldIds`), so it stays decoupled from exactly
@@ -50,6 +51,7 @@ export class ShipScene {
     return [
       { id: 'travel', label: t('Travel') },
       { id: 'questlog', label: t('Quest Log') },
+      { id: 'heroes', label: t('Heroes') },
       { id: 'language', label: tf('{label}: {value}', { label: t('Language'), value: current.label }) },
       { id: 'close', label: t('Close') },
     ]
@@ -88,6 +90,13 @@ export class ShipScene {
     if (this.onClose) this.onClose()
   }
 
+  _openHeroes() {
+    sceneManager.push(new HeroScreen(), {
+      state: this.state,
+      onClose: () => sceneManager.pop(),
+    })
+  }
+
   update() {
     if (this.mode === 'main') {
       const options = this.mainOptions
@@ -108,6 +117,9 @@ export class ShipScene {
         } else if (choice.id === 'questlog') {
           this.mode = 'questlog'
           playConfirm()
+        } else if (choice.id === 'heroes') {
+          playConfirm()
+          this._openHeroes()
         } else if (choice.id === 'language') {
           cycleLanguage()
           playBlip()

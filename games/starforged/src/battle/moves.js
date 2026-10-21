@@ -24,7 +24,8 @@ registerMoves({
   guard: { name: 'Guard', kind: 'buff', power: 0, focusCost: 0, accuracy: 1 },
   scavengerSlash: { name: 'Rusty Slash', kind: 'attack', power: 5, focusCost: 0, accuracy: 0.85 },
 
-  // Wando's kit: a blaster pistol/rifle and a trick shot.
+  // Wando's kit: a blaster pistol/rifle, a trick shot, and (unlocked later,
+  // see data/gameState.js MOVE_UNLOCKS) a ricochet shot and a grenade.
   pistolShot: { name: 'Pistol Shot', kind: 'attack', power: 6, focusCost: 0, accuracy: 0.98 },
   rifleShot: { name: 'Rifle Shot', kind: 'attack', power: 12, focusCost: 3, accuracy: 0.7 },
   flamethrower: {
@@ -35,6 +36,13 @@ registerMoves({
     accuracy: 0.8,
     applyStatus: { type: 'burn', duration: 3, power: 3 },
   },
+  // Cheap and reliable, like pistolShot, but the ricochet bites back some
+  // HP for Wando — reuses the generic lifesteal flag (see `drain` below)
+  // rather than inventing a new mechanic just for this move.
+  trickShot: { name: 'Trick Shot', kind: 'attack', power: 7, focusCost: 1, accuracy: 0.92, lifesteal: true },
+  // Wando's heaviest hit: highest power of his kit, but costly and the
+  // least accurate - a real risk/reward pick next to rifleShot.
+  grenadeToss: { name: 'Grenade Toss', kind: 'attack', power: 16, focusCost: 5, accuracy: 0.6 },
 
   // Gogu's kit: Force-themed. glimmer is Gogu's free move — every party
   // member needs at least one 0-focus-cost option so the battle menu can
