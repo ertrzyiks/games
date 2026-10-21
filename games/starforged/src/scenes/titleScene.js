@@ -3,7 +3,7 @@ import { input } from '../engine/input.js'
 import { sceneManager } from '../engine/sceneManager.js'
 import { OverworldScene } from './overworldScene.js'
 import { createInitialState } from '../data/gameState.js'
-import { hasSave, loadGame, clearSave } from '../engine/save.js'
+import { hasSave, loadGame, clearSave, clearCheckpoint } from '../engine/save.js'
 import { drawSprite } from '../engine/sprite.js'
 import { heroSprite } from '../assets/sprites/hero.js'
 import { mossSprite } from '../assets/sprites/moss.js'
@@ -50,6 +50,7 @@ export class TitleScene {
         state = loadGame() || createInitialState()
       } else {
         clearSave()
+        clearCheckpoint()
         state = createInitialState()
       }
       sceneManager.replace(new OverworldScene(), { state })

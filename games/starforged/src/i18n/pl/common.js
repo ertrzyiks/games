@@ -16,6 +16,8 @@ registerTranslations('pl', {
   'GAME OVER': 'KONIEC GRY',
   'Wando and Gogu were overwhelmed.': 'Wando i Gogu zostali pokonani.',
   'Press A to continue': 'Naciśnij A, aby kontynuować',
+  'Press A to retry': 'Naciśnij A, aby spróbować ponownie',
+  'A: Retry   B: Give up': 'A: Ponów   B: Poddaj się',
 
   // Ship / pause screen
   Travel: 'Podróż',

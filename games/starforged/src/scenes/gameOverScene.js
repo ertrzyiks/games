@@ -6,15 +6,17 @@ import { t } from '../engine/i18n.js'
 /**
  * Shown when the whole party is knocked out in battle (both Wando and Gogu
  * at 0 HP) — a real "you lost" beat, rather than the previous silent
- * full-heal-back-to-the-overworld behavior. `enter({ onContinue })` is
- * called once with a callback that hands control back to the caller
- * (OverworldScene sends the player to the TitleScene, so they fall through
- * to its existing Continue/New Game flow instead of this scene owning a
- * save/load decision itself).
+ * full-heal-back-to-the-overworld behavior. `enter({ onRetry, onGiveUp })`
+ * is called once with the two things the player can do next: retry from
+ * the last travel checkpoint (only offered when one exists), or give up
+ * and fall through to the Title screen's Continue/New Game flow. Neither
+ * callback is this scene's business beyond invoking it - OverworldScene
+ * owns the actual save/load decision.
  */
 export class GameOverScene {
-  enter({ onContinue } = {}) {
-    this.onContinue = onContinue || null
+  enter({ onRetry, onGiveUp } = {}) {
+    this.onRetry = onRetry || null
+    this.onGiveUp = onGiveUp || null
     this.timer = 0
     this.accepting = false
     playExplosion()
@@ -27,8 +29,12 @@ export class GameOverScene {
     // A short pause before any input is accepted, so a stray held-down key
     // from the battle's final blow can't instantly skip past this screen.
     if (!this.accepting && this.timer > 600) this.accepting = true
-    if (this.accepting && (input.wasPressed('a') || input.wasPressed('b'))) {
-      if (this.onContinue) this.onContinue()
+    if (!this.accepting) return
+    if (input.wasPressed('a')) {
+      if (this.onRetry) this.onRetry()
+      else if (this.onGiveUp) this.onGiveUp()
+    } else if (input.wasPressed('b')) {
+      if (this.onGiveUp) this.onGiveUp()
     }
   }
 
@@ -49,7 +55,16 @@ export class GameOverScene {
       const blink = Math.floor(performance.now() / 400) % 2 === 0
       if (blink) {
         ctx.fillStyle = '#e8e8e8'
-        ctx.fillText(t('Press A to continue'), CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 28)
+        ctx.fillText(
+          this.onRetry ? t('Press A to retry') : t('Press A to continue'),
+          CANVAS_WIDTH / 2,
+          CANVAS_HEIGHT / 2 + 28,
+        )
+      }
+      if (this.onRetry) {
+        ctx.font = '6px Consolas, Menlo, monospace'
+        ctx.fillStyle = '#52586a'
+        ctx.fillText(t('A: Retry   B: Give up'), CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 40)
       }
     }
     ctx.textAlign = 'left'

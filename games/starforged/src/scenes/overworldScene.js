@@ -18,7 +18,7 @@ import { getWorld } from '../worlds/registry.js'
 import { TILE_SIZE } from '../engine/constants.js'
 import { sceneManager } from '../engine/sceneManager.js'
 import { BattleScene } from '../battle/battleScene.js'
-import { saveGame, clearSave } from '../engine/save.js'
+import { saveGame, clearSave, loadCheckpoint, clearCheckpoint } from '../engine/save.js'
 import { ShipScene } from './shipScene.js'
 import { GameOverScene } from './gameOverScene.js'
 import { TitleScene } from './titleScene.js'
@@ -395,14 +395,21 @@ export class OverworldScene {
         } else {
           if (callbacks.onDefeat) callbacks.onDefeat(this.state)
           // A full party wipe is a real Game Over now, instead of a silent
-          // full-heal-and-return-to-the-overworld. The save is cleared
-          // (not just left un-updated) once the player acknowledges it, so
-          // the Title screen's own hasSave() check naturally drops the
-          // "Continue" option - a loss means starting over, not reloading
-          // an old checkpoint.
+          // full-heal-and-return-to-the-overworld. If a travel checkpoint
+          // exists (snapshotted the moment the player last arrived in a
+          // world - see shipScene.js's _confirmTravel), offer to retry from
+          // there instead of only "clear everything and start over".
+          const checkpoint = loadCheckpoint()
           sceneManager.replace(new GameOverScene(), {
-            onContinue: () => {
+            onRetry: checkpoint
+              ? () => {
+                  saveGame(checkpoint)
+                  sceneManager.replace(new OverworldScene(), { state: checkpoint })
+                }
+              : null,
+            onGiveUp: () => {
               clearSave()
+              clearCheckpoint()
               sceneManager.replace(new TitleScene())
             },
           })

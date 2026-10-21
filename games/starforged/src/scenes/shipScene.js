@@ -2,7 +2,7 @@ import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../engine/constants.js'
 import { input } from '../engine/input.js'
 import { sceneManager } from '../engine/sceneManager.js'
 import { getWorld, listWorldIds } from '../worlds/registry.js'
-import { saveGame } from '../engine/save.js'
+import { saveGame, saveCheckpoint } from '../engine/save.js'
 import { playBlip, playConfirm, playCancel } from '../engine/audio.js'
 import { t, tf, getLanguage, cycleLanguage, LANGUAGES } from '../engine/i18n.js'
 import { TravelMinigameScene } from './travelMinigameScene.js'
@@ -80,6 +80,10 @@ export class ShipScene {
         this.state.x = world.entry?.x ?? 2
         this.state.y = world.entry?.y ?? 2
         saveGame(this.state)
+        // Snapshot this exact arrival state as the retry checkpoint - if the
+        // party later wipes out in this world, Game Over can offer to retry
+        // from here instead of only "start a brand new game".
+        saveCheckpoint(this.state)
         if (this.onClose) this.onClose()
       },
     })
