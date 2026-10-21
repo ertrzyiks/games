@@ -472,7 +472,7 @@ export const rustmoorWorld = {
       ],
       // Visible marker for Yara's buried cache, same tile as its
       // (unchanged) Trigger below.
-      items: [{ id: 'yaraCache', x: 19, y: 11, spriteId: 'rustmoor_yaraCache' }],
+      items: [{ id: 'yaraCache', x: 19, y: 11, spriteId: 'rustmoor_yaraCache', hideWhenFlag: 'rustmoor_yaraCacheFound' }],
       warps: [{ x: 11, y: 1, toMap: 'settlement', toX: 10, toY: SETTLEMENT_H - 2 }],
       triggers: [
         // Syndicate scout sign — advances the plot quest once it has been
@@ -510,6 +510,7 @@ export const rustmoorWorld = {
             const q = ctx.state.quests['rustmoor_yaraCache']
             if (q.stage === 0 && !q.complete) {
               setQuestStage(ctx.state, 'rustmoor_yaraCache', 1)
+              ctx.state.flags.add('rustmoor_yaraCacheFound')
               ctx.showDialogue([
                 "You find Yara's cache — some medkits survived.",
                 'Worth bringing back to her.',

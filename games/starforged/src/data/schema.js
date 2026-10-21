@@ -45,6 +45,10 @@
  * @property {string} spriteId     - id from assets/sprites/registry.js. Rendered every frame like an NPC or
  *   EnemySpawn, plus a pulsing golden aura glow behind it (see OverworldScene._drawGoldenAura) so important
  *   story/quest objects (a lamp, a console, ...) are never just invisible floor.
+ * @property {string} [hideWhenFlag] - once this flag is set, the marker (sprite + aura) stops being drawn
+ *   entirely, instead of lingering on a tile whose one-time payoff has already been collected/used. Set this
+ *   to whatever flag the item's own Trigger already sets on pickup (its `setsFlag`, or one it adds to
+ *   `ctx.state.flags` manually) — the item doesn't read quest/inventory state itself, only this one flag.
  *
  * @typedef {Object} EncounterZone
  * @deprecated random encounters are disabled — OverworldScene no longer

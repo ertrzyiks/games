@@ -18,8 +18,10 @@ import { getWorld } from '../worlds/registry.js'
 import { TILE_SIZE } from '../engine/constants.js'
 import { sceneManager } from '../engine/sceneManager.js'
 import { BattleScene } from '../battle/battleScene.js'
-import { saveGame } from '../engine/save.js'
+import { saveGame, clearSave } from '../engine/save.js'
 import { ShipScene } from './shipScene.js'
+import { GameOverScene } from './gameOverScene.js'
+import { TitleScene } from './titleScene.js'
 import { drawHud } from '../ui/hud.js'
 import { t } from '../engine/i18n.js'
 
@@ -365,14 +367,22 @@ export class OverworldScene {
         sceneManager.pop()
         if (result.victory) {
           if (callbacks.onVictory) callbacks.onVictory(this.state)
+          saveGame(this.state)
         } else {
           if (callbacks.onDefeat) callbacks.onDefeat(this.state)
-          for (const member of Object.values(this.state.party)) {
-            member.hp = member.maxHp
-            member.focus = member.maxFocus
-          }
+          // A full party wipe is a real Game Over now, instead of a silent
+          // full-heal-and-return-to-the-overworld. The save is cleared
+          // (not just left un-updated) once the player acknowledges it, so
+          // the Title screen's own hasSave() check naturally drops the
+          // "Continue" option - a loss means starting over, not reloading
+          // an old checkpoint.
+          sceneManager.replace(new GameOverScene(), {
+            onContinue: () => {
+              clearSave()
+              sceneManager.replace(new TitleScene())
+            },
+          })
         }
-        saveGame(this.state)
       },
     })
   }
@@ -411,6 +421,7 @@ export class OverworldScene {
     // scenery. Purely visual — the Trigger at the same tile (if any) still
     // drives all the actual gameplay, untouched.
     for (const item of this.mapDef.items || []) {
+      if (item.hideWhenFlag && this.state.flags.has(item.hideWhenFlag)) continue
       const sprite = getSprite(item.spriteId)
       if (!sprite) continue
       const sx = (item.x - camera.camX) * TILE_SIZE

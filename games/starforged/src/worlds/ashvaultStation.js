@@ -543,8 +543,8 @@ export const ashvaultStationWorld = {
       // Visible markers for this map's two quest-critical devices, same
       // tiles as their (unchanged) Trigger definitions below.
       items: [
-        { id: 'releaseSwitch', x: 4, y: 10, spriteId: 'ashvault_releaseSwitch' },
-        { id: 'schematicsConsole', x: 4, y: 13, spriteId: 'ashvault_schematicsConsole' },
+        { id: 'releaseSwitch', x: 4, y: 10, spriteId: 'ashvault_releaseSwitch', hideWhenFlag: 'ashvault_tamsinFreed' },
+        { id: 'schematicsConsole', x: 4, y: 13, spriteId: 'ashvault_schematicsConsole', hideWhenFlag: 'ashvault_extractorConfirmed' },
       ],
       warps: [
         { x: 1, y: 1, toMap: 'habitationRing', toX: 18, toY: 8 },

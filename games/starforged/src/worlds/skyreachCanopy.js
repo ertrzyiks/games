@@ -539,7 +539,7 @@ export const skyreachCanopyWorld = {
       ],
       // Visible marker for the Current-well beacon, same tile as its
       // (unchanged) Trigger below.
-      items: [{ id: 'currentWellBeacon', x: 8, y: 15, spriteId: 'skyreach_currentWellBeacon' }],
+      items: [{ id: 'currentWellBeacon', x: 8, y: 15, spriteId: 'skyreach_currentWellBeacon', hideWhenFlag: 'skyreach_beaconDoused' }],
       warps: [
         { x: 11, y: 22, toMap: 'skykinRefuge', toX: 10, toY: 2 },
         { x: 15, y: 4, toMap: 'enforcerArena', toX: 7, toY: 11 },

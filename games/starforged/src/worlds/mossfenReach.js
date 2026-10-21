@@ -515,8 +515,8 @@ export const mossfenReachWorld = {
       // same tiles as their (unchanged) Trigger definitions below: Wick's
       // kinlight lantern, and the Syndicate siphon rig evidence.
       items: [
-        { id: 'kinlightLamp', x: 5, y: 4, spriteId: 'mossfen_kinlightLamp' },
-        { id: 'siphonRig', x: 16, y: 13, spriteId: 'mossfen_siphonRig' },
+        { id: 'kinlightLamp', x: 5, y: 4, spriteId: 'mossfen_kinlightLamp', hideWhenFlag: 'mossfen_glowReed' },
+        { id: 'siphonRig', x: 16, y: 13, spriteId: 'mossfen_siphonRig', hideWhenFlag: 'mossfen_evidenceFound' },
       ],
       warps: [
         { x: 0, y: 12, toMap: 'settlement', toX: 19, toY: 6 },

@@ -12,6 +12,11 @@ registerTranslations('pl', {
   Language: 'Język',
   'a tale of the Drift': 'opowieść Dryfu',
 
+  // Game Over screen
+  'GAME OVER': 'KONIEC GRY',
+  'Wando and Gogu were overwhelmed.': 'Wando i Gogu zostali pokonani.',
+  'Press A to continue': 'Naciśnij A, aby kontynuować',
+
   // Ship / pause screen
   Travel: 'Podróż',
   'Quest Log': 'Dziennik Zadań',

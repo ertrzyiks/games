@@ -286,7 +286,7 @@ const outerHollowMap = {
   ],
   // Visible marker for the shield relay, same tile as its (unchanged)
   // Trigger below.
-  items: [{ id: 'shieldRelay', x: 9, y: 3, spriteId: 'hollow_shieldRelay' }],
+  items: [{ id: 'shieldRelay', x: 9, y: 3, spriteId: 'hollow_shieldRelay', hideWhenFlag: 'hollow_relayDisabled' }],
   warps: [{ x: 9, y: 1, toMap: 'innerSanctum', toX: 8, toY: 13 }],
   triggers: [
     // Fires on the first step away from the entry — kicks off the finale
