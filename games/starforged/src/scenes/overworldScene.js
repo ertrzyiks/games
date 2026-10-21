@@ -78,12 +78,36 @@ export class OverworldScene {
   update(dt) {
     const dialogueWasActive = this.dialogue.active
     this.dialogue.update(dt, input)
+
+    // Release a direction's "block" (see below) as soon as the player
+    // actually lets go of that key, so ordinary movement resumes the
+    // moment they do.
+    if (this._blockedDirs) {
+      for (const d of this._blockedDirs) {
+        if (!input.isDown(d)) this._blockedDirs.delete(d)
+      }
+    }
+
     // If dialogue was open at the start of this frame, this frame's input
     // (even the very press that just closed it) belongs to the dialogue,
-    // not to movement/interact/ship-menu — otherwise the same A/B press
-    // that closes a textbox immediately re-triggers _tryInteract() on the
-    // NPC still in front of you, reopening the same dialogue forever.
-    if (dialogueWasActive) return
+    // not to movement/interact/ship-menu — otherwise the same press that
+    // closes a textbox immediately re-triggers _tryInteract() on the NPC
+    // still in front of you, reopening the same dialogue forever.
+    if (dialogueWasActive) {
+      // A direction key (unlike A/B) also drives overworld movement via
+      // isDown() rather than an edge-triggered press. If that same held
+      // arrow key is what just closed this dialogue, the very next frame
+      // would otherwise see it as "still down" and immediately walk/bump
+      // straight back into the NPC or secret that opened it — looping the
+      // same dialogue for as long as the key stays held, unlike Enter/B
+      // (edge-triggered, so holding does nothing extra). Block movement
+      // for any direction currently held until it's released, so an
+      // arrow behaves like Enter: one discrete close, never a loop.
+      if (!this.dialogue.active) {
+        this._blockedDirs = new Set(['up', 'down', 'left', 'right'].filter((d) => input.isDown(d)))
+      }
+      return
+    }
 
     if (this.moveCooldown > 0) {
       this.moveCooldown -= dt
@@ -100,7 +124,7 @@ export class OverworldScene {
 
     if (this.moveCooldown > 0) return
 
-    const dir = ['up', 'down', 'left', 'right'].find((d) => input.isDown(d))
+    const dir = ['up', 'down', 'left', 'right'].find((d) => input.isDown(d) && !this._blockedDirs?.has(d))
     if (!dir) return
 
     this.state.facing = dir
