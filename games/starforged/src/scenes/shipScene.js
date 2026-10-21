@@ -67,9 +67,9 @@ export class ShipScene {
 
     playConfirm()
     // The minigame owns deciding when it's done (same convention as
-    // BattleScene) - it always calls onDone after its full 15s run, no
-    // matter how the player did, so the world transition below is
-    // guaranteed to happen.
+    // BattleScene) - it always calls onDone once every hazard is cleared,
+    // no matter how the player did along the way, so the world transition
+    // below is guaranteed to happen.
     sceneManager.push(new TravelMinigameScene(), {
       onDone: () => {
         sceneManager.pop()
