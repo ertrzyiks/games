@@ -55,7 +55,7 @@ registerMoves({
     power: 3,
     focusCost: 0,
     accuracy: 0.95,
-    applyStatus: { type: 'burn', duration: 2, power: 2 },
+    applyStatus: { type: 'burn', duration: 3, power: 3 },
   },
 
   // Boss-tier / reusable additions. Other worlds' enemy/move files may
