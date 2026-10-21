@@ -44,8 +44,16 @@ jobs:
           cp -r portal/dist/. _site/
           for game_dir in games/*/; do
             game=$(basename "$game_dir")
-            mkdir -p "_site/$game"
-            cp -r "$game_dir/dist/." "_site/$game/"
+            case "$game" in
+              starforged-wiki)
+                dest="_site/starforged/wiki"
+                ;;
+              *)
+                dest="_site/$game"
+                ;;
+            esac
+            mkdir -p "$dest"
+            cp -r "$game_dir/dist/." "$dest/"
           done
 
       - name: Upload Pages artifact
