@@ -627,7 +627,7 @@ export const ashvaultStationWorld = {
                     completeQuest(state, 'ashvault_extractorSabotage')
                     ctx.showDialogue(
                       [
-                        'The Foreman falls — the Extractor sparks and dies.',
+                        'The Foreman gives up — the Extractor sparks and shuts down.',
                         'Gogu breathes out: "It\'s gone quiet."',
                         'Head back to the Starskiff for Skyreach Canopy.',
                       ],

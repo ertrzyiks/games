@@ -313,7 +313,7 @@ export const rustmoorWorld = {
             if (q.stage >= 2) {
               return [
                 "So it's real — they're not done with Rustmoor.",
-                'Kill that raider captain and cut their leash.',
+                'Stop that raider captain and cut their leash.',
               ]
             }
             return [
@@ -356,7 +356,7 @@ export const rustmoorWorld = {
           facing: 'down',
           spriteId: 'npc',
           dialogue: [
-            "This raider captain's bleeding us slow.",
+            "This raider captain's squeezing us dry.",
             "Deal with him, and I'll fuel your skiff myself.",
           ],
         },
@@ -558,7 +558,7 @@ export const rustmoorWorld = {
                 completeQuest(state, 'rustmoor_syndicateSigns')
                 ctx.showDialogue(
                   [
-                    'The captain falls — a Syndicate sigil-coin rolls free.',
+                    'The captain gives up — a Syndicate sigil-coin rolls free.',
                     "Rustmoor's shakedown is over. Wando's skiff is fueled and ready.",
                     'Head back to the Starskiff — a new world awaits.',
                   ],
