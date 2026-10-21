@@ -1,0 +1,1589 @@
+{
+  "moves": [
+    {
+      "id": "strike",
+      "name": {
+        "en": "Strike",
+        "pl": "Uderzenie"
+      },
+      "kind": "attack",
+      "power": 6,
+      "focusCost": 0,
+      "accuracy": 0.95,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "world": "core"
+    },
+    {
+      "id": "forgeSlam",
+      "name": {
+        "en": "Forge Slam",
+        "pl": "Kuźniany Cios"
+      },
+      "kind": "attack",
+      "power": 11,
+      "focusCost": 3,
+      "accuracy": 0.85,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "world": "core"
+    },
+    {
+      "id": "guard",
+      "name": {
+        "en": "Guard",
+        "pl": "Osłona"
+      },
+      "kind": "buff",
+      "power": 0,
+      "focusCost": 0,
+      "accuracy": 1,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "world": "core"
+    },
+    {
+      "id": "scavengerSlash",
+      "name": {
+        "en": "Rusty Slash",
+        "pl": "Zardzewiałe Cięcie"
+      },
+      "kind": "attack",
+      "power": 5,
+      "focusCost": 0,
+      "accuracy": 0.85,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "world": "core"
+    },
+    {
+      "id": "pistolShot",
+      "name": {
+        "en": "Pistol Shot",
+        "pl": "Strzał z Pistoletu"
+      },
+      "kind": "attack",
+      "power": 6,
+      "focusCost": 0,
+      "accuracy": 0.98,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "world": "core"
+    },
+    {
+      "id": "rifleShot",
+      "name": {
+        "en": "Rifle Shot",
+        "pl": "Strzał z Karabinu"
+      },
+      "kind": "attack",
+      "power": 12,
+      "focusCost": 3,
+      "accuracy": 0.7,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "world": "core"
+    },
+    {
+      "id": "flamethrower",
+      "name": {
+        "en": "Flamethrower",
+        "pl": "Miotacz Ognia"
+      },
+      "kind": "attack",
+      "power": 9,
+      "focusCost": 2,
+      "accuracy": 0.8,
+      "status": {
+        "type": "burn",
+        "duration": 3,
+        "power": 3
+      },
+      "lifesteal": false,
+      "focusRestore": 0,
+      "world": "core"
+    },
+    {
+      "id": "trickShot",
+      "name": {
+        "en": "Trick Shot",
+        "pl": "Rykoszet"
+      },
+      "kind": "attack",
+      "power": 7,
+      "focusCost": 1,
+      "accuracy": 0.92,
+      "status": null,
+      "lifesteal": true,
+      "focusRestore": 0,
+      "world": "core"
+    },
+    {
+      "id": "grenadeToss",
+      "name": {
+        "en": "Grenade Toss",
+        "pl": "Rzut Granatem"
+      },
+      "kind": "attack",
+      "power": 16,
+      "focusCost": 5,
+      "accuracy": 0.6,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "world": "core"
+    },
+    {
+      "id": "push",
+      "name": {
+        "en": "Force Push",
+        "pl": "Pchnięcie Mocą"
+      },
+      "kind": "attack",
+      "power": 7,
+      "focusCost": 2,
+      "accuracy": 0.9,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "world": "core"
+    },
+    {
+      "id": "mend",
+      "name": {
+        "en": "Force Heal",
+        "pl": "Uzdrowienie Mocą"
+      },
+      "kind": "heal",
+      "power": 10,
+      "focusCost": 4,
+      "accuracy": 1,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "world": "core"
+    },
+    {
+      "id": "glimmer",
+      "name": {
+        "en": "Force Spark",
+        "pl": "Iskra Mocy"
+      },
+      "kind": "attack",
+      "power": 3,
+      "focusCost": 0,
+      "accuracy": 0.95,
+      "status": {
+        "type": "burn",
+        "duration": 3,
+        "power": 3
+      },
+      "lifesteal": false,
+      "focusRestore": 0,
+      "world": "core"
+    },
+    {
+      "id": "heavySlam",
+      "name": {
+        "en": "Heavy Slam",
+        "pl": "Ciężki Cios"
+      },
+      "kind": "attack",
+      "power": 14,
+      "focusCost": 4,
+      "accuracy": 0.8,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "world": "core"
+    },
+    {
+      "id": "drain",
+      "name": {
+        "en": "Drain",
+        "pl": "Wyssanie"
+      },
+      "kind": "attack",
+      "power": 8,
+      "focusCost": 3,
+      "accuracy": 0.9,
+      "status": null,
+      "lifesteal": true,
+      "focusRestore": 0,
+      "world": "core"
+    },
+    {
+      "id": "rally",
+      "name": {
+        "en": "Rally",
+        "pl": "Mobilizacja"
+      },
+      "kind": "buff",
+      "power": 0,
+      "focusCost": 0,
+      "accuracy": 1,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 2,
+      "world": "core"
+    },
+    {
+      "id": "rustmoor_slash",
+      "name": {
+        "en": "Raider Slash",
+        "pl": "Cięcie Najeźdźcy"
+      },
+      "kind": "attack",
+      "power": 7,
+      "focusCost": 0,
+      "accuracy": 0.85,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "world": "rustmoor"
+    },
+    {
+      "id": "rustmoor_scoutJab",
+      "name": {
+        "en": "Scout Jab",
+        "pl": "Dźgnięcie Zwiadowcy"
+      },
+      "kind": "attack",
+      "power": 6,
+      "focusCost": 0,
+      "accuracy": 0.9,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "world": "rustmoor"
+    },
+    {
+      "id": "rustmoor_shrapnelBurst",
+      "name": {
+        "en": "Shrapnel Burst",
+        "pl": "Odłamkowy Wybuch"
+      },
+      "kind": "attack",
+      "power": 13,
+      "focusCost": 0,
+      "accuracy": 0.8,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "world": "rustmoor"
+    },
+    {
+      "id": "mossfen_mireGrasp",
+      "name": {
+        "en": "Mire Grasp",
+        "pl": "Uchwyt Bagna"
+      },
+      "kind": "attack",
+      "power": 8,
+      "focusCost": 0,
+      "accuracy": 0.8,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "world": "mossfenReach"
+    },
+    {
+      "id": "mossfen_bogSlam",
+      "name": {
+        "en": "Bog Slam",
+        "pl": "Bagienny Cios"
+      },
+      "kind": "attack",
+      "power": 10,
+      "focusCost": 0,
+      "accuracy": 0.82,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "world": "mossfenReach"
+    },
+    {
+      "id": "mossfen_venomBite",
+      "name": {
+        "en": "Venom Bite",
+        "pl": "Jadowite Ukąszenie"
+      },
+      "kind": "attack",
+      "power": 7,
+      "focusCost": 0,
+      "accuracy": 0.92,
+      "status": {
+        "type": "poison",
+        "duration": 3,
+        "power": 2
+      },
+      "lifesteal": false,
+      "focusRestore": 0,
+      "world": "mossfenReach"
+    },
+    {
+      "id": "mossfen_corruptedSurge",
+      "name": {
+        "en": "Corrupted Surge",
+        "pl": "Skażony Impuls"
+      },
+      "kind": "attack",
+      "power": 15,
+      "focusCost": 0,
+      "accuracy": 0.85,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "world": "mossfenReach"
+    },
+    {
+      "id": "mossfen_mireRegen",
+      "name": {
+        "en": "Mire Regeneration",
+        "pl": "Bagienna Regeneracja"
+      },
+      "kind": "heal",
+      "power": 14,
+      "focusCost": 0,
+      "accuracy": 1,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "world": "mossfenReach"
+    },
+    {
+      "id": "ashvault_shockBaton",
+      "name": {
+        "en": "Shock Baton",
+        "pl": "Pałka Elektryczna"
+      },
+      "kind": "attack",
+      "power": 7,
+      "focusCost": 0,
+      "accuracy": 0.9,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "world": "ashvaultStation"
+    },
+    {
+      "id": "ashvault_overloadVent",
+      "name": {
+        "en": "Overload Vent",
+        "pl": "Przeciążony Wylot"
+      },
+      "kind": "attack",
+      "power": 13,
+      "focusCost": 3,
+      "accuracy": 0.8,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "world": "ashvaultStation"
+    },
+    {
+      "id": "ashvault_chainLash",
+      "name": {
+        "en": "Chain Lash",
+        "pl": "Łańcuchowe Uderzenie"
+      },
+      "kind": "attack",
+      "power": 9,
+      "focusCost": 1,
+      "accuracy": 0.9,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "world": "ashvaultStation"
+    },
+    {
+      "id": "ashvault_rustedClaw",
+      "name": {
+        "en": "Rusted Claw",
+        "pl": "Zardzewiały Pazur"
+      },
+      "kind": "attack",
+      "power": 10,
+      "focusCost": 0,
+      "accuracy": 0.85,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "world": "ashvaultStation"
+    },
+    {
+      "id": "ashvault_dronePulse",
+      "name": {
+        "en": "Drone Pulse",
+        "pl": "Impuls Drona"
+      },
+      "kind": "attack",
+      "power": 12,
+      "focusCost": 0,
+      "accuracy": 0.8,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "world": "ashvaultStation"
+    },
+    {
+      "id": "skyreach_windSlash",
+      "name": {
+        "en": "Wind Slash",
+        "pl": "Cięcie Wiatru"
+      },
+      "kind": "attack",
+      "power": 9,
+      "focusCost": 0,
+      "accuracy": 0.88,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "world": "skyreachCanopy"
+    },
+    {
+      "id": "skyreach_talonRake",
+      "name": {
+        "en": "Talon Rake",
+        "pl": "Pazurowe Drapnięcie"
+      },
+      "kind": "attack",
+      "power": 10,
+      "focusCost": 0,
+      "accuracy": 0.85,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "world": "skyreachCanopy"
+    },
+    {
+      "id": "skyreach_rootCoil",
+      "name": {
+        "en": "Root Coil",
+        "pl": "Korzeniowy Uścisk"
+      },
+      "kind": "debuff",
+      "power": 5,
+      "focusCost": 0,
+      "accuracy": 0.85,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "world": "skyreachCanopy"
+    },
+    {
+      "id": "skyreach_cycloneCleave",
+      "name": {
+        "en": "Cyclone Cleave",
+        "pl": "Cyklonowe Rozcięcie"
+      },
+      "kind": "attack",
+      "power": 15,
+      "focusCost": 0,
+      "accuracy": 0.85,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "world": "skyreachCanopy"
+    },
+    {
+      "id": "skyreach_downdraftSlam",
+      "name": {
+        "en": "Downdraft Slam",
+        "pl": "Cios Opadającego Wiatru"
+      },
+      "kind": "attack",
+      "power": 12,
+      "focusCost": 2,
+      "accuracy": 0.9,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "world": "skyreachCanopy"
+    },
+    {
+      "id": "skyreach_stormshear",
+      "name": {
+        "en": "Stormshear",
+        "pl": "Burzowe Rozdarcie"
+      },
+      "kind": "debuff",
+      "power": 6,
+      "focusCost": 0,
+      "accuracy": 0.9,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "world": "skyreachCanopy"
+    },
+    {
+      "id": "hollow_shockLance",
+      "name": {
+        "en": "Shock Lance",
+        "pl": "Lanca Elektryczna"
+      },
+      "kind": "attack",
+      "power": 10,
+      "focusCost": 0,
+      "accuracy": 0.88,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "world": "theHollow"
+    },
+    {
+      "id": "hollow_crushingBlow",
+      "name": {
+        "en": "Crushing Blow",
+        "pl": "Miażdżący Cios"
+      },
+      "kind": "attack",
+      "power": 16,
+      "focusCost": 0,
+      "accuracy": 0.85,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "world": "theHollow"
+    },
+    {
+      "id": "hollow_resonantSlam",
+      "name": {
+        "en": "Resonant Slam",
+        "pl": "Rezonansowy Cios"
+      },
+      "kind": "attack",
+      "power": 19,
+      "focusCost": 0,
+      "accuracy": 0.78,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "world": "theHollow"
+    },
+    {
+      "id": "hollow_syndicateVenom",
+      "name": {
+        "en": "Syndicate Venom",
+        "pl": "Jad Syndykatu"
+      },
+      "kind": "debuff",
+      "power": 5,
+      "focusCost": 0,
+      "accuracy": 0.9,
+      "status": {
+        "type": "poison",
+        "duration": 3,
+        "power": 4
+      },
+      "lifesteal": false,
+      "focusRestore": 0,
+      "world": "theHollow"
+    },
+    {
+      "id": "hollow_wardenResolve",
+      "name": {
+        "en": "Warden's Resolve",
+        "pl": "Determinacja Strażnika"
+      },
+      "kind": "heal",
+      "power": 16,
+      "focusCost": 0,
+      "accuracy": 1,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "world": "theHollow"
+    }
+  ],
+  "enemies": [
+    {
+      "id": "scavenger",
+      "name": {
+        "en": "Rustmoor Scavenger",
+        "pl": "Szabrownik z Rustmoor"
+      },
+      "maxHp": 18,
+      "atk": 5,
+      "def": 2,
+      "spd": 3,
+      "xpReward": 12,
+      "isBoss": false,
+      "moves": [
+        "scavengerSlash"
+      ],
+      "world": "core"
+    },
+    {
+      "id": "rustmoor_raider",
+      "name": {
+        "en": "Rustmoor Raider",
+        "pl": "Najeźdźca z Rustmoor"
+      },
+      "maxHp": 22,
+      "atk": 6,
+      "def": 3,
+      "spd": 4,
+      "xpReward": 16,
+      "isBoss": false,
+      "moves": [
+        "rustmoor_slash",
+        "strike"
+      ],
+      "world": "rustmoor"
+    },
+    {
+      "id": "rustmoor_raiderScout",
+      "name": {
+        "en": "Raider Scout",
+        "pl": "Zwiadowca Najeźdźców"
+      },
+      "maxHp": 20,
+      "atk": 5,
+      "def": 2,
+      "spd": 7,
+      "xpReward": 15,
+      "isBoss": false,
+      "moves": [
+        "rustmoor_scoutJab"
+      ],
+      "world": "rustmoor"
+    },
+    {
+      "id": "rustmoor_scavengerCaptain",
+      "name": {
+        "en": "Scavenger Captain",
+        "pl": "Kapitan Szabrowników"
+      },
+      "maxHp": 52,
+      "atk": 11,
+      "def": 6,
+      "spd": 5,
+      "xpReward": 100,
+      "isBoss": true,
+      "moves": [
+        "strike",
+        "rustmoor_shrapnelBurst",
+        "heavySlam"
+      ],
+      "world": "rustmoor"
+    },
+    {
+      "id": "mossfen_bogStalker",
+      "name": {
+        "en": "Bog Stalker",
+        "pl": "Bagienny Tropiciel"
+      },
+      "maxHp": 28,
+      "atk": 8,
+      "def": 3,
+      "spd": 4,
+      "xpReward": 20,
+      "isBoss": false,
+      "moves": [
+        "mossfen_mireGrasp",
+        "strike"
+      ],
+      "world": "mossfenReach"
+    },
+    {
+      "id": "mossfen_mireLurker",
+      "name": {
+        "en": "Mire Lurker",
+        "pl": "Czyhający w Bagnie"
+      },
+      "maxHp": 32,
+      "atk": 9,
+      "def": 4,
+      "spd": 3,
+      "xpReward": 24,
+      "isBoss": false,
+      "moves": [
+        "mossfen_bogSlam",
+        "mossfen_mireGrasp"
+      ],
+      "world": "mossfenReach"
+    },
+    {
+      "id": "mossfen_reedViper",
+      "name": {
+        "en": "Reed Viper",
+        "pl": "Trzcinowa Żmija"
+      },
+      "maxHp": 26,
+      "atk": 8,
+      "def": 2,
+      "spd": 7,
+      "xpReward": 19,
+      "isBoss": false,
+      "moves": [
+        "mossfen_venomBite",
+        "strike"
+      ],
+      "world": "mossfenReach"
+    },
+    {
+      "id": "mossfen_bogWarden",
+      "name": {
+        "en": "Bog Warden",
+        "pl": "Strażnik Bagna"
+      },
+      "maxHp": 88,
+      "atk": 12,
+      "def": 6,
+      "spd": 5,
+      "xpReward": 70,
+      "isBoss": true,
+      "moves": [
+        "mossfen_mireGrasp",
+        "mossfen_corruptedSurge",
+        "mossfen_mireRegen"
+      ],
+      "world": "mossfenReach"
+    },
+    {
+      "id": "ashvault_cinderTrooper",
+      "name": {
+        "en": "Cinder Trooper",
+        "pl": "Żołnierz Popiołu"
+      },
+      "maxHp": 40,
+      "atk": 10,
+      "def": 5,
+      "spd": 5,
+      "xpReward": 30,
+      "isBoss": false,
+      "moves": [
+        "ashvault_shockBaton",
+        "ashvault_chainLash"
+      ],
+      "world": "ashvaultStation"
+    },
+    {
+      "id": "ashvault_scrapLurker",
+      "name": {
+        "en": "Scrap Lurker",
+        "pl": "Czyhający w Złomie"
+      },
+      "maxHp": 36,
+      "atk": 11,
+      "def": 4,
+      "spd": 7,
+      "xpReward": 28,
+      "isBoss": false,
+      "moves": [
+        "ashvault_rustedClaw",
+        "ashvault_shockBaton"
+      ],
+      "world": "ashvaultStation"
+    },
+    {
+      "id": "ashvault_reclaimerDrone",
+      "name": {
+        "en": "Reclaimer Drone",
+        "pl": "Dron Odzysku"
+      },
+      "maxHp": 44,
+      "atk": 9,
+      "def": 7,
+      "spd": 4,
+      "xpReward": 32,
+      "isBoss": false,
+      "moves": [
+        "ashvault_dronePulse",
+        "ashvault_overloadVent"
+      ],
+      "world": "ashvaultStation"
+    },
+    {
+      "id": "ashvault_foreman",
+      "name": {
+        "en": "Syndicate Foreman",
+        "pl": "Brygadzista Syndykatu"
+      },
+      "maxHp": 115,
+      "atk": 16,
+      "def": 8,
+      "spd": 6,
+      "xpReward": 95,
+      "isBoss": true,
+      "moves": [
+        "forgeSlam",
+        "ashvault_overloadVent",
+        "ashvault_chainLash"
+      ],
+      "world": "ashvaultStation"
+    },
+    {
+      "id": "skyreach_galeStalker",
+      "name": {
+        "en": "Gale Stalker",
+        "pl": "Tropiciel Wichru"
+      },
+      "maxHp": 48,
+      "atk": 12,
+      "def": 6,
+      "spd": 8,
+      "xpReward": 36,
+      "isBoss": false,
+      "moves": [
+        "skyreach_windSlash",
+        "strike"
+      ],
+      "world": "skyreachCanopy"
+    },
+    {
+      "id": "skyreach_windReaver",
+      "name": {
+        "en": "Wind Reaver",
+        "pl": "Grabieżca Wiatru"
+      },
+      "maxHp": 52,
+      "atk": 13,
+      "def": 6,
+      "spd": 9,
+      "xpReward": 40,
+      "isBoss": false,
+      "moves": [
+        "skyreach_talonRake",
+        "skyreach_windSlash"
+      ],
+      "world": "skyreachCanopy"
+    },
+    {
+      "id": "skyreach_rootLurker",
+      "name": {
+        "en": "Root Lurker",
+        "pl": "Czyhający w Korzeniach"
+      },
+      "maxHp": 57,
+      "atk": 11,
+      "def": 9,
+      "spd": 5,
+      "xpReward": 42,
+      "isBoss": false,
+      "moves": [
+        "skyreach_rootCoil",
+        "strike"
+      ],
+      "world": "skyreachCanopy"
+    },
+    {
+      "id": "skyreach_enforcerVane",
+      "name": {
+        "en": "Enforcer Vane",
+        "pl": "Egzekutorka Vane"
+      },
+      "maxHp": 152,
+      "atk": 19,
+      "def": 10,
+      "spd": 9,
+      "xpReward": 160,
+      "isBoss": true,
+      "moves": [
+        "skyreach_cycloneCleave",
+        "skyreach_downdraftSlam",
+        "skyreach_stormshear"
+      ],
+      "world": "skyreachCanopy"
+    },
+    {
+      "id": "hollow_eliteGuard",
+      "name": {
+        "en": "Hollow Elite Guard",
+        "pl": "Elitarny Strażnik Czeluści"
+      },
+      "maxHp": 64,
+      "atk": 14,
+      "def": 7,
+      "spd": 6,
+      "xpReward": 55,
+      "isBoss": false,
+      "moves": [
+        "hollow_shockLance",
+        "push"
+      ],
+      "world": "theHollow"
+    },
+    {
+      "id": "hollow_shadowAgent",
+      "name": {
+        "en": "Hollow Shadow Agent",
+        "pl": "Cieniowy Agent Czeluści"
+      },
+      "maxHp": 52,
+      "atk": 11,
+      "def": 5,
+      "spd": 9,
+      "xpReward": 50,
+      "isBoss": false,
+      "moves": [
+        "hollow_syndicateVenom",
+        "strike"
+      ],
+      "world": "theHollow"
+    },
+    {
+      "id": "hollow_syndicateWarden",
+      "name": {
+        "en": "Syndicate Warden",
+        "pl": "Strażnik Syndykatu"
+      },
+      "maxHp": 210,
+      "atk": 22,
+      "def": 12,
+      "spd": 8,
+      "xpReward": 260,
+      "isBoss": true,
+      "moves": [
+        "hollow_crushingBlow",
+        "hollow_resonantSlam",
+        "hollow_syndicateVenom",
+        "hollow_wardenResolve"
+      ],
+      "world": "theHollow"
+    }
+  ],
+  "items": [
+    {
+      "id": "medkit",
+      "name": {
+        "en": "Medkit",
+        "pl": "Medkit"
+      },
+      "description": {
+        "en": "Restores 22 HP to one party member. Usable both in and out of battle.",
+        "pl": "Przywraca 22 PŻ jednemu członkowi drużyny. Można użyć w walce i poza nią."
+      }
+    },
+    {
+      "id": "tonic",
+      "name": {
+        "en": "Tonic",
+        "pl": "Tonic"
+      },
+      "description": {
+        "en": "Outside battle, restores 6 Focus to one party member. In battle, raises that member's Attack for the fight instead.",
+        "pl": "Poza walką przywraca 6 Skupienia jednemu członkowi drużyny. W walce zamiast tego zwiększa jego Atak do końca starcia."
+      }
+    }
+  ],
+  "party": [
+    {
+      "id": "kade",
+      "name": "Wando",
+      "startingMoves": [
+        "pistolShot"
+      ]
+    },
+    {
+      "id": "moss",
+      "name": "Gogu",
+      "startingMoves": [
+        "glimmer"
+      ]
+    }
+  ],
+  "worlds": [
+    {
+      "id": "rustmoor",
+      "name": {
+        "en": "Rustmoor",
+        "pl": "Rustmoor"
+      },
+      "startMap": "canyonApproach",
+      "maps": [
+        {
+          "id": "canyonApproach",
+          "name": {
+            "en": "Canyon",
+            "pl": "Kanion"
+          },
+          "npcs": [
+            "dessa"
+          ],
+          "enemySpawns": [
+            "rustmoor_raider",
+            "scavenger",
+            "rustmoor_raiderScout"
+          ],
+          "secrets": [
+            {
+              "id": "canyonBoulderStash",
+              "reward": {
+                "medkit": 1,
+                "tonic": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "settlement",
+          "name": {
+            "en": "Settlement",
+            "pl": "Osada"
+          },
+          "npcs": [
+            "elder",
+            "yara",
+            "pip",
+            "bram"
+          ],
+          "enemySpawns": [],
+          "secrets": []
+        },
+        {
+          "id": "depths",
+          "name": {
+            "en": "Depths",
+            "pl": "Głębiny"
+          },
+          "npcs": [
+            "tamsin"
+          ],
+          "enemySpawns": [
+            "scavenger",
+            "rustmoor_raider",
+            "rustmoor_raiderScout"
+          ],
+          "secrets": []
+        }
+      ]
+    },
+    {
+      "id": "mossfenReach",
+      "name": {
+        "en": "Mossfen Reach",
+        "pl": "Mossfen Reach"
+      },
+      "startMap": "approach",
+      "maps": [
+        {
+          "id": "approach",
+          "name": {
+            "en": "Reach Approach",
+            "pl": "Podejście do Mateczni"
+          },
+          "npcs": [
+            "juro"
+          ],
+          "enemySpawns": [
+            "mossfen_bogStalker",
+            "mossfen_reedViper",
+            "mossfen_mireLurker"
+          ],
+          "secrets": [
+            {
+              "id": "approachHiddenPassage",
+              "reward": {
+                "tonic": 1,
+                "medkit": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "settlement",
+          "name": {
+            "en": "Settlement",
+            "pl": "Osada"
+          },
+          "npcs": [
+            "finnTheTracker",
+            "birchKeeper",
+            "mireChild",
+            "selaNetmender"
+          ],
+          "enemySpawns": [],
+          "secrets": []
+        },
+        {
+          "id": "deepMire",
+          "name": {
+            "en": "Deep Mire",
+            "pl": "Głębokie Mokradła"
+          },
+          "npcs": [
+            "oldHarl"
+          ],
+          "enemySpawns": [
+            "mossfen_mireLurker",
+            "mossfen_bogStalker",
+            "mossfen_reedViper"
+          ],
+          "secrets": []
+        },
+        {
+          "id": "wardenLair",
+          "name": {
+            "en": "Warden's Lair",
+            "pl": "Legowisko Strażnika"
+          },
+          "npcs": [],
+          "enemySpawns": [],
+          "secrets": []
+        }
+      ]
+    },
+    {
+      "id": "ashvaultStation",
+      "name": {
+        "en": "Ashvault Station",
+        "pl": "Ashvault Station"
+      },
+      "startMap": "dockingApproach",
+      "maps": [
+        {
+          "id": "dockingApproach",
+          "name": {
+            "en": "Docking Approach",
+            "pl": "Podejście do Doku"
+          },
+          "npcs": [
+            "scrapRunner"
+          ],
+          "enemySpawns": [
+            "ashvault_cinderTrooper",
+            "ashvault_scrapLurker"
+          ],
+          "secrets": [
+            {
+              "id": "dockPillarStash",
+              "reward": {
+                "medkit": 1,
+                "tonic": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "habitationRing",
+          "name": {
+            "en": "Habitation Ring",
+            "pl": "Pierścień Mieszkalny"
+          },
+          "npcs": [
+            "dockHand",
+            "technician",
+            "restingWorker"
+          ],
+          "enemySpawns": [
+            "ashvault_cinderTrooper",
+            "ashvault_reclaimerDrone"
+          ],
+          "secrets": []
+        },
+        {
+          "id": "engineCore",
+          "name": {
+            "en": "Engine Core",
+            "pl": "Rdzeń Silnika"
+          },
+          "npcs": [
+            "ventTech",
+            "tamsin"
+          ],
+          "enemySpawns": [
+            "ashvault_cinderTrooper",
+            "ashvault_scrapLurker",
+            "ashvault_reclaimerDrone"
+          ],
+          "secrets": []
+        },
+        {
+          "id": "extractorVault",
+          "name": {
+            "en": "Extractor Vault",
+            "pl": "Skarbiec Ekstraktora"
+          },
+          "npcs": [],
+          "enemySpawns": [],
+          "secrets": []
+        }
+      ]
+    },
+    {
+      "id": "skyreachCanopy",
+      "name": {
+        "en": "Skyreach Canopy",
+        "pl": "Skyreach Canopy"
+      },
+      "startMap": "canopyApproach",
+      "maps": [
+        {
+          "id": "canopyApproach",
+          "name": {
+            "en": "Canopy",
+            "pl": "Korona Drzew"
+          },
+          "npcs": [
+            "hale"
+          ],
+          "enemySpawns": [
+            "skyreach_galeStalker",
+            "skyreach_windReaver"
+          ],
+          "secrets": [
+            {
+              "id": "canopyTrunkStash",
+              "reward": {
+                "tonic": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "skykinRefuge",
+          "name": {
+            "en": "Skykin Refuge",
+            "pl": "Schronienie Ludu Nieba"
+          },
+          "npcs": [
+            "senna",
+            "orin",
+            "tamsin",
+            "fenn"
+          ],
+          "enemySpawns": [],
+          "secrets": []
+        },
+        {
+          "id": "highReaches",
+          "name": {
+            "en": "High Reaches",
+            "pl": "Wysokie Rubieże"
+          },
+          "npcs": [
+            "wren"
+          ],
+          "enemySpawns": [
+            "skyreach_rootLurker",
+            "skyreach_galeStalker"
+          ],
+          "secrets": []
+        },
+        {
+          "id": "enforcerArena",
+          "name": {
+            "en": "Enforcer Arena",
+            "pl": "Arena Egzekutora"
+          },
+          "npcs": [],
+          "enemySpawns": [],
+          "secrets": []
+        }
+      ]
+    },
+    {
+      "id": "theHollow",
+      "name": {
+        "en": "The Hollow",
+        "pl": "Czeluść"
+      },
+      "startMap": "outerHollow",
+      "maps": [
+        {
+          "id": "outerHollow",
+          "name": {
+            "en": "Outer Hollow",
+            "pl": "Zewnętrzna Czeluść"
+          },
+          "npcs": [
+            "vex",
+            "lookout"
+          ],
+          "enemySpawns": [
+            "hollow_eliteGuard",
+            "hollow_shadowAgent"
+          ],
+          "secrets": [
+            {
+              "id": "outerPillarStash",
+              "reward": {
+                "medkit": 1,
+                "tonic": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "innerSanctum",
+          "name": {
+            "en": "Inner Sanctum",
+            "pl": "Wewnętrzne Sanktuarium"
+          },
+          "npcs": [
+            "rell",
+            "jun"
+          ],
+          "enemySpawns": [
+            "hollow_eliteGuard",
+            "hollow_shadowAgent"
+          ],
+          "secrets": []
+        },
+        {
+          "id": "wardenChamber",
+          "name": {
+            "en": "Warden's Chamber",
+            "pl": "Komnata Strażnika"
+          },
+          "npcs": [],
+          "enemySpawns": [
+            "hollow_eliteGuard",
+            "hollow_shadowAgent"
+          ],
+          "secrets": []
+        }
+      ]
+    }
+  ],
+  "quests": [
+    {
+      "id": "rustmoor_syndicateSigns",
+      "key": "T1",
+      "name": {
+        "en": "Signs of the Syndicate",
+        "pl": "Ślady Syndykatu"
+      },
+      "world": "rustmoor",
+      "giver": "Dessa",
+      "reward": {
+        "en": "Unlocks Mossfen Reach",
+        "pl": "Odblokowuje Mossfen Reach"
+      },
+      "solution": {
+        "en": [
+          "Talk to Dessa at her camp in the Canyon Approach — she asks you to find proof of the Hollow Syndicate in the old mine tunnels.",
+          "Head down into the Depths (through the Settlement's south door) and reach the mid chamber — the Syndicate sigil scratched into the wall advances the investigation.",
+          "Push on to the end of the Depths corridor and defeat the Scavenger Captain in the boss chamber. This finishes the quest and fuels Wando's skiff for the trip to Mossfen Reach."
+        ],
+        "pl": [
+          "Porozmawiaj z Dessą w jej obozie na Podejściu do Kanionu — prosi cię o znalezienie dowodów na działalność Syndykatu Pustki w starych tunelach kopalni.",
+          "Zejdź do Głębin (przez południowe drzwi Osady) i dotrz do środkowej komory — wyryty w murze symbol Syndykatu posuwa śledztwo do przodu.",
+          "Przejdź do końca korytarza Głębin i pokonaj Kapitana Szabrowników w komnacie szefa. To kończy zadanie i tankuje szkuner Wando na podróż do Mossfen Reach."
+        ]
+      }
+    },
+    {
+      "id": "rustmoor_yaraCache",
+      "key": "T2",
+      "name": {
+        "en": "Yara's Buried Cache",
+        "pl": "Zakopana Skrzynia Yary"
+      },
+      "world": "rustmoor",
+      "giver": "Yara",
+      "reward": {
+        "en": "+2 medkits, Wando DEF +1",
+        "pl": "+2 apteczki, Obrona Wando +1"
+      },
+      "solution": {
+        "en": [
+          "Talk to Yara in the Settlement — she hands you her mining pick (it clears the rubble gate deeper in the Depths) and asks you to find her buried medkit cache.",
+          "In the Depths' mid chamber, step onto the cache marker to find it.",
+          "Return to Yara and talk to her again to hand it over — you receive 2 medkits and Wando's DEF permanently +1."
+        ],
+        "pl": [
+          "Porozmawiaj z Yarą w Osadzie — daje ci swój kilof górniczy (rozbija zawał głębiej w Głębinach) i prosi o znalezienie jej zakopanej skrzyni z apteczkami.",
+          "W środkowej komorze Głębin stań na oznaczonym polu, by ją znaleźć.",
+          "Wróć do Yary i porozmawiaj z nią jeszcze raz, by jej to przekazać — otrzymujesz 2 apteczki, a Obrona Wando trwale wzrasta o 1."
+        ]
+      }
+    },
+    {
+      "id": "mossfen_lostScout",
+      "key": "T3",
+      "name": {
+        "en": "The Lost Scout",
+        "pl": "Zaginiony Zwiadowca"
+      },
+      "world": "mossfenReach",
+      "giver": "Finn the Tracker",
+      "reward": {
+        "en": "+1 medkit, Kinlight lantern",
+        "pl": "+1 apteczka, lampa Kinlight"
+      },
+      "solution": {
+        "en": [
+          "Talk to Finn in the Fenling Settlement — his kin Wick went missing scouting the Deep Mire.",
+          "Enter the Deep Mire and take the side branch north-west of the entrance room to the small room where Wick is tangled in root-snares; talking to her rescues her and hands you the Kinlight lantern (needed later to cross the dark-water gate).",
+          "Return to Finn in the Settlement and talk to him again to complete the quest and receive a medkit."
+        ],
+        "pl": [
+          "Porozmawiaj z Finnem w Osadzie Fenlingów — jego krewna Wick zaginęła, zwiadując w Głębokim Bagnisku.",
+          "Wejdź do Głębokiego Bagniska i skręć w boczny korytarz na północny zachód od komnaty wejściowej, do małego pokoju, gdzie Wick jest uwięziona w korzeniach-sidłach; rozmowa z nią uwalnia ją i daje ci lampę Kinlight (potrzebną później do przejścia przez bramę czarnej wody).",
+          "Wróć do Finna w Osadzie i porozmawiaj z nim ponownie, by zakończyć zadanie i otrzymać apteczkę."
+        ]
+      }
+    },
+    {
+      "id": "mossfen_syndicateTrail",
+      "key": "T4",
+      "name": {
+        "en": "What the Syndicate Took",
+        "pl": "Co Zabrał Syndykat"
+      },
+      "world": "mossfenReach",
+      "giver": "Birch Keeper",
+      "reward": {
+        "en": "Unlocks Ashvault Station",
+        "pl": "Odblokowuje Ashvault Station"
+      },
+      "solution": {
+        "en": [
+          "Talk to the Birch Keeper in the Settlement — something was dug up at the old shrine and she wants to know what.",
+          "Get the Kinlight lantern from Wick first (see \"The Lost Scout\") — without it, the dark-water gate deeper in the Deep Mire just bounces you back.",
+          "Cross the gate and reach the evidence room to find the cracked Syndicate siphon rig.",
+          "Continue on to the Bog Warden's Lair and defeat the Bog Warden to complete the quest."
+        ],
+        "pl": [
+          "Porozmawiaj ze Strażniczką Brzozy w Osadzie — coś wykopano przy starej świątyni i chce wiedzieć co.",
+          "Najpierw zdobądź lampę Kinlight od Wick (zobacz \"Zaginiony Zwiadowca\") — bez niej brama czarnej wody głębiej w Głębokim Bagnisku odeśle cię z powrotem.",
+          "Przejdź przez bramę i dotrz do komnaty z dowodami, by znaleźć uszkodzony aparat wysysający Syndykatu.",
+          "Idź dalej do Nory Strażnika Bagna i pokonaj Strażnika Bagna, by zakończyć zadanie."
+        ]
+      }
+    },
+    {
+      "id": "ashvault_tamsinRescue",
+      "key": "T5",
+      "name": {
+        "en": "Free Tamsin",
+        "pl": "Uwolnij Tamsin"
+      },
+      "world": "ashvaultStation",
+      "giver": "Dock Hand",
+      "reward": {
+        "en": "+1 medkit",
+        "pl": "+1 apteczka"
+      },
+      "solution": {
+        "en": [
+          "Talk to the dock hand in the Habitation Ring — Tamsin is being held in the Engine Core.",
+          "Head into the Engine Core and push past the first narrow neck to the junction room; step on the release switch there to free her.",
+          "Return to the dock hand and talk to him again to complete the quest and receive a medkit."
+        ],
+        "pl": [
+          "Porozmawiaj z dokerem w Pierścieniu Mieszkalnym — Tamsin jest przetrzymywana w Jądrze Silnika.",
+          "Wejdź do Jądra Silnika i przejdź przez pierwsze wąskie gardło do komnaty węzłowej; stań na przełączniku zwalniającym, by ją uwolnić.",
+          "Wróć do dokera i porozmawiaj z nim jeszcze raz, by zakończyć zadanie i otrzymać apteczkę."
+        ]
+      }
+    },
+    {
+      "id": "ashvault_extractorSabotage",
+      "key": "T6",
+      "name": {
+        "en": "The Current Extractor",
+        "pl": "Ekstraktor Nurtu"
+      },
+      "world": "ashvaultStation",
+      "giver": "Technician",
+      "reward": {
+        "en": "Unlocks Skyreach Canopy",
+        "pl": "Odblokowuje Skyreach Canopy"
+      },
+      "solution": {
+        "en": [
+          "Talk to the technician in the Habitation Ring — he wants confirmation of what the Extractor device is for.",
+          "Push on through the Engine Core to the schematics console and read it — it confirms the device is keyed to Gogu's signature, and unlocks the sealed blast door further in.",
+          "Continue to the Extractor Vault and defeat the Syndicate Foreman to complete the quest."
+        ],
+        "pl": [
+          "Porozmawiaj z technikiem w Pierścieniu Mieszkalnym — chce potwierdzenia, do czego służy Ekstraktor.",
+          "Przejdź przez Jądro Silnika do konsoli ze schematami i odczytaj ją — potwierdza, że urządzenie jest dostrojone do sygnatury Gogu, i odblokowuje zablokowane drzwi pancerne głębiej.",
+          "Idź dalej do Komory Ekstraktora i pokonaj Brygadzistę Syndykatu, by zakończyć zadanie."
+        ]
+      }
+    },
+    {
+      "id": "skyreach_hollowWatch",
+      "key": "T7",
+      "name": {
+        "en": "Shroud the Current-Well",
+        "pl": "Osłoń Studnię Nurtu"
+      },
+      "world": "skyreachCanopy",
+      "giver": "Senna",
+      "reward": {
+        "en": "Triggers the Enforcer Vane boss fight",
+        "pl": "Wywołuje walkę z bossem Egzekutorką Vane"
+      },
+      "solution": {
+        "en": [
+          "Talk to Senna in the Skykin Refuge — the Current-well in the High Reaches is broadcasting straight to the Syndicate.",
+          "Make your way up into the High Reaches (the Windward Charm from Tamsin opens the vine-lock gate blocking the way — see \"Find Wren in the High Reaches\") and reach the Current-well beacon to still it.",
+          "Return to Senna to complete the quest — this is also what brings Enforcer Vane down on the refuge for the chapter's boss fight."
+        ],
+        "pl": [
+          "Porozmawiaj z Senną w Schronieniu Skykin — Studnia Nurtu w Wysokich Ostępach nadaje sygnał prosto do Syndykatu.",
+          "Wejdź do Wysokich Ostępów (Amulet Wiatru od Tamsin otwiera bramę z lian blokującą drogę — zobacz \"Znajdź Wren w Wysokich Ostępach\") i dotrz do latarni Studni Nurtu, by ją uciszyć.",
+          "Wróć do Senny, by zakończyć zadanie — to właśnie ściąga Egzekutorkę Vane na schronienie, co prowadzi do walki z bossem tego rozdziału."
+        ]
+      }
+    },
+    {
+      "id": "skyreach_roostRescue",
+      "key": "T8",
+      "name": {
+        "en": "Find Wren in the High Reaches",
+        "pl": "Znajdź Wren w Wysokich Ostępach"
+      },
+      "world": "skyreachCanopy",
+      "giver": "Orin",
+      "reward": {
+        "en": "Gogu's max Focus +1",
+        "pl": "Maksymalne Skupienie Gogu +1"
+      },
+      "solution": {
+        "en": [
+          "Talk to Orin in the Skykin Refuge — Wren never came back from scouting the roost towers.",
+          "Talk to Tamsin in the Refuge to receive the Windward Charm, which opens the vine-lock gate in the High Reaches.",
+          "Cross the gate and find Wren near the roost — talking to them rescues Wren and permanently raises Gogu's max Focus by 1.",
+          "Return to Orin to complete the quest."
+        ],
+        "pl": [
+          "Porozmawiaj z Orinem w Schronieniu Skykin — Wren nie wróciła ze zwiadu przy wieżach gniazd.",
+          "Porozmawiaj z Tamsin w Schronieniu, by otrzymać Amulet Wiatru, który otwiera bramę z lian w Wysokich Ostępach.",
+          "Przejdź przez bramę i znajdź Wren niedaleko gniazda — rozmowa z nią ratuje Wren i trwale zwiększa maksymalne Skupienie Gogu o 1.",
+          "Wróć do Orina, by zakończyć zadanie."
+        ]
+      }
+    },
+    {
+      "id": "hollow_finaleQuestId",
+      "key": "T9",
+      "name": {
+        "en": "Break the Hollow",
+        "pl": "Złam Pustkę"
+      },
+      "world": "theHollow",
+      "giver": "—",
+      "reward": {
+        "en": "Completes the game",
+        "pl": "Kończy grę"
+      },
+      "solution": {
+        "en": [
+          "Walking away from your landing point in the Outer Hollow starts the quest automatically.",
+          "Shut down the shield relay in the Outer Hollow (Vex and the lookout both point you toward it) to silence the alarms.",
+          "Push into the Inner Sanctum and free Rell through the single doorway into her cell.",
+          "Advance through the Warden's Chamber corridor and defeat the Syndicate Warden at the chokepoint to finish the game."
+        ],
+        "pl": [
+          "Zadanie zaczyna się automatycznie, gdy odejdziesz od miejsca lądowania w Zewnętrznej Czeluści.",
+          "Wyłącz przekaźnik osłony w Zewnętrznej Czeluści (Vex i wartownik obaj wskazują na niego), by uciszyć alarmy.",
+          "Wejdź do Wewnętrznego Sanktuarium i uwolnij Rell przez jedyne wejście do jej celi.",
+          "Idź dalej przez korytarz Komnaty Strażnika i pokonaj Strażnika Syndykatu w wąskim przejściu, by zakończyć grę."
+        ]
+      }
+    }
+  ]
+}

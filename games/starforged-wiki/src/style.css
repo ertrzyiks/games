@@ -1,0 +1,252 @@
+:root {
+  color-scheme: dark;
+  --bg: #0b0d12;
+  --panel: #151822;
+  --panel-border: #2a2d36;
+  --text: #e8e8e8;
+  --text-dim: #a7acba;
+  --accent: #a78bfa;
+  --accent-dim: #5a63b8;
+  --boss: #e0564b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', system-ui, sans-serif;
+  line-height: 1.5;
+}
+
+#app {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 4rem;
+}
+
+header.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border-bottom: 2px solid var(--panel-border);
+  padding-bottom: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+h1.site-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 1.1rem;
+  color: var(--accent);
+  margin: 0;
+}
+
+.site-subtitle {
+  color: var(--text-dim);
+  margin: 0.35rem 0 0;
+  font-size: 0.9rem;
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+button,
+.btn {
+  font-family: inherit;
+  font-size: 0.85rem;
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  padding: 0.45rem 0.8rem;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+}
+
+button:hover,
+.btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+button[aria-current='true'] {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+  color: #101624;
+  font-weight: 600;
+}
+
+nav.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+section.panel {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+h2 {
+  margin-top: 0;
+  font-size: 1.2rem;
+}
+
+h3 {
+  font-size: 1.05rem;
+  color: var(--accent);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.45rem 0.6rem;
+  border-bottom: 1px solid var(--panel-border);
+  vertical-align: top;
+}
+
+th {
+  color: var(--text-dim);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+tr.boss td {
+  color: var(--boss);
+}
+
+.tag {
+  display: inline-block;
+  font-size: 0.72rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  border: 1px solid var(--panel-border);
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+.world-block {
+  margin-bottom: 2rem;
+}
+
+.world-block:last-child {
+  margin-bottom: 0;
+}
+
+.map-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.75rem;
+  margin: 0.75rem 0 1.25rem;
+}
+
+.map-card {
+  background: var(--bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.82rem;
+}
+
+.map-card h4 {
+  margin: 0 0 0.35rem;
+  color: var(--accent);
+  font-size: 0.9rem;
+}
+
+.map-card p {
+  margin: 0.2rem 0;
+  color: var(--text-dim);
+}
+
+.quest-card {
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  padding: 0.9rem 1rem;
+  margin-bottom: 0.9rem;
+  background: var(--bg);
+}
+
+.quest-card:last-child {
+  margin-bottom: 0;
+}
+
+.quest-card h4 {
+  margin: 0 0 0.3rem;
+  font-size: 1rem;
+}
+
+.quest-meta {
+  color: var(--text-dim);
+  font-size: 0.82rem;
+  margin-bottom: 0.6rem;
+}
+
+.quest-card ol {
+  margin: 0;
+  padding-left: 1.3rem;
+}
+
+.quest-card li {
+  margin-bottom: 0.35rem;
+}
+
+footer.site-footer {
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  text-align: center;
+  margin-top: 2rem;
+}
+
+footer.site-footer a {
+  color: var(--accent);
+}
+
+@media (max-width: 640px) {
+  table,
+  thead,
+  tbody,
+  th,
+  td,
+  tr {
+    display: block;
+  }
+  thead tr {
+    display: none;
+  }
+  tr {
+    border-bottom: 2px solid var(--panel-border);
+    padding: 0.4rem 0;
+  }
+  td {
+    border-bottom: none;
+    padding: 0.2rem 0;
+  }
+  td::before {
+    content: attr(data-label);
+    color: var(--text-dim);
+    font-size: 0.72rem;
+    display: block;
+  }
+}

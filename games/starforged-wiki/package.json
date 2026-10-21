@@ -1,0 +1,15 @@
+{
+  "name": "starforged-wiki",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "generate-data": "node scripts/generate-wiki-data.mjs",
+    "dev": "node scripts/generate-wiki-data.mjs && vite",
+    "build": "node scripts/generate-wiki-data.mjs && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}
