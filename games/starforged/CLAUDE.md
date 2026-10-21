@@ -1,6 +1,6 @@
-## Compatibility
+## Updating game
 
-All games should be compatible with small screens and optimized for touch screents
+After each update to the game make sure to also update corresponding part of the starforged-wiki if needed.
 
 ## Game design principles
 
