@@ -61,7 +61,7 @@ registerTranslations('pl', {
   poison: 'trucizna',
   '{name} drinks a tonic! Attack rises.': '{name} wypija eliksir! Atak wzrasta.',
   'Tonic x{count}': 'Eliksir x{count}',
-  'Your party has fallen...': 'Twoja drużyna poległa...',
+  'Your party has been defeated...': 'Twoja drużyna została pokonana...',
 
   // Footer control hint (index.html)
   'Arrows/WASD to move · Z/Enter = A · X/Esc = B': 'Strzałki/WASD - ruch · Z/Enter = A · X/Esc = B',
@@ -86,5 +86,5 @@ registerTranslations('pl', {
   'Force Spark': 'Iskra Mocy',
 
   // Base enemy (battle/enemies.js)
-  'Rustmoor Scavenger': 'Padlinożerca z Rustmoor',
+  'Rustmoor Scavenger': 'Szabrownik z Rustmoor',
 })

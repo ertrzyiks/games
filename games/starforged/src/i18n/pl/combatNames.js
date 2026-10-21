@@ -10,7 +10,7 @@ registerTranslations('pl', {
   // Rustmoor
   'Rustmoor Raider': 'Najeźdźca z Rustmoor',
   'Raider Scout': 'Zwiadowca Najeźdźców',
-  'Scavenger Captain': 'Kapitan Padlinożerców',
+  'Scavenger Captain': 'Kapitan Szabrowników',
   'Raider Slash': 'Cięcie Najeźdźcy',
   'Scout Jab': 'Dźgnięcie Zwiadowcy',
   'Shrapnel Burst': 'Odłamkowy Wybuch',

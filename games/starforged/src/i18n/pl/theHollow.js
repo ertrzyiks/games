@@ -45,14 +45,14 @@ const pl = {
 
   // --- vexDialogue ---------------------------------------------------------
   [`I'm Vex. I escaped the Syndicate.`]: `Jestem Vex. Uciekłam z Syndykatu.`,
-  [`Kill the shield relay past the courtyard before you go deeper.`]: `Zniszcz przekaźnik osłon za dziedzińcem, zanim pójdziesz dalej.`,
-  [`Relay's dead — good.`]: `Przekaźnik padł — dobrze.`,
+  [`Shut down the shield relay past the courtyard before you go deeper.`]: `Wyłącz przekaźnik osłon za dziedzińcem, zanim pójdziesz dalej.`,
+  [`Relay's down — good.`]: `Przekaźnik wyłączony — dobrze.`,
   [`They're still holding prisoners. Free them if you can.`]: `Wciąż trzymają więźniów. Uwolnij ich, jeśli możesz.`,
   [`You freed them. That's rare mercy down here.`]: `Uwolniłeś ich. To rzadkie miłosierdzie na tym dnie.`,
   [`The Warden waits past the sanctum. Gogu won't face it alone.`]: `Strażnik czeka za sanktuarium. Gogu nie stanie do tego sam.`,
 
   // --- lookoutDialogue -------------------------------------------------
-  [`Alarms are dead. Patrols still walk old routes.`]: `Alarmy nie działają. Patrole wciąż chodzą starymi trasami.`,
+  [`Alarms are down. Patrols still walk old routes.`]: `Alarmy nie działają. Patrole wciąż chodzą starymi trasami.`,
   [`Patrols sweep every few minutes. Watch the pattern.`]: `Patrol przechodzi tu co kilka minut. Obserwuj wzorzec.`,
   [`One of the broken pillars near the west wall is hollow.`]: `Jedna ze zniszczonych kolumn przy zachodniej ścianie jest pusta w środku.`,
   [`The pillar crumbles — a guard’s stashed kit!`]: `Kolumna się rozpada — schowany sprzęt strażnika!`,
@@ -62,12 +62,12 @@ const pl = {
   [`This is the Hollow — it ends here.`]: `To jest Czeluść — tu się to kończy.`,
   [`Cut their defenses, then go for the one in charge.`]: `Przetnij ich obronę, a potem idź po tego, kto tu rządzi.`,
   [`The shield relay hums before you.`]: `Przekaźnik osłon brzęczy przed tobą.`,
-  [`Wando cuts it dead — the alarms go silent.`]: `Wando przecina go — alarmy cichną.`,
+  [`Wando shuts it down — the alarms go silent.`]: `Wando wyłącza go — alarmy cichną.`,
 
   // --- rellDialogue ------------------------------------------------------
   [`Real air. I'd forgotten the feel.`]: `Prawdziwe powietrze. Zapomniałam, jak to jest.`,
   [`Go finish this, Wando.`]: `Idź, dokończ to, Wando.`,
-  [`...Wando? They said you were dead.`]: `...Wando? Mówili, że zginąłeś.`,
+  [`...Wando? They said you were gone for good.`]: `...Wando? Mówili, że przepadłeś na dobre.`,
   [`Free me and I'll tell you about Gogu.`]: `Uwolnij mnie, a powiem ci o Gogu.`,
 
   // --- junDialogue ---------------------------------------------------------
@@ -85,11 +85,11 @@ const pl = {
   // --- wardenChamber boss lead-in (4 lines, unchanged) --------------------
   [`The corridor opens onto a floor etched in cold red runes — the same sigils from Ashvault's vault, from the Bog Warden's hollow, all of it tracing back here.`]: `Korytarz otwiera się na podłogę wyżłobioną w zimnych, czerwonych runach — te same symbole, co w skarbcu Ashvault, w jamie Bagiennego Strażnika — wszystko prowadziło właśnie tutaj.`,
   [`At the center, wreathed in Syndicate light, the Warden rises to meet you.`]: `W centrum, otoczony światłem Syndykatu, Strażnik powstaje, by stanąć przed wami.`,
-  [`"The little psychic comes to us after all," it rasps. "Every world you crossed to get here, and it ends the same. Kneel, armorer, and he lives."`]: `"Mały psychik sam trafia w nasze ręce," chrypi. "Każdy świat, który przemierzyliście, by dotrzeć tutaj — a kończy się zawsze tak samo. Ukorz się, zbrojmistrzu, i on przeżyje."`,
+  [`"The little psychic comes to us after all," it rasps. "Every world you crossed to get here, and it ends the same. Kneel, armorer, and hand him over."`]: `"Mały psychik sam trafia w nasze ręce," chrypi. "Każdy świat, który przemierzyliście, by dotrzeć tutaj — a kończy się zawsze tak samo. Ukorz się, zbrojmistrzu, i oddaj go nam."`,
   [`Wando plants his feet, shield raised. "Gogu — stay behind me. This ends now. Not with him."`]: `Wando staje w rozkroku, unosi tarczę. "Gogu — zostań za mną. To się kończy teraz. Nie z nim."`,
 
   // --- onVictory ending (7 lines, including THE END — unchanged) ----------
-  [`The Warden falls still. The rune-light flickers, dims, and finally goes dark — the Hollow has nothing left to throw at you.`]: `Strażnik zastyga w bezruchu. Światło run miga, przygasa i wreszcie gaśnie całkiem — Czeluść nie ma już niczego, czym mogłaby w was rzucić.`,
+  [`The Warden sinks down, beaten. The rune-light flickers, dims, and finally goes dark — the Hollow has nothing left to throw at you.`]: `Strażnik osuwa się, pokonany. Światło run miga, przygasa i wreszcie gaśnie całkiem — Czeluść nie ma już niczego, czym mogłaby w was rzucić.`,
   [`Gogu steps out from behind Wando, small fingers finding his armored hand. "...It's quiet. I've never felt it this quiet before."`]: `Gogu wychodzi spod osłony Wando'a, małe palce odnajdują jego opancerzoną rękę. "...Jest cicho. Nigdy wcześniej nie czułem takiej ciszy."`,
   [`Wando kneels to his level. "That's the Current settling. Nobody's hunting it anymore — not here, not in the Reach, not anywhere we've been."`]: `Wando przyklęka, żeby spojrzeć mu w oczy. "To Prąd się wycisza. Nikt już go nie poluje — ani tu, ani w Reach, ani gdziekolwiek byliśmy."`,
   [`Rell, and everyone else the Syndicate dragged down here, will walk out into daylight they didn't expect to see again.`]: `Rell i wszyscy inni, których Syndykat zaciągnął tutaj, wyjdą na światło dnia, którego nie liczyli już ujrzeć.`,
