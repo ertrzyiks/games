@@ -268,6 +268,7 @@ for (let y = 0; y < DEPTHS_H; y++) {
   }
   depthsTiles.push(row)
 }
+depthsTiles[0][11] = 'door' // north: back up to the settlement
 // Decorative cave-in rocks and debris piles, clear of both corridor
 // columns and the gate/chokepoint tiles.
 depthsTiles[2][9] = 'rustmoor_debris'
@@ -432,7 +433,7 @@ export const rustmoorWorld = {
       enemySpawns: [],
       warps: [
         { x: 10, y: 0, toMap: 'canyonApproach', toX: 13, toY: CANYON_H - 2 },
-        { x: 10, y: SETTLEMENT_H - 1, toMap: 'depths', toX: 11, toY: 2 },
+        { x: 10, y: SETTLEMENT_H - 1, toMap: 'depths', toX: 11, toY: 1 },
       ],
       triggers: [],
     },
@@ -473,7 +474,7 @@ export const rustmoorWorld = {
       // Visible marker for Yara's buried cache, same tile as its
       // (unchanged) Trigger below.
       items: [{ id: 'yaraCache', x: 19, y: 11, spriteId: 'rustmoor_yaraCache', hideWhenFlag: 'rustmoor_yaraCacheFound' }],
-      warps: [{ x: 11, y: 1, toMap: 'settlement', toX: 10, toY: SETTLEMENT_H - 2 }],
+      warps: [{ x: 11, y: 0, toMap: 'settlement', toX: 10, toY: SETTLEMENT_H - 2 }],
       triggers: [
         // Syndicate scout sign — advances the plot quest once it has been
         // started by Dessa. Not gated behind the rubble, so the player can
