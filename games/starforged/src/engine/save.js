@@ -1,3 +1,5 @@
+import { normalizePartyMember } from '../data/gameState.js'
+
 const SAVE_KEY = 'starforged-save-v1'
 
 export function saveGame(state) {
@@ -19,7 +21,11 @@ export function loadGame() {
     const raw = localStorage.getItem(SAVE_KEY)
     if (!raw) return null
     const parsed = JSON.parse(raw)
-    return { ...parsed, flags: new Set(parsed.flags || []) }
+    const state = { ...parsed, flags: new Set(parsed.flags || []) }
+    // Older saves predate the known-vs-equipped moves split - backfill
+    // knownMoves from the equipped list so they keep working unchanged.
+    for (const member of Object.values(state.party || {})) normalizePartyMember(member)
+    return state
   } catch (err) {
     console.warn('Failed to load game', err)
     return null

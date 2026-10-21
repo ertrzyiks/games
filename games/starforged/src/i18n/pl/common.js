@@ -29,6 +29,23 @@ registerTranslations('pl', {
   '[done]': '[gotowe]',
   'A/B: Back': 'A/B: Wstecz',
 
+  // Hero screen
+  Heroes: 'Bohaterowie',
+  Moves: 'Ataki',
+  Back: 'Wstecz',
+  'A: Select   B: Back': 'A: Wybierz   B: Wstecz',
+  'HP {hp}/{maxHp}  Focus {focus}/{maxFocus}': 'PŻ {hp}/{maxHp}  Skupienie {focus}/{maxFocus}',
+  'Already at full HP.': 'Już przy pełnym PŻ.',
+  'Already at full Focus.': 'Już przy pełnym skupieniu.',
+  '{name} recovers {amount} HP!': '{name} odzyskuje {amount} PŻ!',
+  '{name} restores {amount} Focus!': '{name} odzyskuje {amount} skupienia!',
+  '{name}: Equipped Moves': '{name}: Wybrane Ataki',
+  '-- empty --': '-- brak --',
+  'A: Assign   B: Back': 'A: Przypisz   B: Wstecz',
+  'Known Moves': 'Poznane Ataki',
+  'A: Swap   B: Back': 'A: Zamień   B: Wstecz',
+  equipped: 'wybrany',
+
   // Travel minigame
   'Asteroid run!': 'Lot przez asteroidy!',
   'Remaining: {n}': 'Pozostało: {n}',
@@ -79,6 +96,8 @@ registerTranslations('pl', {
   'Pistol Shot': 'Strzał z Pistoletu',
   'Rifle Shot': 'Strzał z Karabinu',
   Flamethrower: 'Miotacz Ognia',
+  'Trick Shot': 'Rykoszet',
+  'Grenade Toss': 'Rzut Granatem',
 
   // Gogu's kit (Force-themed)
   'Force Push': 'Pchnięcie Mocą',

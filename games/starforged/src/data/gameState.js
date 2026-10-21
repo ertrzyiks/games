@@ -11,8 +11,17 @@
  * @property {number} def
  * @property {number} spd
  * @property {number} xp
- * @property {string[]} moves
+ * @property {string[]} moves - "equipped" loadout actually used in battle, capped at
+ *   MAX_EQUIPPED_MOVES. Battle code only ever reads this field, so it stays unchanged.
+ * @property {string[]} knownMoves - every move this member has unlocked so far via
+ *   level-ups (see MOVE_UNLOCKS below); grows without limit. The Hero screen lets the
+ *   player pick which ≤MAX_EQUIPPED_MOVES of these are currently equipped in `moves`.
  */
+
+// Battle's move menu (battleScene.js's _currentOptions) and its UI both assume a small,
+// fixed-size loadout - this is also the cap the Hero screen enforces when the player
+// swaps equipped moves.
+export const MAX_EQUIPPED_MOVES = 3
 
 export function createInitialState() {
   return {
@@ -40,6 +49,7 @@ export function createInitialState() {
         // Weapons unlock with level — see MOVE_UNLOCKS below. Wando starts
         // with just his pistol; Rifle Shot and the Flamethrower come later.
         moves: ['pistolShot'],
+        knownMoves: ['pistolShot'],
       },
       moss: {
         id: 'moss',
@@ -56,6 +66,7 @@ export function createInitialState() {
         // Gogu starts with just the free Force Spark; Force Push and Force
         // Heal unlock at level 2 — see MOVE_UNLOCKS below.
         moves: ['glimmer'],
+        knownMoves: ['glimmer'],
       },
     },
     inventory: { medkit: 2 },
@@ -106,8 +117,11 @@ export function xpToNextLevel(level) {
 // so the battle menu can never end up with nothing selectable. A level's
 // value can be a single move id or an array of move ids (e.g. Gogu learns
 // both Force Push and Force Heal the moment he hits level 2).
+// Wando gets two more attacks on top of his starting pistol/rifle/flamethrower
+// (trickShot, grenadeToss) so by level 7 he has 5 known moves to pick from, per
+// issue #21 - only 3 of them can be equipped at once (see MAX_EQUIPPED_MOVES).
 const MOVE_UNLOCKS = {
-  kade: { 2: 'rifleShot', 5: 'flamethrower' },
+  kade: { 2: 'rifleShot', 5: 'flamethrower', 6: 'trickShot', 7: 'grenadeToss' },
   moss: { 2: ['push', 'mend'] },
 }
 
@@ -130,9 +144,16 @@ export function grantXp(member, amount) {
     const unlock = MOVE_UNLOCKS[member.id]?.[member.level]
     const toUnlock = Array.isArray(unlock) ? unlock : unlock ? [unlock] : []
     for (const unlockedMoveId of toUnlock) {
-      if (!member.moves.includes(unlockedMoveId)) {
-        member.moves.push(unlockedMoveId)
+      if (!member.knownMoves.includes(unlockedMoveId)) {
+        member.knownMoves.push(unlockedMoveId)
         unlockedMoves.push(unlockedMoveId)
+        // Auto-equip while there's a free slot, so a freshly-unlocked move is
+        // usable in battle right away and a member is never left with 0
+        // equipped moves - once the loadout is full the player has to swap
+        // moves in deliberately from the new Hero screen.
+        if (member.moves.length < MAX_EQUIPPED_MOVES) {
+          member.moves.push(unlockedMoveId)
+        }
       }
     }
   }
@@ -141,4 +162,13 @@ export function grantXp(member, amount) {
 
 export function isPartyWiped(party) {
   return Object.values(party).every((m) => m.hp <= 0)
+}
+
+// Saves written before knownMoves existed only have `moves` (then still
+// capped at 3 by the old unlock schedule), so treat it as the full known
+// pool for an old save - the player hasn't missed anything, since nothing
+// could grant more than 3 moves yet at the time such a save was written.
+export function normalizePartyMember(member) {
+  if (!member.knownMoves) member.knownMoves = [...member.moves]
+  return member
 }
