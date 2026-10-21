@@ -31,7 +31,7 @@ registerTranslations('pl', {
 
   // Travel minigame
   'Asteroid run!': 'Lot przez asteroidy!',
-  '{s}s left': 'Zostało {s}s',
+  'Remaining: {n}': 'Pozostało: {n}',
 
   // Battle chrome
   and: 'i',
