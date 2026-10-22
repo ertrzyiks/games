@@ -25,7 +25,7 @@ function gameSrc(relPath) {
 
 const { getAllMoves } = await import(gameSrc('battle/moves.js'))
 const { getAllEnemies } = await import(gameSrc('battle/enemies.js'))
-const { MEDKIT_HEAL_AMOUNT, TONIC_FOCUS_RESTORE_AMOUNT } = await import(gameSrc('battle/items.js'))
+const { MEDKIT_HEAL_AMOUNT, TONIC_FOCUS_RESTORE_AMOUNT, MEDKIT_PRICE, TONIC_PRICE } = await import(gameSrc('battle/items.js'))
 const { createInitialState } = await import(gameSrc('data/gameState.js'))
 const { setLanguage, t } = await import(gameSrc('engine/i18n.js'))
 const { listWorldIds, getWorld } = await import(gameSrc('worlds/registry.js'))
@@ -81,6 +81,13 @@ const moves = getAllMoves().map((m) => ({
   status: m.applyStatus ? { type: m.applyStatus.type, duration: m.applyStatus.duration, power: m.applyStatus.power } : null,
   lifesteal: !!m.lifesteal,
   focusRestore: m.focusRestore || 0,
+  // damageType ('kinetic'|'fire'|'force') drives the weakTo/resistantTo
+  // multiplier in battleScene._resolveAction - see enemies[].weakTo/
+  // resistantTo below. healAll/upgradesFrom describe Force Heal+'s
+  // level-7 upgrade over Force Heal (mend -> mendPlus).
+  damageType: m.damageType || null,
+  healAll: !!m.healAll,
+  upgradesFrom: m.upgradesFrom || null,
   world: moveWorld.get(m.id) || CORE,
 }))
 
@@ -94,6 +101,11 @@ const enemies = getAllEnemies().map((e) => ({
   xpReward: e.xpReward,
   isBoss: !!e.isBoss,
   moves: e.moves,
+  // Regular enemies only ever carry weakTo (1.5x damage from a matching
+  // move damageType); bosses only ever carry resistantTo (0.6x damage,
+  // see battleScene.js) - never both on the same enemy.
+  weakTo: e.weakTo || null,
+  resistantTo: e.resistantTo || null,
   world: enemyWorld.get(e.id) || CORE,
 }))
 
@@ -101,17 +113,19 @@ const items = [
   {
     id: 'medkit',
     name: bilingual('Medkit'),
+    price: MEDKIT_PRICE,
     description: {
-      en: `Restores ${MEDKIT_HEAL_AMOUNT} HP to one party member. Usable both in and out of battle.`,
-      pl: `Przywraca ${MEDKIT_HEAL_AMOUNT} PŻ jednemu członkowi drużyny. Można użyć w walce i poza nią.`,
+      en: `Restores ${MEDKIT_HEAL_AMOUNT} HP to one party member. Usable both in and out of battle. Sold by each world's merchant for ${MEDKIT_PRICE} credits.`,
+      pl: `Przywraca ${MEDKIT_HEAL_AMOUNT} PŻ jednemu członkowi drużyny. Można użyć w walce i poza nią. Kupiec na każdym świecie sprzedaje ją za ${MEDKIT_PRICE} kredytów.`,
     },
   },
   {
     id: 'tonic',
     name: bilingual('Tonic'),
+    price: TONIC_PRICE,
     description: {
-      en: `Outside battle, restores ${TONIC_FOCUS_RESTORE_AMOUNT} Focus to one party member. In battle, raises that member's Attack for the fight instead.`,
-      pl: `Poza walką przywraca ${TONIC_FOCUS_RESTORE_AMOUNT} Skupienia jednemu członkowi drużyny. W walce zamiast tego zwiększa jego Atak do końca starcia.`,
+      en: `Outside battle, restores ${TONIC_FOCUS_RESTORE_AMOUNT} Focus to one party member. In battle, raises that member's Attack for the fight instead. Sold by each world's merchant for ${TONIC_PRICE} credits.`,
+      pl: `Poza walką przywraca ${TONIC_FOCUS_RESTORE_AMOUNT} Skupienia jednemu członkowi drużyny. W walce zamiast tego zwiększa jego Atak do końca starcia. Kupiec na każdym świecie sprzedaje go za ${TONIC_PRICE} kredytów.`,
     },
   },
 ]
@@ -122,6 +136,10 @@ const party = Object.values(initialState.party).map((member) => ({
   name: member.name,
   startingMoves: member.moves,
 }))
+// Wando and Gogu share one wallet (state.credits) from the very start of
+// the game, spent at any world's merchant NPC (see worlds[].maps[].npcs
+// below) and refilled mainly through quest rewards (see quests[].reward).
+const startingCredits = initialState.credits
 
 const worldMeta = [
   { id: 'rustmoor', order: 1 },
@@ -136,7 +154,7 @@ const worlds = worldMeta.map(({ id }) => {
   const maps = Object.entries(world.maps).map(([mapId, map]) => ({
     id: mapId,
     name: bilingual(map.name),
-    npcs: (map.npcs || []).map((npc) => npc.id),
+    npcs: (map.npcs || []).map((npc) => ({ id: npc.id, isMerchant: !!npc.isMerchant })),
     enemySpawns: [...new Set((map.enemySpawns || []).map((s) => s.enemyId))],
     secrets: (map.secrets || []).map((s) => ({
       id: s.id,
@@ -167,7 +185,7 @@ const QUESTS = [
     nameEn: 'Signs of the Syndicate',
     world: 'rustmoor',
     giver: 'Dessa',
-    reward: { en: 'Unlocks Mossfen Reach', pl: 'Odblokowuje Mossfen Reach' },
+    reward: { en: '+25 credits, unlocks Mossfen Reach', pl: '+25 kredytów, odblokowuje Mossfen Reach' },
     solution: {
       en: [
         'Talk to Dessa at her camp in the Canyon Approach — she asks you to find proof of the Hollow Syndicate in the old mine tunnels.',
@@ -227,7 +245,7 @@ const QUESTS = [
     nameEn: 'What the Syndicate Took',
     world: 'mossfenReach',
     giver: 'Birch Keeper',
-    reward: { en: 'Unlocks Ashvault Station', pl: 'Odblokowuje Ashvault Station' },
+    reward: { en: '+25 credits, unlocks Ashvault Station', pl: '+25 kredytów, odblokowuje Ashvault Station' },
     solution: {
       en: [
         'Talk to the Birch Keeper in the Settlement — something was dug up at the old shrine and she wants to know what.',
@@ -269,7 +287,7 @@ const QUESTS = [
     nameEn: 'The Current Extractor',
     world: 'ashvaultStation',
     giver: 'Technician',
-    reward: { en: 'Unlocks Skyreach Canopy', pl: 'Odblokowuje Skyreach Canopy' },
+    reward: { en: '+25 credits, unlocks Skyreach Canopy', pl: '+25 kredytów, odblokowuje Skyreach Canopy' },
     solution: {
       en: [
         'Talk to the technician in the Habitation Ring — he wants confirmation of what the Extractor device is for.',
@@ -289,7 +307,10 @@ const QUESTS = [
     nameEn: 'Shroud the Current-Well',
     world: 'skyreachCanopy',
     giver: 'Senna',
-    reward: { en: 'Triggers the Enforcer Vane boss fight', pl: 'Wywołuje walkę z bossem Egzekutorką Vane' },
+    reward: {
+      en: '+25 credits, triggers the Enforcer Vane boss fight',
+      pl: '+25 kredytów, wywołuje walkę z bossem Egzekutorką Vane',
+    },
     solution: {
       en: [
         'Talk to Senna in the Skykin Refuge — the Current-well in the High Reaches is broadcasting straight to the Syndicate.',
@@ -331,7 +352,7 @@ const QUESTS = [
     nameEn: 'Break the Hollow',
     world: 'theHollow',
     giver: '—',
-    reward: { en: 'Completes the game', pl: 'Kończy grę' },
+    reward: { en: '+45 credits, completes the game', pl: '+45 kredytów, kończy grę' },
     solution: {
       en: [
         'Walking away from your landing point in the Outer Hollow starts the quest automatically.',
@@ -359,7 +380,7 @@ const quests = QUESTS.map((q) => ({
   solution: q.solution,
 }))
 
-const data = { moves, enemies, items, party, worlds, quests }
+const data = { moves, enemies, items, party, startingCredits, worlds, quests }
 
 writeFileSync(OUT_FILE, JSON.stringify(data, null, 2))
 console.log(`Wrote ${OUT_FILE}`)

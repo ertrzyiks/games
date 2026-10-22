@@ -69,11 +69,11 @@ registerTranslations('pl', {
   [`Find the console. Don't touch the Extractor yet.`]:
     `Znajdź konsolę. Nie dotykaj jeszcze Ekstraktora.`,
 
-  // --- Habitation Ring: restingWorker NPC ---
+  // --- Habitation Ring: restingWorker NPC (merchant) ---
   [`They call our shifts 'labor debt' — debt to who?`]:
     `Nazywają nasze zmiany „długiem pracy” — komu ten dług?`,
-  [`The Syndicate doesn't trust strangers — neither do I, yet.`]:
-    `Syndykat nie wierzy obcym — ja też nie, jeszcze.`,
+  [`Still, I trade medkits and tonics if you've got the credits.`]:
+    `Ale handluję apteczkami i eliksirami, jeśli masz kredyty.`,
 
   // --- Engine Core: ventTech NPC ---
   [`Core's been running hot since they powered that thing up.`]:
@@ -122,6 +122,6 @@ registerTranslations('pl', {
     `Brygadzista się poddaje — Ekstraktor iskrzy i gaśnie.`,
   [`Gogu breathes out: "It's gone quiet."`]:
     `Gogu wypuszcza powietrze: „Zrobiło się cicho.”`,
-  [`Head back to the Starskiff for Skyreach Canopy.`]:
-    `Wróć na Starskiff, kurs na Skyreach Canopy.`,
+  [`Head back to the Starskiff for Skyreach Canopy. (+25 credits)`]:
+    `Wróć na Starskiff, kurs na Skyreach Canopy. (+25 kredytów)`,
 })

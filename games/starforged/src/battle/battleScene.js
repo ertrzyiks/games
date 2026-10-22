@@ -19,6 +19,12 @@ const MENU_FONT_BIG = 7
 const MENU_FONT_SMALL = 5
 const TONIC_ATK_BOOST = 5
 const TONIC_DURATION = 3
+// Damage-type multipliers (see battle/moves.js `damageType` and
+// battle/enemies.js `weakTo`/`resistantTo`). Regular enemies only ever
+// carry weakTo, bosses only ever carry resistantTo, so a single target
+// never triggers both.
+const WEAKNESS_MULTIPLIER = 1.5
+const RESISTANCE_MULTIPLIER = 0.6
 // Short on-screen tags for active status effects, shown next to a unit's
 // name on its HP bar.
 const STATUS_TAG = { burn: 'BRN', poison: 'PSN', boostAtk: 'ATK+', boostDef: 'DEF+' }
@@ -289,18 +295,22 @@ export class BattleScene {
 
     if (move.kind === 'heal') {
       const allies = action.isParty ? this._livingPartyUnits() : this._livingEnemies()
-      const target = allies.sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp)[0]
-      if (!target) return lines
-      const before = target.hp
-      target.hp = Math.min(target.maxHp, target.hp + move.power)
-      lines.push(
-        tf('{name} uses {move} on {target}, healing {amount} HP!', {
-          name: t(action.name),
-          move: t(move.name),
-          target: t(target.name),
-          amount: target.hp - before,
-        })
-      )
+      if (allies.length === 0) return lines
+      // Force Heal+ (see battle/moves.js mendPlus) tops up every living
+      // ally at once instead of only the one lowest on HP.
+      const targets = move.healAll ? allies : [allies.sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp)[0]]
+      for (const target of targets) {
+        const before = target.hp
+        target.hp = Math.min(target.maxHp, target.hp + move.power)
+        lines.push(
+          tf('{name} uses {move} on {target}, healing {amount} HP!', {
+            name: t(action.name),
+            move: t(move.name),
+            target: t(target.name),
+            amount: target.hp - before,
+          })
+        )
+      }
       return lines
     }
 
@@ -326,6 +336,11 @@ export class BattleScene {
     }
 
     let dmg = Math.max(1, Math.round(move.power + this._effectiveAtk(action.unit) - this._effectiveDef(target) * 0.5))
+    const isWeakHit = move.damageType && target.weakTo === move.damageType
+    const isResistedHit = move.damageType && (target.resistantTo || []).includes(move.damageType)
+    if (isWeakHit) dmg = Math.round(dmg * WEAKNESS_MULTIPLIER)
+    else if (isResistedHit) dmg = Math.round(dmg * RESISTANCE_MULTIPLIER)
+    dmg = Math.max(1, dmg)
     if (target.guarding) dmg = Math.max(1, Math.round(dmg / 2))
     target.hp = Math.max(0, target.hp - dmg)
     lines.push(
@@ -336,6 +351,8 @@ export class BattleScene {
         dmg,
       })
     )
+    if (isWeakHit) lines.push(tf('{target} is weak to this attack!', { target: t(target.name) }))
+    else if (isResistedHit) lines.push(tf('{target} resists this attack!', { target: t(target.name) }))
 
     if (move.lifesteal) {
       const healAmt = Math.max(1, Math.round(dmg / 2))

@@ -113,14 +113,19 @@ registerSprites({
 
 // --- Moves (namespaced) ----------------------------------------------------
 registerMoves({
-  rustmoor_slash: { name: 'Raider Slash', kind: 'attack', power: 7, focusCost: 0, accuracy: 0.85 },
-  rustmoor_scoutJab: { name: 'Scout Jab', kind: 'attack', power: 6, focusCost: 0, accuracy: 0.9 },
-  rustmoor_shrapnelBurst: { name: 'Shrapnel Burst', kind: 'attack', power: 13, focusCost: 0, accuracy: 0.8 },
+  rustmoor_slash: { name: 'Raider Slash', kind: 'attack', power: 7, focusCost: 0, accuracy: 0.85, damageType: 'kinetic' },
+  rustmoor_scoutJab: { name: 'Scout Jab', kind: 'attack', power: 6, focusCost: 0, accuracy: 0.9, damageType: 'kinetic' },
+  rustmoor_shrapnelBurst: { name: 'Shrapnel Burst', kind: 'attack', power: 13, focusCost: 0, accuracy: 0.8, damageType: 'kinetic' },
 })
 
 // --- Enemies -----------------------------------------------------------
-// Regular variety: the existing 'scavenger' plus two namespaced originals.
-// Named boss: Scavenger Captain (Rustmoor currently has no boss at all).
+// Regular variety: the existing 'scavenger' (weak to fire, see
+// battle/enemies.js) plus two namespaced originals, one weak to kinetic
+// (Wando's blasters) and one weak to force (Gogu's kit) so every one of
+// the game's three damage types has a soft target here. Named boss:
+// Scavenger Captain, resistant to both kinetic and fire like every other
+// chapter's boss (see battle/battleScene.js) - Force Push is the one
+// attack type that's never resisted.
 registerEnemies({
   rustmoor_raider: {
     name: 'Rustmoor Raider',
@@ -131,6 +136,7 @@ registerEnemies({
     spd: 4,
     moves: ['rustmoor_slash', 'strike'],
     xpReward: 16,
+    weakTo: 'kinetic',
   },
   rustmoor_raiderScout: {
     name: 'Raider Scout',
@@ -141,6 +147,7 @@ registerEnemies({
     spd: 7,
     moves: ['rustmoor_scoutJab'],
     xpReward: 15,
+    weakTo: 'force',
   },
   rustmoor_scavengerCaptain: {
     name: 'Scavenger Captain',
@@ -152,6 +159,7 @@ registerEnemies({
     moves: ['strike', 'rustmoor_shrapnelBurst', 'heavySlam'],
     xpReward: 100,
     isBoss: true,
+    resistantTo: ['kinetic', 'fire'],
   },
 })
 
@@ -411,9 +419,10 @@ export const rustmoorWorld = {
           y: 12,
           facing: 'down',
           spriteId: 'rustmoor_pip',
+          isMerchant: true,
           dialogue: [
             'Gogu, are you Current-touched too?',
-            'Stay away from the rockfall — a scary boss lives there!',
+            "I trade medkits and tonics, if you've got the credits.",
           ],
         },
         {
@@ -557,10 +566,11 @@ export const rustmoorWorld = {
               onVictory: (state) => {
                 const nextWorldId = unlockNextWorld(state, 'rustmoor')
                 completeQuest(state, 'rustmoor_syndicateSigns')
+                state.credits = (state.credits || 0) + 25
                 ctx.showDialogue(
                   [
                     'The captain gives up — a Syndicate sigil-coin rolls free.',
-                    "Rustmoor's shakedown is over. Wando's skiff is fueled and ready.",
+                    "Rustmoor's shakedown is over. Wando's skiff is fueled and ready. (+25 credits)",
                     'Head back to the Starskiff — a new world awaits.',
                   ],
                   () => ctx.openShip({ preselectWorldId: nextWorldId })

@@ -137,10 +137,17 @@ registerSprites({
 })
 
 // --- Moves -------------------------------------------------------------
+// damageType: Shock Lance and Crushing Blow are both mechanical melee hits
+// from the guard roster, so they read as 'kinetic'; Resonant Slam is named
+// for the Current-resonance behind the hit rather than the impact itself
+// (it's the Warden's own signature move), so it's tagged 'force' instead
+// of 'kinetic' despite "Slam" in the name. Syndicate Venom stays untagged —
+// it's a 'debuff' move (status only), matching every other debuff move in
+// the game (see worlds/skyreachCanopy.js), not an 'attack'.
 registerMoves({
-  hollow_shockLance: { name: 'Shock Lance', kind: 'attack', power: 10, focusCost: 0, accuracy: 0.88 },
-  hollow_crushingBlow: { name: 'Crushing Blow', kind: 'attack', power: 16, focusCost: 0, accuracy: 0.85 },
-  hollow_resonantSlam: { name: 'Resonant Slam', kind: 'attack', power: 19, focusCost: 0, accuracy: 0.78 },
+  hollow_shockLance: { name: 'Shock Lance', kind: 'attack', power: 10, focusCost: 0, accuracy: 0.88, damageType: 'kinetic' },
+  hollow_crushingBlow: { name: 'Crushing Blow', kind: 'attack', power: 16, focusCost: 0, accuracy: 0.85, damageType: 'kinetic' },
+  hollow_resonantSlam: { name: 'Resonant Slam', kind: 'attack', power: 19, focusCost: 0, accuracy: 0.78, damageType: 'force' },
   hollow_syndicateVenom: {
     name: 'Syndicate Venom',
     kind: 'debuff',
@@ -156,6 +163,16 @@ registerMoves({
 // Two regular elite-guard types, now placed as visible enemySpawns across
 // the outer courtyard, the sanctum, and the warden's corridor, plus the
 // buffed final boss (still a forced Trigger fight at the chokepoint).
+//
+// This world's own regular roster is just these two guard types (the other
+// chapters have three), so only two of the three damage types can have a
+// weak target here: the heavily armored eliteGuard (def 7) goes down with
+// fire, the fast, low-profile shadowAgent (spd 9, the highest of the two)
+// is weak to force — mirroring how the other chapters' fastest regular
+// enemy is always the one weak to force. 'kinetic' doesn't get a weak
+// target in this file, which is fine for the finale: Force Push still gets
+// its usual payoff against the boss below, which — like every other
+// chapter's boss — never resists force.
 registerEnemies({
   hollow_eliteGuard: {
     name: 'Hollow Elite Guard',
@@ -166,6 +183,7 @@ registerEnemies({
     spd: 6,
     moves: ['hollow_shockLance', 'push'],
     xpReward: 55,
+    weakTo: 'fire',
   },
   hollow_shadowAgent: {
     name: 'Hollow Shadow Agent',
@@ -176,9 +194,12 @@ registerEnemies({
     spd: 9,
     moves: ['hollow_syndicateVenom', 'strike'],
     xpReward: 50,
+    weakTo: 'force',
   },
   // Final boss — buffed from v1's 155 HP to the ch.5 balance target
   // (190-230) since the party is well leveled by the time it's reached.
+  // resistantTo kinetic+fire, same as every other chapter's boss — never
+  // force, so Gogu's kit always pays off here.
   hollow_syndicateWarden: {
     name: 'Syndicate Warden',
     spriteId: 'hollow_syndicateWarden',
@@ -189,6 +210,7 @@ registerEnemies({
     moves: ['hollow_crushingBlow', 'hollow_resonantSlam', 'hollow_syndicateVenom', 'hollow_wardenResolve'],
     xpReward: 260,
     isBoss: true,
+    resistantTo: ['kinetic', 'fire'],
   },
 })
 
@@ -352,11 +374,17 @@ function rellDialogue(state) {
   return ['...Wando? They said you were gone for good.', "Free me and I'll tell you about Gogu."]
 }
 
+// Purely flavor: Jun doesn't watch any quest, gate anything, or hint at a
+// secret — just a bystander loitering in the sanctum while everyone else
+// braces for the Warden. Makes them the one merchant NPC for this world
+// (see data/schema.js NPC.isMerchant): both branches below share the same
+// trade line, so the shop still gets offered no matter how far the player
+// has gotten.
 function junDialogue(state) {
   if (state.unlockedWorlds.length >= 5) {
-    return ['You crossed the whole Drift to get here.', "The Warden knows — that's why it stayed."]
+    return ['You crossed the whole Drift to get here.', 'Even down here, I still trade medkits and tonics for credits.']
   }
-  return ['This ends past that door.', "The Warden isn't running."]
+  return ['This ends past that door.', 'Even down here, I still trade medkits and tonics for credits.']
 }
 
 const innerSanctumMap = {
@@ -380,6 +408,7 @@ const innerSanctumMap = {
       y: 7,
       facing: 'left',
       spriteId: 'hollow_jun',
+      isMerchant: true,
       dialogue: junDialogue,
     },
   ],
@@ -491,10 +520,16 @@ const wardenChamberMap = {
         ctx.startBattle(['hollow_syndicateWarden'], {
           onVictory: (state) => {
             completeQuest(state, FINALE_QUEST_ID)
+            // Final chapter's climactic completion — a bigger reward than
+            // every other world's +25, since there's no next chapter to
+            // bankroll the trip into; it's spent on whatever's left to buy
+            // back at the Starskiff instead.
+            state.credits = (state.credits || 0) + 45
             state.flags.add('gameCompleted')
             ctx.showDialogue(
               [
                 'The Warden sinks down, beaten. The rune-light flickers, dims, and finally goes dark — the Hollow has nothing left to throw at you.',
+                'Among the wreckage, salvaged Syndicate tech is worth a small fortune back at the Starskiff. (+45 credits)',
                 'Gogu steps out from behind Wando, small fingers finding his armored hand. "...It\'s quiet. I\'ve never felt it this quiet before."',
                 'Wando kneels to his level. "That\'s the Current settling. Nobody\'s hunting it anymore — not here, not in the Reach, not anywhere we\'ve been."',
                 "Rell, and everyone else the Syndicate dragged down here, will walk out into daylight they didn't expect to see again.",

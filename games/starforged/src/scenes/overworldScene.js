@@ -22,10 +22,16 @@ import { saveGame, clearSave, loadCheckpoint, clearCheckpoint } from '../engine/
 import { ShipScene } from './shipScene.js'
 import { GameOverScene } from './gameOverScene.js'
 import { TitleScene } from './titleScene.js'
+import { ShopScene } from './shopScene.js'
 import { drawHud } from '../ui/hud.js'
 import { t } from '../engine/i18n.js'
 
 const BUMP_COOLDOWN_MS = 90
+// Both heroes trickle back HP while exploring, independent of medkits - a
+// slow safety net, not a substitute for them (compare ShipScene's 30s full
+// "Rest", the deliberate fallback once medkits run out).
+const HP_REGEN_INTERVAL_MS = 4000
+const HP_REGEN_AMOUNT = 1
 
 export class OverworldScene {
   constructor() {
@@ -35,6 +41,7 @@ export class OverworldScene {
   enter({ state }) {
     this.state = state
     this.moveCooldown = 0
+    this.hpRegenTimer = 0
     this._refreshMap()
   }
 
@@ -75,7 +82,19 @@ export class OverworldScene {
     return `_trig_${this.state.worldId}_${this.state.mapId}_${x}_${y}`
   }
 
+  _tickHpRegen(dt) {
+    this.hpRegenTimer += dt
+    while (this.hpRegenTimer >= HP_REGEN_INTERVAL_MS) {
+      this.hpRegenTimer -= HP_REGEN_INTERVAL_MS
+      for (const member of Object.values(this.state.party)) {
+        if (member.hp <= 0) continue
+        member.hp = Math.min(member.maxHp, member.hp + HP_REGEN_AMOUNT)
+      }
+    }
+  }
+
   update(dt) {
+    this._tickHpRegen(dt)
     const dialogueWasActive = this.dialogue.active
     this.dialogue.update(dt, input)
 
@@ -227,6 +246,20 @@ export class OverworldScene {
 
   _talkToNpc(npc) {
     if (npc.requiresFlag && !this.state.flags.has(npc.requiresFlag)) return
+    // A merchant NPC (one per world, see data/schema.js NPC.isMerchant)
+    // opens the shop straight away instead of a plain dialogue box — their
+    // `dialogue` lines are still shown first as a greeting when present, so
+    // existing flavor text doesn't need to be thrown away.
+    if (npc.isMerchant) {
+      const lines = typeof npc.dialogue === 'function' ? npc.dialogue(this.state) : npc.dialogue
+      this._markNpcSeen(npc)
+      if (lines && lines.length) {
+        this.dialogue.start(lines, () => this._openShop())
+      } else {
+        this._openShop()
+      }
+      return
+    }
     const lines = typeof npc.dialogue === 'function' ? npc.dialogue(this.state) : npc.dialogue
     this.dialogue.start(lines)
     // Compute the "seen" signature AFTER calling dialogue(), since some
@@ -234,6 +267,13 @@ export class OverworldScene {
     // being read — the signature should reflect what the player just
     // learned, not what was true a moment before.
     this._markNpcSeen(npc)
+  }
+
+  _openShop() {
+    sceneManager.push(new ShopScene(), {
+      state: this.state,
+      onClose: () => sceneManager.pop(),
+    })
   }
 
   _tryInteract() {

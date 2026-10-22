@@ -17,6 +17,9 @@ function deserialize(raw) {
   // Older saves predate the known-vs-equipped moves split - backfill
   // knownMoves from the equipped list so they keep working unchanged.
   for (const member of Object.values(state.party || {})) normalizePartyMember(member)
+  // Older saves predate the shared credits wallet - give them a starting
+  // balance too rather than locking existing players out of every merchant.
+  if (state.credits == null) state.credits = 30
   return state
 }
 

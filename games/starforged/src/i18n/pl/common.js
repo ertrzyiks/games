@@ -30,6 +30,21 @@ registerTranslations('pl', {
   'No quests yet. Talk to people!': 'Brak zadań. Porozmawiaj z kimś!',
   '[done]': '[gotowe]',
   'A/B: Back': 'A/B: Wstecz',
+  'Rest (30s)': 'Odpoczynek (30s)',
+  'Resting...': 'Odpoczynek...',
+  'B: Cancel': 'B: Odwołaj',
+
+  // Shop (merchant NPCs)
+  Shop: 'Sklep',
+  'Credits: {amount}': 'Kredyty: {amount}',
+  'Medkit — {price}cr': 'Apteczka — {price}kr',
+  'Tonic — {price}cr': 'Eliksir — {price}kr',
+  Leave: 'Wyjdź',
+  'Not enough credits.': 'Niewystarczająca liczba kredytów.',
+  'Bought a {item}!': 'Kupiono: {item}!',
+  Medkit: 'Apteczka',
+  Tonic: 'Eliksir',
+  'A: Buy   B: Leave': 'A: Kup   B: Wyjdź',
 
   // Hero screen
   Heroes: 'Bohaterowie',
@@ -67,6 +82,8 @@ registerTranslations('pl', {
   '{name} uses {move} but misses!': '{name} używa: {move}, ale chybia!',
   '{name} uses {move}! {target} takes {dmg} damage.': '{name} używa: {move}! {target} otrzymuje {dmg} obrażeń.',
   '{name} drains {amount} HP!': '{name} wysysa {amount} PŻ!',
+  '{target} is weak to this attack!': '{target} jest wrażliwy na ten atak!',
+  '{target} resists this attack!': '{target} jest odporny na ten atak!',
   '{target} is defeated!': '{target} zostaje pokonany!',
   'Victory! Gained {xp} XP.': 'Zwycięstwo! Zdobyto {xp} PD.',
   '{name} leveled up to Lv.{level}!': '{name} awansuje na poziom {level}!',
@@ -104,6 +121,7 @@ registerTranslations('pl', {
   // Gogu's kit (Force-themed)
   'Force Push': 'Pchnięcie Mocą',
   'Force Heal': 'Uzdrowienie Mocą',
+  'Force Heal+': 'Uzdrowienie Mocą+',
   'Force Spark': 'Iskra Mocy',
 
   // Base enemy (battle/enemies.js)

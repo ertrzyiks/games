@@ -25,6 +25,9 @@
  *   just shows once).
  * @property {string[]} [watchesFlags] - flag names this NPC's dialogue branches on (for flag-gated rather
  *   than quest-stage-gated dialogue) — same "!" marker behavior as watchesQuests.
+ * @property {boolean} [isMerchant] - one per world: talking to them shows their `dialogue` (if any) as a
+ *   greeting, then opens the ShopScene (see scenes/shopScene.js) to buy medkits/tonics with state.credits,
+ *   instead of just closing the dialogue box.
  *
  * @typedef {Object} Secret
  * @property {string} id           - unique within the map
@@ -105,6 +108,8 @@
  * @property {number} focusCost
  * @property {number} accuracy     - 0..1
  * @property {'kade'|'moss'|'any'} user
+ * @property {'kinetic'|'fire'|'force'} [damageType] - attack moves only; compared against a target's
+ *   weakTo/resistantTo (see EnemyDef) by battleScene._resolveAction for a damage multiplier
  *
  * @typedef {Object} EnemyDef
  * @property {string} id
@@ -117,6 +122,10 @@
  * @property {string[]} moves
  * @property {number} xpReward
  * @property {boolean} [isBoss]
+ * @property {'kinetic'|'fire'|'force'} [weakTo] - regular (non-boss) enemies only: takes 1.5x damage
+ *   from an attack move with this damageType
+ * @property {Array<'kinetic'|'fire'|'force'>} [resistantTo] - bosses only: takes 0.6x damage from an
+ *   attack move whose damageType is in this list
  *
  * @typedef {Object} Quest
  * @property {string} id       - unique quest id, e.g. 'rustmoor_syndicateSigns'

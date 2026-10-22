@@ -72,9 +72,8 @@ const pl = {
 
   // --- junDialogue ---------------------------------------------------------
   [`You crossed the whole Drift to get here.`]: `Przemierzyłeś cały Drift, żeby dotrzeć tutaj.`,
-  [`The Warden knows — that's why it stayed.`]: `Strażnik to wie — dlatego nie uciekł.`,
   [`This ends past that door.`]: `To się kończy za tymi drzwiami.`,
-  [`The Warden isn't running.`]: `Strażnik nie ucieka.`,
+  [`Even down here, I still trade medkits and tonics for credits.`]: `Nawet tu, na samym dnie, wciąż handluję apteczkami i eliksirami za kredyty.`,
 
   // --- innerSanctum triggers -----------------------------------------------
   [`The sanctum's quiet — too quiet.`]: `W sanktuarium jest cicho — zbyt cicho.`,
@@ -88,8 +87,10 @@ const pl = {
   [`"The little psychic comes to us after all," it rasps. "Every world you crossed to get here, and it ends the same. Kneel, armorer, and hand him over."`]: `"Mały psychik sam trafia w nasze ręce," chrypi. "Każdy świat, który przemierzyliście, by dotrzeć tutaj — a kończy się zawsze tak samo. Ukorz się, zbrojmistrzu, i oddaj go nam."`,
   [`Wando plants his feet, shield raised. "Gogu — stay behind me. This ends now. Not with him."`]: `Wando staje w rozkroku, unosi tarczę. "Gogu — zostań za mną. To się kończy teraz. Nie z nim."`,
 
-  // --- onVictory ending (7 lines, including THE END — unchanged) ----------
+  // --- onVictory ending (8 lines, including THE END; a new salvage/credits
+  // line was inserted second, the rest carried over unchanged) -----------
   [`The Warden sinks down, beaten. The rune-light flickers, dims, and finally goes dark — the Hollow has nothing left to throw at you.`]: `Strażnik osuwa się, pokonany. Światło run miga, przygasa i wreszcie gaśnie całkiem — Czeluść nie ma już niczego, czym mogłaby w was rzucić.`,
+  [`Among the wreckage, salvaged Syndicate tech is worth a small fortune back at the Starskiff. (+45 credits)`]: `Wśród gruzów, odzyskana technologia Syndykatu jest warta małej fortuny po powrocie na Starskiffa. (+45 kredytów)`,
   [`Gogu steps out from behind Wando, small fingers finding his armored hand. "...It's quiet. I've never felt it this quiet before."`]: `Gogu wychodzi spod osłony Wando'a, małe palce odnajdują jego opancerzoną rękę. "...Jest cicho. Nigdy wcześniej nie czułem takiej ciszy."`,
   [`Wando kneels to his level. "That's the Current settling. Nobody's hunting it anymore — not here, not in the Reach, not anywhere we've been."`]: `Wando przyklęka, żeby spojrzeć mu w oczy. "To Prąd się wycisza. Nikt już go nie poluje — ani tu, ani w Reach, ani gdziekolwiek byliśmy."`,
   [`Rell, and everyone else the Syndicate dragged down here, will walk out into daylight they didn't expect to see again.`]: `Rell i wszyscy inni, których Syndykat zaciągnął tutaj, wyjdą na światło dnia, którego nie liczyli już ujrzeć.`,

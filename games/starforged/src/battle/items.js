@@ -10,9 +10,20 @@
  * be gone before the next battle even started. Restoring Focus instead
  * keeps a tonic useful outside battle without needing a persistent
  * buff-tracking mechanism just for this.
+ *
+ * MEDKIT_HEAL_AMOUNT is deliberately kept well above a typical non-boss
+ * enemy hit (roughly 10-25 damage across the game's five chapters) so one
+ * medkit reliably outheals the damage from the attack that just landed,
+ * rather than merely softening it.
  */
-export const MEDKIT_HEAL_AMOUNT = 22
+export const MEDKIT_HEAL_AMOUNT = 35
 export const TONIC_FOCUS_RESTORE_AMOUNT = 6
+
+// Shop prices (see scenes/shopScene.js) - shared here so the wiki's
+// generated item descriptions can quote the same numbers instead of a
+// hand-copied duplicate.
+export const MEDKIT_PRICE = 15
+export const TONIC_PRICE = 20
 
 export function healWithMedkit(unit) {
   const before = unit.hp

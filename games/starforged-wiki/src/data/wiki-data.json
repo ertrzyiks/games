@@ -13,6 +13,9 @@
       "status": null,
       "lifesteal": false,
       "focusRestore": 0,
+      "damageType": "kinetic",
+      "healAll": false,
+      "upgradesFrom": null,
       "world": "core"
     },
     {
@@ -28,6 +31,9 @@
       "status": null,
       "lifesteal": false,
       "focusRestore": 0,
+      "damageType": "kinetic",
+      "healAll": false,
+      "upgradesFrom": null,
       "world": "core"
     },
     {
@@ -43,6 +49,9 @@
       "status": null,
       "lifesteal": false,
       "focusRestore": 0,
+      "damageType": null,
+      "healAll": false,
+      "upgradesFrom": null,
       "world": "core"
     },
     {
@@ -58,6 +67,9 @@
       "status": null,
       "lifesteal": false,
       "focusRestore": 0,
+      "damageType": "kinetic",
+      "healAll": false,
+      "upgradesFrom": null,
       "world": "core"
     },
     {
@@ -69,10 +81,13 @@
       "kind": "attack",
       "power": 6,
       "focusCost": 0,
-      "accuracy": 0.98,
+      "accuracy": 1,
       "status": null,
       "lifesteal": false,
       "focusRestore": 0,
+      "damageType": "kinetic",
+      "healAll": false,
+      "upgradesFrom": null,
       "world": "core"
     },
     {
@@ -84,10 +99,13 @@
       "kind": "attack",
       "power": 12,
       "focusCost": 3,
-      "accuracy": 0.7,
+      "accuracy": 0.78,
       "status": null,
       "lifesteal": false,
       "focusRestore": 0,
+      "damageType": "kinetic",
+      "healAll": false,
+      "upgradesFrom": null,
       "world": "core"
     },
     {
@@ -107,6 +125,9 @@
       },
       "lifesteal": false,
       "focusRestore": 0,
+      "damageType": "fire",
+      "healAll": false,
+      "upgradesFrom": null,
       "world": "core"
     },
     {
@@ -122,6 +143,9 @@
       "status": null,
       "lifesteal": true,
       "focusRestore": 0,
+      "damageType": "kinetic",
+      "healAll": false,
+      "upgradesFrom": null,
       "world": "core"
     },
     {
@@ -133,10 +157,13 @@
       "kind": "attack",
       "power": 16,
       "focusCost": 5,
-      "accuracy": 0.6,
+      "accuracy": 0.68,
       "status": null,
       "lifesteal": false,
       "focusRestore": 0,
+      "damageType": "kinetic",
+      "healAll": false,
+      "upgradesFrom": null,
       "world": "core"
     },
     {
@@ -152,6 +179,9 @@
       "status": null,
       "lifesteal": false,
       "focusRestore": 0,
+      "damageType": "force",
+      "healAll": false,
+      "upgradesFrom": null,
       "world": "core"
     },
     {
@@ -167,6 +197,27 @@
       "status": null,
       "lifesteal": false,
       "focusRestore": 0,
+      "damageType": null,
+      "healAll": false,
+      "upgradesFrom": null,
+      "world": "core"
+    },
+    {
+      "id": "mendPlus",
+      "name": {
+        "en": "Force Heal+",
+        "pl": "Uzdrowienie Mocą+"
+      },
+      "kind": "heal",
+      "power": 14,
+      "focusCost": 6,
+      "accuracy": 1,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "damageType": null,
+      "healAll": true,
+      "upgradesFrom": "mend",
       "world": "core"
     },
     {
@@ -186,6 +237,9 @@
       },
       "lifesteal": false,
       "focusRestore": 0,
+      "damageType": "force",
+      "healAll": false,
+      "upgradesFrom": null,
       "world": "core"
     },
     {
@@ -201,6 +255,9 @@
       "status": null,
       "lifesteal": false,
       "focusRestore": 0,
+      "damageType": "kinetic",
+      "healAll": false,
+      "upgradesFrom": null,
       "world": "core"
     },
     {
@@ -216,6 +273,9 @@
       "status": null,
       "lifesteal": true,
       "focusRestore": 0,
+      "damageType": "kinetic",
+      "healAll": false,
+      "upgradesFrom": null,
       "world": "core"
     },
     {
@@ -231,6 +291,9 @@
       "status": null,
       "lifesteal": false,
       "focusRestore": 2,
+      "damageType": null,
+      "healAll": false,
+      "upgradesFrom": null,
       "world": "core"
     },
     {
@@ -246,6 +309,9 @@
       "status": null,
       "lifesteal": false,
       "focusRestore": 0,
+      "damageType": "kinetic",
+      "healAll": false,
+      "upgradesFrom": null,
       "world": "rustmoor"
     },
     {
@@ -261,6 +327,9 @@
       "status": null,
       "lifesteal": false,
       "focusRestore": 0,
+      "damageType": "kinetic",
+      "healAll": false,
+      "upgradesFrom": null,
       "world": "rustmoor"
     },
     {
@@ -276,6 +345,9 @@
       "status": null,
       "lifesteal": false,
       "focusRestore": 0,
+      "damageType": "kinetic",
+      "healAll": false,
+      "upgradesFrom": null,
       "world": "rustmoor"
     },
     {
@@ -291,6 +363,9 @@
       "status": null,
       "lifesteal": false,
       "focusRestore": 0,
+      "damageType": "kinetic",
+      "healAll": false,
+      "upgradesFrom": null,
       "world": "mossfenReach"
     },
     {
@@ -306,6 +381,9 @@
       "status": null,
       "lifesteal": false,
       "focusRestore": 0,
+      "damageType": "kinetic",
+      "healAll": false,
+      "upgradesFrom": null,
       "world": "mossfenReach"
     },
     {
@@ -325,6 +403,9 @@
       },
       "lifesteal": false,
       "focusRestore": 0,
+      "damageType": "kinetic",
+      "healAll": false,
+      "upgradesFrom": null,
       "world": "mossfenReach"
     },
     {
@@ -340,6 +421,9 @@
       "status": null,
       "lifesteal": false,
       "focusRestore": 0,
+      "damageType": "force",
+      "healAll": false,
+      "upgradesFrom": null,
       "world": "mossfenReach"
     },
     {
@@ -355,6 +439,9 @@
       "status": null,
       "lifesteal": false,
       "focusRestore": 0,
+      "damageType": null,
+      "healAll": false,
+      "upgradesFrom": null,
       "world": "mossfenReach"
     },
     {
@@ -370,6 +457,9 @@
       "status": null,
       "lifesteal": false,
       "focusRestore": 0,
+      "damageType": "kinetic",
+      "healAll": false,
+      "upgradesFrom": null,
       "world": "ashvaultStation"
     },
     {
@@ -385,6 +475,9 @@
       "status": null,
       "lifesteal": false,
       "focusRestore": 0,
+      "damageType": "fire",
+      "healAll": false,
+      "upgradesFrom": null,
       "world": "ashvaultStation"
     },
     {
@@ -400,6 +493,9 @@
       "status": null,
       "lifesteal": false,
       "focusRestore": 0,
+      "damageType": "kinetic",
+      "healAll": false,
+      "upgradesFrom": null,
       "world": "ashvaultStation"
     },
     {
@@ -415,6 +511,9 @@
       "status": null,
       "lifesteal": false,
       "focusRestore": 0,
+      "damageType": "kinetic",
+      "healAll": false,
+      "upgradesFrom": null,
       "world": "ashvaultStation"
     },
     {
@@ -430,6 +529,9 @@
       "status": null,
       "lifesteal": false,
       "focusRestore": 0,
+      "damageType": "kinetic",
+      "healAll": false,
+      "upgradesFrom": null,
       "world": "ashvaultStation"
     },
     {
@@ -445,6 +547,9 @@
       "status": null,
       "lifesteal": false,
       "focusRestore": 0,
+      "damageType": "kinetic",
+      "healAll": false,
+      "upgradesFrom": null,
       "world": "skyreachCanopy"
     },
     {
@@ -460,6 +565,9 @@
       "status": null,
       "lifesteal": false,
       "focusRestore": 0,
+      "damageType": "kinetic",
+      "healAll": false,
+      "upgradesFrom": null,
       "world": "skyreachCanopy"
     },
     {
@@ -475,6 +583,9 @@
       "status": null,
       "lifesteal": false,
       "focusRestore": 0,
+      "damageType": null,
+      "healAll": false,
+      "upgradesFrom": null,
       "world": "skyreachCanopy"
     },
     {
@@ -490,6 +601,9 @@
       "status": null,
       "lifesteal": false,
       "focusRestore": 0,
+      "damageType": "kinetic",
+      "healAll": false,
+      "upgradesFrom": null,
       "world": "skyreachCanopy"
     },
     {
@@ -505,6 +619,9 @@
       "status": null,
       "lifesteal": false,
       "focusRestore": 0,
+      "damageType": "force",
+      "healAll": false,
+      "upgradesFrom": null,
       "world": "skyreachCanopy"
     },
     {
@@ -520,6 +637,9 @@
       "status": null,
       "lifesteal": false,
       "focusRestore": 0,
+      "damageType": null,
+      "healAll": false,
+      "upgradesFrom": null,
       "world": "skyreachCanopy"
     },
     {
@@ -535,6 +655,9 @@
       "status": null,
       "lifesteal": false,
       "focusRestore": 0,
+      "damageType": "kinetic",
+      "healAll": false,
+      "upgradesFrom": null,
       "world": "theHollow"
     },
     {
@@ -550,6 +673,9 @@
       "status": null,
       "lifesteal": false,
       "focusRestore": 0,
+      "damageType": "kinetic",
+      "healAll": false,
+      "upgradesFrom": null,
       "world": "theHollow"
     },
     {
@@ -565,6 +691,9 @@
       "status": null,
       "lifesteal": false,
       "focusRestore": 0,
+      "damageType": "force",
+      "healAll": false,
+      "upgradesFrom": null,
       "world": "theHollow"
     },
     {
@@ -584,6 +713,9 @@
       },
       "lifesteal": false,
       "focusRestore": 0,
+      "damageType": null,
+      "healAll": false,
+      "upgradesFrom": null,
       "world": "theHollow"
     },
     {
@@ -599,6 +731,9 @@
       "status": null,
       "lifesteal": false,
       "focusRestore": 0,
+      "damageType": null,
+      "healAll": false,
+      "upgradesFrom": null,
       "world": "theHollow"
     }
   ],
@@ -618,6 +753,8 @@
       "moves": [
         "scavengerSlash"
       ],
+      "weakTo": "fire",
+      "resistantTo": null,
       "world": "core"
     },
     {
@@ -636,6 +773,8 @@
         "rustmoor_slash",
         "strike"
       ],
+      "weakTo": "kinetic",
+      "resistantTo": null,
       "world": "rustmoor"
     },
     {
@@ -653,6 +792,8 @@
       "moves": [
         "rustmoor_scoutJab"
       ],
+      "weakTo": "force",
+      "resistantTo": null,
       "world": "rustmoor"
     },
     {
@@ -672,6 +813,11 @@
         "rustmoor_shrapnelBurst",
         "heavySlam"
       ],
+      "weakTo": null,
+      "resistantTo": [
+        "kinetic",
+        "fire"
+      ],
       "world": "rustmoor"
     },
     {
@@ -690,6 +836,8 @@
         "mossfen_mireGrasp",
         "strike"
       ],
+      "weakTo": "kinetic",
+      "resistantTo": null,
       "world": "mossfenReach"
     },
     {
@@ -708,6 +856,8 @@
         "mossfen_bogSlam",
         "mossfen_mireGrasp"
       ],
+      "weakTo": "fire",
+      "resistantTo": null,
       "world": "mossfenReach"
     },
     {
@@ -726,6 +876,8 @@
         "mossfen_venomBite",
         "strike"
       ],
+      "weakTo": "force",
+      "resistantTo": null,
       "world": "mossfenReach"
     },
     {
@@ -745,6 +897,11 @@
         "mossfen_corruptedSurge",
         "mossfen_mireRegen"
       ],
+      "weakTo": null,
+      "resistantTo": [
+        "kinetic",
+        "fire"
+      ],
       "world": "mossfenReach"
     },
     {
@@ -763,6 +920,8 @@
         "ashvault_shockBaton",
         "ashvault_chainLash"
       ],
+      "weakTo": "kinetic",
+      "resistantTo": null,
       "world": "ashvaultStation"
     },
     {
@@ -781,6 +940,8 @@
         "ashvault_rustedClaw",
         "ashvault_shockBaton"
       ],
+      "weakTo": "fire",
+      "resistantTo": null,
       "world": "ashvaultStation"
     },
     {
@@ -799,6 +960,8 @@
         "ashvault_dronePulse",
         "ashvault_overloadVent"
       ],
+      "weakTo": "force",
+      "resistantTo": null,
       "world": "ashvaultStation"
     },
     {
@@ -818,6 +981,11 @@
         "ashvault_overloadVent",
         "ashvault_chainLash"
       ],
+      "weakTo": null,
+      "resistantTo": [
+        "kinetic",
+        "fire"
+      ],
       "world": "ashvaultStation"
     },
     {
@@ -836,6 +1004,8 @@
         "skyreach_windSlash",
         "strike"
       ],
+      "weakTo": "kinetic",
+      "resistantTo": null,
       "world": "skyreachCanopy"
     },
     {
@@ -854,6 +1024,8 @@
         "skyreach_talonRake",
         "skyreach_windSlash"
       ],
+      "weakTo": "force",
+      "resistantTo": null,
       "world": "skyreachCanopy"
     },
     {
@@ -872,6 +1044,8 @@
         "skyreach_rootCoil",
         "strike"
       ],
+      "weakTo": "fire",
+      "resistantTo": null,
       "world": "skyreachCanopy"
     },
     {
@@ -891,6 +1065,11 @@
         "skyreach_downdraftSlam",
         "skyreach_stormshear"
       ],
+      "weakTo": null,
+      "resistantTo": [
+        "kinetic",
+        "fire"
+      ],
       "world": "skyreachCanopy"
     },
     {
@@ -909,6 +1088,8 @@
         "hollow_shockLance",
         "push"
       ],
+      "weakTo": "fire",
+      "resistantTo": null,
       "world": "theHollow"
     },
     {
@@ -927,6 +1108,8 @@
         "hollow_syndicateVenom",
         "strike"
       ],
+      "weakTo": "force",
+      "resistantTo": null,
       "world": "theHollow"
     },
     {
@@ -947,6 +1130,11 @@
         "hollow_syndicateVenom",
         "hollow_wardenResolve"
       ],
+      "weakTo": null,
+      "resistantTo": [
+        "kinetic",
+        "fire"
+      ],
       "world": "theHollow"
     }
   ],
@@ -955,22 +1143,24 @@
       "id": "medkit",
       "name": {
         "en": "Medkit",
-        "pl": "Medkit"
+        "pl": "Apteczka"
       },
+      "price": 15,
       "description": {
-        "en": "Restores 22 HP to one party member. Usable both in and out of battle.",
-        "pl": "Przywraca 22 PŻ jednemu członkowi drużyny. Można użyć w walce i poza nią."
+        "en": "Restores 35 HP to one party member. Usable both in and out of battle. Sold by each world's merchant for 15 credits.",
+        "pl": "Przywraca 35 PŻ jednemu członkowi drużyny. Można użyć w walce i poza nią. Kupiec na każdym świecie sprzedaje ją za 15 kredytów."
       }
     },
     {
       "id": "tonic",
       "name": {
         "en": "Tonic",
-        "pl": "Tonic"
+        "pl": "Eliksir"
       },
+      "price": 20,
       "description": {
-        "en": "Outside battle, restores 6 Focus to one party member. In battle, raises that member's Attack for the fight instead.",
-        "pl": "Poza walką przywraca 6 Skupienia jednemu członkowi drużyny. W walce zamiast tego zwiększa jego Atak do końca starcia."
+        "en": "Outside battle, restores 6 Focus to one party member. In battle, raises that member's Attack for the fight instead. Sold by each world's merchant for 20 credits.",
+        "pl": "Poza walką przywraca 6 Skupienia jednemu członkowi drużyny. W walce zamiast tego zwiększa jego Atak do końca starcia. Kupiec na każdym świecie sprzedaje go za 20 kredytów."
       }
     }
   ],
@@ -990,6 +1180,7 @@
       ]
     }
   ],
+  "startingCredits": 30,
   "worlds": [
     {
       "id": "rustmoor",
@@ -1006,7 +1197,10 @@
             "pl": "Kanion"
           },
           "npcs": [
-            "dessa"
+            {
+              "id": "dessa",
+              "isMerchant": false
+            }
           ],
           "enemySpawns": [
             "rustmoor_raider",
@@ -1030,10 +1224,22 @@
             "pl": "Osada"
           },
           "npcs": [
-            "elder",
-            "yara",
-            "pip",
-            "bram"
+            {
+              "id": "elder",
+              "isMerchant": false
+            },
+            {
+              "id": "yara",
+              "isMerchant": false
+            },
+            {
+              "id": "pip",
+              "isMerchant": true
+            },
+            {
+              "id": "bram",
+              "isMerchant": false
+            }
           ],
           "enemySpawns": [],
           "secrets": []
@@ -1045,7 +1251,10 @@
             "pl": "Głębiny"
           },
           "npcs": [
-            "tamsin"
+            {
+              "id": "tamsin",
+              "isMerchant": false
+            }
           ],
           "enemySpawns": [
             "scavenger",
@@ -1071,7 +1280,10 @@
             "pl": "Podejście do Mateczni"
           },
           "npcs": [
-            "juro"
+            {
+              "id": "juro",
+              "isMerchant": false
+            }
           ],
           "enemySpawns": [
             "mossfen_bogStalker",
@@ -1095,10 +1307,22 @@
             "pl": "Osada"
           },
           "npcs": [
-            "finnTheTracker",
-            "birchKeeper",
-            "mireChild",
-            "selaNetmender"
+            {
+              "id": "finnTheTracker",
+              "isMerchant": false
+            },
+            {
+              "id": "birchKeeper",
+              "isMerchant": false
+            },
+            {
+              "id": "mireChild",
+              "isMerchant": true
+            },
+            {
+              "id": "selaNetmender",
+              "isMerchant": false
+            }
           ],
           "enemySpawns": [],
           "secrets": []
@@ -1110,7 +1334,10 @@
             "pl": "Głębokie Mokradła"
           },
           "npcs": [
-            "oldHarl"
+            {
+              "id": "oldHarl",
+              "isMerchant": false
+            }
           ],
           "enemySpawns": [
             "mossfen_mireLurker",
@@ -1146,7 +1373,10 @@
             "pl": "Podejście do Doku"
           },
           "npcs": [
-            "scrapRunner"
+            {
+              "id": "scrapRunner",
+              "isMerchant": false
+            }
           ],
           "enemySpawns": [
             "ashvault_cinderTrooper",
@@ -1169,9 +1399,18 @@
             "pl": "Pierścień Mieszkalny"
           },
           "npcs": [
-            "dockHand",
-            "technician",
-            "restingWorker"
+            {
+              "id": "dockHand",
+              "isMerchant": false
+            },
+            {
+              "id": "technician",
+              "isMerchant": false
+            },
+            {
+              "id": "restingWorker",
+              "isMerchant": true
+            }
           ],
           "enemySpawns": [
             "ashvault_cinderTrooper",
@@ -1186,8 +1425,14 @@
             "pl": "Rdzeń Silnika"
           },
           "npcs": [
-            "ventTech",
-            "tamsin"
+            {
+              "id": "ventTech",
+              "isMerchant": false
+            },
+            {
+              "id": "tamsin",
+              "isMerchant": false
+            }
           ],
           "enemySpawns": [
             "ashvault_cinderTrooper",
@@ -1223,7 +1468,10 @@
             "pl": "Korona Drzew"
           },
           "npcs": [
-            "hale"
+            {
+              "id": "hale",
+              "isMerchant": false
+            }
           ],
           "enemySpawns": [
             "skyreach_galeStalker",
@@ -1245,10 +1493,22 @@
             "pl": "Schronienie Ludu Nieba"
           },
           "npcs": [
-            "senna",
-            "orin",
-            "tamsin",
-            "fenn"
+            {
+              "id": "senna",
+              "isMerchant": false
+            },
+            {
+              "id": "orin",
+              "isMerchant": false
+            },
+            {
+              "id": "tamsin",
+              "isMerchant": false
+            },
+            {
+              "id": "fenn",
+              "isMerchant": true
+            }
           ],
           "enemySpawns": [],
           "secrets": []
@@ -1260,7 +1520,10 @@
             "pl": "Wysokie Rubieże"
           },
           "npcs": [
-            "wren"
+            {
+              "id": "wren",
+              "isMerchant": false
+            }
           ],
           "enemySpawns": [
             "skyreach_rootLurker",
@@ -1295,8 +1558,14 @@
             "pl": "Zewnętrzna Czeluść"
           },
           "npcs": [
-            "vex",
-            "lookout"
+            {
+              "id": "vex",
+              "isMerchant": false
+            },
+            {
+              "id": "lookout",
+              "isMerchant": false
+            }
           ],
           "enemySpawns": [
             "hollow_eliteGuard",
@@ -1319,8 +1588,14 @@
             "pl": "Wewnętrzne Sanktuarium"
           },
           "npcs": [
-            "rell",
-            "jun"
+            {
+              "id": "rell",
+              "isMerchant": false
+            },
+            {
+              "id": "jun",
+              "isMerchant": true
+            }
           ],
           "enemySpawns": [
             "hollow_eliteGuard",
@@ -1355,8 +1630,8 @@
       "world": "rustmoor",
       "giver": "Dessa",
       "reward": {
-        "en": "Unlocks Mossfen Reach",
-        "pl": "Odblokowuje Mossfen Reach"
+        "en": "+25 credits, unlocks Mossfen Reach",
+        "pl": "+25 kredytów, odblokowuje Mossfen Reach"
       },
       "solution": {
         "en": [
@@ -1433,8 +1708,8 @@
       "world": "mossfenReach",
       "giver": "Birch Keeper",
       "reward": {
-        "en": "Unlocks Ashvault Station",
-        "pl": "Odblokowuje Ashvault Station"
+        "en": "+25 credits, unlocks Ashvault Station",
+        "pl": "+25 kredytów, odblokowuje Ashvault Station"
       },
       "solution": {
         "en": [
@@ -1487,8 +1762,8 @@
       "world": "ashvaultStation",
       "giver": "Technician",
       "reward": {
-        "en": "Unlocks Skyreach Canopy",
-        "pl": "Odblokowuje Skyreach Canopy"
+        "en": "+25 credits, unlocks Skyreach Canopy",
+        "pl": "+25 kredytów, odblokowuje Skyreach Canopy"
       },
       "solution": {
         "en": [
@@ -1513,8 +1788,8 @@
       "world": "skyreachCanopy",
       "giver": "Senna",
       "reward": {
-        "en": "Triggers the Enforcer Vane boss fight",
-        "pl": "Wywołuje walkę z bossem Egzekutorką Vane"
+        "en": "+25 credits, triggers the Enforcer Vane boss fight",
+        "pl": "+25 kredytów, wywołuje walkę z bossem Egzekutorką Vane"
       },
       "solution": {
         "en": [
@@ -1567,8 +1842,8 @@
       "world": "theHollow",
       "giver": "—",
       "reward": {
-        "en": "Completes the game",
-        "pl": "Kończy grę"
+        "en": "+45 credits, completes the game",
+        "pl": "+45 kredytów, kończy grę"
       },
       "solution": {
         "en": [

@@ -189,15 +189,26 @@ registerSprites({
 
 // --- Moves -----------------------------------------------------------------
 registerMoves({
-  skyreach_windSlash: { name: 'Wind Slash', kind: 'attack', power: 9, focusCost: 0, accuracy: 0.88 },
-  skyreach_talonRake: { name: 'Talon Rake', kind: 'attack', power: 10, focusCost: 0, accuracy: 0.85 },
+  skyreach_windSlash: { name: 'Wind Slash', kind: 'attack', power: 9, focusCost: 0, accuracy: 0.88, damageType: 'kinetic' },
+  skyreach_talonRake: { name: 'Talon Rake', kind: 'attack', power: 10, focusCost: 0, accuracy: 0.85, damageType: 'kinetic' },
   skyreach_rootCoil: { name: 'Root Coil', kind: 'debuff', power: 5, focusCost: 0, accuracy: 0.85 },
-  skyreach_cycloneCleave: { name: 'Cyclone Cleave', kind: 'attack', power: 15, focusCost: 0, accuracy: 0.85 },
-  skyreach_downdraftSlam: { name: 'Downdraft Slam', kind: 'attack', power: 12, focusCost: 2, accuracy: 0.9 },
+  skyreach_cycloneCleave: { name: 'Cyclone Cleave', kind: 'attack', power: 15, focusCost: 0, accuracy: 0.85, damageType: 'kinetic' },
+  // Storm/Current-churned downdraft, not a plain physical hit — the one
+  // 'force' attack in this world's own moveset (see the enemies' weakTo
+  // comment below for how the rest of the three damage types show up).
+  skyreach_downdraftSlam: { name: 'Downdraft Slam', kind: 'attack', power: 12, focusCost: 2, accuracy: 0.9, damageType: 'force' },
   skyreach_stormshear: { name: 'Stormshear', kind: 'debuff', power: 6, focusCost: 0, accuracy: 0.9 },
 })
 
 // --- Enemies -----------------------------------------------------------------
+// Regular variety: one weakness of each damage type across the regular
+// roster (kinetic/fire/force) so every one of the game's three damage types
+// has a soft target here — Gale Stalker knocked off-balance by blunt
+// kinetic hits, Wind Reaver's own wind-current destabilized by Gogu's
+// force, Root Lurker's root-and-vine bulk burning easily. Named boss:
+// Enforcer Vane, resistant to both kinetic and fire like every other
+// chapter's boss (see battle/battleScene.js) — Force Push is the one
+// attack type that's never resisted.
 registerEnemies({
   skyreach_galeStalker: {
     name: 'Gale Stalker',
@@ -208,6 +219,7 @@ registerEnemies({
     spd: 8,
     moves: ['skyreach_windSlash', 'strike'],
     xpReward: 36,
+    weakTo: 'kinetic',
   },
   skyreach_windReaver: {
     name: 'Wind Reaver',
@@ -218,6 +230,7 @@ registerEnemies({
     spd: 9,
     moves: ['skyreach_talonRake', 'skyreach_windSlash'],
     xpReward: 40,
+    weakTo: 'force',
   },
   skyreach_rootLurker: {
     name: 'Root Lurker',
@@ -228,6 +241,7 @@ registerEnemies({
     spd: 5,
     moves: ['skyreach_rootCoil', 'strike'],
     xpReward: 42,
+    weakTo: 'fire',
   },
   // Elite Syndicate enforcer — the chapter's boss. Aerial/wind-themed to
   // match the setting; drops from a glider-rig to force the fight at the
@@ -242,6 +256,7 @@ registerEnemies({
     moves: ['skyreach_cycloneCleave', 'skyreach_downdraftSlam', 'skyreach_stormshear'],
     xpReward: 160,
     isBoss: true,
+    resistantTo: ['kinetic', 'fire'],
   },
 })
 
@@ -489,7 +504,8 @@ export const skyreachCanopyWorld = {
           y: 13,
           facing: 'down',
           spriteId: 'skyreach_fenn',
-          dialogue: ["Fenn: You're really Wando Ironhelm?", "Fenn: Gogu doesn't look scary at all."],
+          isMerchant: true,
+          dialogue: ["Fenn: You're really Wando Ironhelm?", "Fenn: I trade medkits and tonics for credits, if you want some!"],
         },
       ],
       enemySpawns: [],
@@ -624,11 +640,12 @@ export const skyreachCanopyWorld = {
                   onVictory: (state) => {
                     const nextWorldId = unlockNextWorld(state, 'skyreachCanopy')
                     completeQuest(state, WATCH_QUEST)
+                    state.credits = (state.credits || 0) + 25
                     ctx.showDialogue(
                       [
                         'Enforcer Vane crashes against the rail, defeated.',
                         'The refuge is safe — for now.',
-                        'Head back to the Starskiff. The Hollow awaits.',
+                        'Head back to the Starskiff. The Hollow awaits. (+25 credits)',
                       ],
                       () => ctx.openShip({ preselectWorldId: nextWorldId })
                     )

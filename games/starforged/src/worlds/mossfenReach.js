@@ -172,21 +172,25 @@ registerSprites({
 
 // --- World-specific moves ------------------------------------------------
 registerMoves({
-  mossfen_mireGrasp: { name: 'Mire Grasp', kind: 'attack', power: 8, focusCost: 0, accuracy: 0.8 },
-  mossfen_bogSlam: { name: 'Bog Slam', kind: 'attack', power: 10, focusCost: 0, accuracy: 0.82 },
+  mossfen_mireGrasp: { name: 'Mire Grasp', kind: 'attack', power: 8, focusCost: 0, accuracy: 0.8, damageType: 'kinetic' },
+  mossfen_bogSlam: { name: 'Bog Slam', kind: 'attack', power: 10, focusCost: 0, accuracy: 0.82, damageType: 'kinetic' },
   mossfen_venomBite: {
     name: 'Venom Bite',
     kind: 'attack',
     power: 7,
     focusCost: 0,
     accuracy: 0.92,
+    damageType: 'kinetic',
     applyStatus: { type: 'poison', duration: 3, power: 2 },
   },
-  mossfen_corruptedSurge: { name: 'Corrupted Surge', kind: 'attack', power: 15, focusCost: 0, accuracy: 0.85 },
+  mossfen_corruptedSurge: { name: 'Corrupted Surge', kind: 'attack', power: 15, focusCost: 0, accuracy: 0.85, damageType: 'force' },
   mossfen_mireRegen: { name: 'Mire Regeneration', kind: 'heal', power: 14, focusCost: 0, accuracy: 1 },
 })
 
 // --- World-specific enemies -----------------------------------------------
+// One weakness of each damage type across the regular roster (kinetic/fire/
+// force), boss resistant to kinetic+fire like every other chapter's boss -
+// see battle/battleScene.js's multiplier comment.
 registerEnemies({
   mossfen_bogStalker: {
     name: 'Bog Stalker',
@@ -197,6 +201,7 @@ registerEnemies({
     spd: 4,
     moves: ['mossfen_mireGrasp', 'strike'],
     xpReward: 20,
+    weakTo: 'kinetic',
   },
   mossfen_mireLurker: {
     name: 'Mire Lurker',
@@ -207,6 +212,7 @@ registerEnemies({
     spd: 3,
     moves: ['mossfen_bogSlam', 'mossfen_mireGrasp'],
     xpReward: 24,
+    weakTo: 'fire',
   },
   mossfen_reedViper: {
     name: 'Reed Viper',
@@ -217,6 +223,7 @@ registerEnemies({
     spd: 7,
     moves: ['mossfen_venomBite', 'strike'],
     xpReward: 19,
+    weakTo: 'force',
   },
   mossfen_bogWarden: {
     name: 'Bog Warden',
@@ -228,13 +235,19 @@ registerEnemies({
     moves: ['mossfen_mireGrasp', 'mossfen_corruptedSurge', 'mossfen_mireRegen'],
     xpReward: 70,
     isBoss: true,
+    resistantTo: ['kinetic', 'fire'],
   },
 })
 
 // === Map 1: Reach Approach (26x20) — outdoor swamp/reed approach. A mud
 // flat ringed by murkwater, dotted with reed patches and swamp dressing,
 // with a north door up to the settlement. ===
-const approachTiles = buildGrid(26, 20, 'mossfen_murkwater')
+// 30 wide, not 26: columns 26-29 sit past the map's original right edge and
+// stay plain unwalkable murkwater (indistinguishable from the border) until
+// the secret below opens a path into them - see the comment at the fake
+// wall tile (25,8) for why the hidden chamber lives out there instead of
+// carved into the already-reachable interior.
+const approachTiles = buildGrid(30, 20, 'mossfen_murkwater')
 fillRect(approachTiles, 1, 1, 24, 18, 'mossfen_mud')
 fillRect(approachTiles, 2, 2, 6, 2, 'mossfen_reeds')
 fillRect(approachTiles, 16, 3, 7, 2, 'mossfen_reeds')
@@ -255,26 +268,14 @@ setTile(approachTiles, 24, 6, 'mossfen_rootTangle')
 setTile(approachTiles, 16, 5, 'mossfen_rootTangle')
 setTile(approachTiles, 13, 1, 'door')
 
-// Hidden passage walling (secret: see secrets[] below) — a 4x4 pocket at
-// x19-22,y6-9, otherwise unused open mud this far from any other content on
-// this map. The ring is unwalkable decorative tiles on every side except
-// (19,8), the fake-wall entrance; (20,7)/(21,7)/(20,8)/(21,8) are left as
-// the default mossfen_mud from the base fillRect above and serve as the
-// hidden chamber floor — already "open" terrain, just unreachable until
-// the entrance opens. Found-state (post-reveal) just turns (19,8) itself
-// into mud; see the secret's opensTiles.
-setTile(approachTiles, 19, 6, 'mossfen_deadTree')
-setTile(approachTiles, 20, 6, 'mossfen_deadTree')
-setTile(approachTiles, 21, 6, 'mossfen_deadTree')
-setTile(approachTiles, 22, 6, 'mossfen_rootTangle')
-setTile(approachTiles, 19, 7, 'mossfen_rootTangle')
-setTile(approachTiles, 22, 7, 'mossfen_deadTree')
-setTile(approachTiles, 19, 8, 'mossfen_mossRock') // the fake wall / secret entrance
-setTile(approachTiles, 22, 8, 'mossfen_rootTangle')
-setTile(approachTiles, 19, 9, 'mossfen_deadTree')
-setTile(approachTiles, 20, 9, 'mossfen_rootTangle')
-setTile(approachTiles, 21, 9, 'mossfen_rootTangle')
-setTile(approachTiles, 22, 9, 'mossfen_deadTree')
+// Hidden passage (secret: see secrets[] below): the fake wall sits right at
+// (25,8), the map's original right-hand edge (the fillRect above only
+// walks the interior out to x=24, so x=25 is still the default
+// mossfen_murkwater border) - and the chamber it opens into is carved out
+// of columns 26-29, entirely beyond that original edge. Before the secret
+// is found, those columns just read as more unremarkable water/border, not
+// as a visibly walled-off room sitting inside the already-explorable map.
+setTile(approachTiles, 25, 8, 'mossfen_mossRock') // the fake wall / secret entrance
 
 // === Map 2: Fenling Settlement (21x18) — hub. A glow-floor patch at its
 // heart marks where the old shrine light still lingers. ===
@@ -339,7 +340,7 @@ export const mossfenReachWorld = {
   maps: {
     approach: {
       name: 'Reach Approach',
-      width: 26,
+      width: 30,
       height: 20,
       tiles: approachTiles,
       npcs: [
@@ -365,13 +366,29 @@ export const mossfenReachWorld = {
       secrets: [
         {
           id: 'approachHiddenPassage',
-          x: 19,
+          x: 25,
           y: 8,
           reward: { tonic: 1, medkit: 1 },
-          opensTiles: [{ x: 19, y: 8, tileId: 'mossfen_mud' }],
+          // Opens the entrance tile itself, a one-tile corridor at (26,8),
+          // and a 3x3 chamber at x=27-29,y=7-9 - all of it beyond the
+          // map's original width (26), so none of it was ever reachable
+          // (or visible as a walled-off room) before this secret is found.
+          opensTiles: [
+            { x: 25, y: 8, tileId: 'mossfen_mud' },
+            { x: 26, y: 8, tileId: 'mossfen_mud' },
+            { x: 27, y: 7, tileId: 'mossfen_mud' },
+            { x: 28, y: 7, tileId: 'mossfen_mud' },
+            { x: 29, y: 7, tileId: 'mossfen_mud' },
+            { x: 27, y: 8, tileId: 'mossfen_mud' },
+            { x: 28, y: 8, tileId: 'mossfen_mud' },
+            { x: 29, y: 8, tileId: 'mossfen_mud' },
+            { x: 27, y: 9, tileId: 'mossfen_mud' },
+            { x: 28, y: 9, tileId: 'mossfen_mud' },
+            { x: 29, y: 9, tileId: 'mossfen_mud' },
+          ],
           dialogue: [
             'The moss-rock grinds aside, revealing a hidden passage!',
-            'You push through into a small hollow...',
+            'You push through into a small hollow beyond the reach...',
             'Found a tonic and a medkit!',
           ],
         },
@@ -463,9 +480,10 @@ export const mossfenReachWorld = {
           y: 4,
           facing: 'down',
           spriteId: 'mossfen_fenling',
+          isMerchant: true,
           dialogue: [
             '"You feel the hum too? That\'s the Current."',
-            '"Tell Gogu the Reach still waits for him."',
+            '"I trade medkits and tonics — found most of it myself!"',
           ],
         },
         {
@@ -610,11 +628,12 @@ export const mossfenReachWorld = {
                   onVictory: (state) => {
                     const nextWorldId = unlockNextWorld(state, 'mossfenReach')
                     completeQuest(state, 'mossfen_syndicateTrail')
+                    state.credits = (state.credits || 0) + 25
                     ctx.showDialogue(
                       [
                         'The corrupted plating cracks away; only still water remains.',
                         'Wando finds a scorched Syndicate medallion. "There\'s a bigger station out there — Ashvault."',
-                        '"Then that\'s where we go," Gogu says. Head back to the Starskiff.',
+                        '"Then that\'s where we go," Gogu says. Head back to the Starskiff. (+25 credits)',
                       ],
                       () => ctx.openShip({ preselectWorldId: nextWorldId })
                     )

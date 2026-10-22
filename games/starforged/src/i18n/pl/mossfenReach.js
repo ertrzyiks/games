@@ -28,8 +28,8 @@ registerTranslations('pl', {
     `Ten omszały głaz na wschodzie wygląda na wydrążony. Warto zerknąć.`,
   [`The moss-rock grinds aside, revealing a hidden passage!`]:
     `Omszały głaz odsuwa się, odkrywając skryte przejście!`,
-  [`You push through into a small hollow...`]:
-    `Wchodzisz do niewielkiej wnęki...`,
+  [`You push through into a small hollow beyond the reach...`]:
+    `Wchodzisz do niewielkiej wnęki poza granicami Reach...`,
   [`Found a tonic and a medkit!`]:
     `Znaleziono eliksir i apteczkę!`,
 
@@ -80,8 +80,8 @@ registerTranslations('pl', {
   // --- settlement: mireChild ---
   [`"You feel the hum too? That's the Current."`]:
     `"Ty też czujesz ten pomruk? To Nurt."`,
-  [`"Tell Gogu the Reach still waits for him."`]:
-    `"Powiedz Gogu, że Rozlewisko wciąż na niego czeka."`,
+  [`"I trade medkits and tonics — found most of it myself!"`]:
+    `"Handluję apteczkami i eliksirami — większość sam znalazłem!"`,
 
   // --- settlement: selaNetmender ---
   [`"The deep channel runs black — no kinlight, no crossing."`]:
@@ -130,6 +130,6 @@ registerTranslations('pl', {
     `Skażony pancerz pęka i osypuje się; zostaje tylko spokojna woda.`,
   [`Wando finds a scorched Syndicate medallion. "There's a bigger station out there — Ashvault."`]:
     `Wando znajduje osmolony medalion Syndykatu. "Tam dalej jest większa stacja — Ashvault."`,
-  [`"Then that's where we go," Gogu says. Head back to the Starskiff.`]:
-    `"Więc tam wyruszamy," mówi Gogu. Wracaj na Starskiffa.`,
+  [`"Then that's where we go," Gogu says. Head back to the Starskiff. (+25 credits)`]:
+    `"Więc tam wyruszamy," mówi Gogu. Wracaj na Starskiffa. (+25 kredytów)`,
 })

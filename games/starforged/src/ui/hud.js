@@ -16,7 +16,8 @@ export function drawHud(ctx, state) {
   const padding = 3
   const rowWidth = 54
   const boxW = rowWidth + padding * 2
-  const boxH = members.length * lineH + padding * 2
+  // One extra row for the shared credits readout, under the party rows.
+  const boxH = (members.length + 1) * lineH + padding * 2
   const x = CANVAS_WIDTH - boxW - 3
   const y = 3
 
@@ -35,4 +36,7 @@ export function drawHud(ctx, state) {
     ctx.fillStyle = alive ? '#9ba1b4' : '#e0564b'
     ctx.fillText(`${member.hp}/${member.maxHp}`, x + padding + 30, rowY)
   })
+
+  ctx.fillStyle = '#f4d35b'
+  ctx.fillText(`${state.credits || 0}cr`, x + padding, y + padding + (members.length + 1) * lineH - 2)
 }

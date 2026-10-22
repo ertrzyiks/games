@@ -192,17 +192,29 @@ registerSprites({
 })
 
 // --- Moves ---
+// damageType: a derelict station, so the roster leans kinetic (shock
+// baton/chain lash/claw are all physical hits); Overload Vent is the one
+// fire-themed exception, a vented coolant/plasma burst.
 registerMoves({
-  ashvault_shockBaton: { name: 'Shock Baton', kind: 'attack', power: 7, focusCost: 0, accuracy: 0.9 },
-  ashvault_overloadVent: { name: 'Overload Vent', kind: 'attack', power: 13, focusCost: 3, accuracy: 0.8 },
-  ashvault_chainLash: { name: 'Chain Lash', kind: 'attack', power: 9, focusCost: 1, accuracy: 0.9 },
-  ashvault_rustedClaw: { name: 'Rusted Claw', kind: 'attack', power: 10, focusCost: 0, accuracy: 0.85 },
-  ashvault_dronePulse: { name: 'Drone Pulse', kind: 'attack', power: 12, focusCost: 0, accuracy: 0.8 },
+  ashvault_shockBaton: { name: 'Shock Baton', kind: 'attack', power: 7, focusCost: 0, accuracy: 0.9, damageType: 'kinetic' },
+  ashvault_overloadVent: { name: 'Overload Vent', kind: 'attack', power: 13, focusCost: 3, accuracy: 0.8, damageType: 'fire' },
+  ashvault_chainLash: { name: 'Chain Lash', kind: 'attack', power: 9, focusCost: 1, accuracy: 0.9, damageType: 'kinetic' },
+  ashvault_rustedClaw: { name: 'Rusted Claw', kind: 'attack', power: 10, focusCost: 0, accuracy: 0.85, damageType: 'kinetic' },
+  ashvault_dronePulse: { name: 'Drone Pulse', kind: 'attack', power: 12, focusCost: 0, accuracy: 0.8, damageType: 'kinetic' },
 })
 
 // --- Enemies ---
 // Balance target for this chapter: regular enemies 34-44 HP, boss 100-125 HP
 // (buffed up from the v1 Foreman's 82).
+// Regular variety: one weakness of each damage type across the roster so
+// all three (kinetic/fire/force) have a soft target here — Cinder
+// Trooper's plating shrugs off scorching but dents under blaster impacts
+// (weak to kinetic), Scrap Lurker is held together with salvaged, flammable
+// junk (weak to fire), and the Reclaimer Drone's electronics short out
+// under Current-based force attacks (weak to force). Boss (Syndicate
+// Foreman) is resistant to both kinetic and fire like every other
+// chapter's boss — see battle/battleScene.js — Force Push is the one
+// attack type that's never resisted.
 registerEnemies({
   ashvault_cinderTrooper: {
     name: 'Cinder Trooper',
@@ -213,6 +225,7 @@ registerEnemies({
     spd: 5,
     moves: ['ashvault_shockBaton', 'ashvault_chainLash'],
     xpReward: 30,
+    weakTo: 'kinetic',
   },
   ashvault_scrapLurker: {
     name: 'Scrap Lurker',
@@ -223,6 +236,7 @@ registerEnemies({
     spd: 7,
     moves: ['ashvault_rustedClaw', 'ashvault_shockBaton'],
     xpReward: 28,
+    weakTo: 'fire',
   },
   ashvault_reclaimerDrone: {
     name: 'Reclaimer Drone',
@@ -233,6 +247,7 @@ registerEnemies({
     spd: 4,
     moves: ['ashvault_dronePulse', 'ashvault_overloadVent'],
     xpReward: 32,
+    weakTo: 'force',
   },
   ashvault_foreman: {
     name: 'Syndicate Foreman',
@@ -244,6 +259,7 @@ registerEnemies({
     moves: ['forgeSlam', 'ashvault_overloadVent', 'ashvault_chainLash'],
     xpReward: 95,
     isBoss: true,
+    resistantTo: ['kinetic', 'fire'],
   },
 })
 
@@ -449,6 +465,10 @@ export const ashvaultStationWorld = {
               return ["Thanks to you, Tamsin's safe now.", 'Watch yourself deeper in the core.']
             }
             if (quest.stage >= 1) {
+              // Practical fetch quest, already paid off with a medkit —
+              // exempted from credits, mirroring rustmoor's Yara's Cache /
+              // mossfen's Lost Scout exception. Only the plot/boss quest
+              // below grants credits.
               completeQuest(state, 'ashvault_tamsinRescue')
               state.inventory.medkit = (state.inventory.medkit || 0) + 1
               return ["You freed her. I won't forget it.", 'Found a medkit!']
@@ -484,9 +504,10 @@ export const ashvaultStationWorld = {
           y: 10,
           facing: 'up',
           spriteId: 'ashvault_restingWorker',
+          isMerchant: true,
           dialogue: [
             "They call our shifts 'labor debt' — debt to who?",
-            "The Syndicate doesn't trust strangers — neither do I, yet.",
+            "Still, I trade medkits and tonics if you've got the credits.",
           ],
         },
       ],
@@ -625,11 +646,12 @@ export const ashvaultStationWorld = {
                   onVictory: (state) => {
                     const nextWorldId = unlockNextWorld(state, 'ashvaultStation')
                     completeQuest(state, 'ashvault_extractorSabotage')
+                    state.credits = (state.credits || 0) + 25
                     ctx.showDialogue(
                       [
                         'The Foreman gives up — the Extractor sparks and shuts down.',
                         'Gogu breathes out: "It\'s gone quiet."',
-                        'Head back to the Starskiff for Skyreach Canopy.',
+                        'Head back to the Starskiff for Skyreach Canopy. (+25 credits)',
                       ],
                       () => ctx.openShip({ preselectWorldId: nextWorldId })
                     )

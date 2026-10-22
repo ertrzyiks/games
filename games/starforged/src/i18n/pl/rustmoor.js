@@ -43,7 +43,7 @@ registerTranslations('pl', {
   'Take your share. (+2 medkits, DEF +1!)': 'Weź swoją część. (+2 apteczki, OBR +1!)',
   "Rockfall's east of the mid chamber. My pick breaks through.": 'Zawał jest na wschód od środkowej komory. Mój kilof przebije się przez niego.',
   'Gogu, are you Current-touched too?': 'Gogu, ty też jesteś Naznaczony Nurtem?',
-  'Stay away from the rockfall — a scary boss lives there!': 'Nie podchodź do zawału — mieszka tam straszny szef!',
+  "I trade medkits and tonics, if you've got the credits.": 'Handluję apteczkami i eliksirami, jeśli masz kredyty.',
   'Raiders dug in deep down there.': 'Rajderzy zakopali się tam głęboko.',
   'Their captain answers to someone bigger now.': 'Ich kapitan odpowiada teraz przed kimś ważniejszym.',
   "There's a boulder up in the canyon that looks shoved into place.": 'W kanionie jest głaz, który wygląda jakby ktoś go tam wepchnął.',
@@ -65,6 +65,7 @@ registerTranslations('pl', {
   '"Hand him over — the Syndicate pays well," the raider sneers.': '"Oddaj go — Syndykat dobrze płaci" — szydzi rajder.',
   'Wando steps between them. "Not a chance."': 'Wando staje między nimi. "Nie ma szans."',
   'The captain gives up — a Syndicate sigil-coin rolls free.': 'Kapitan się poddaje — moneta-sygnet Syndykatu wypada na ziemię.',
-  "Rustmoor's shakedown is over. Wando's skiff is fueled and ready.": 'Wyzysk Rustmoor się skończył. Szkuner Wando jest zatankowany i gotowy.',
+  "Rustmoor's shakedown is over. Wando's skiff is fueled and ready. (+25 credits)":
+    'Wyzysk Rustmoor się skończył. Szkuner Wando jest zatankowany i gotowy. (+25 kredytów)',
   'Head back to the Starskiff — a new world awaits.': 'Wróć na Gwiezdny Szkuner — czeka nowy świat.',
 })

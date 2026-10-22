@@ -26,21 +26,33 @@ const STRINGS = {
       moves: 'Moves',
       world: 'World',
       description: 'Description',
+      damageType: 'Damage Type',
+      weakness: 'Weakness',
+      resistance: 'Resistance',
     },
     kind: { attack: 'Attack', heal: 'Heal', buff: 'Buff', debuff: 'Debuff' },
     core: 'Core / Party',
     boss: 'Boss',
-    opponentsIntro: 'Every enemy in the game, grouped by the world they appear in.',
-    itemsIntro: 'Consumables found and used throughout the Drift.',
+    opponentsIntro:
+      'Every enemy in the game, grouped by the world they appear in. Regular enemies have one Weakness ' +
+      '(1.5x damage from a matching attack); bosses instead Resist one or more damage types (0.6x damage) ' +
+      'and are never weak to anything — Force Push is the one attack type no boss resists.',
+    itemsIntro:
+      'Consumables found and used throughout the Drift. Wando and Gogu share one wallet of Credits — they ' +
+      'start a new game with {credits} and earn more from most quests — spent at the one merchant NPC on ' +
+      'each world (marked ★ on the Worlds & Quests tab).',
     worldsIntro: 'The five worlds of the Drift, in the order you visit them, with their maps and quests.',
     maps: 'Maps',
     npcs: 'NPCs',
+    merchant: 'merchant',
     enemiesHere: 'Enemies here',
     quests: 'Quests',
     giver: 'Quest giver',
     reward: 'Reward',
     walkthrough: 'Walkthrough',
     none: 'none',
+    price: 'Price',
+    creditsShort: 'cr',
   },
   pl: {
     title: 'Wiki Starforged',
@@ -65,26 +77,50 @@ const STRINGS = {
       moves: 'Ataki',
       world: 'Świat',
       description: 'Opis',
+      damageType: 'Typ Obrażeń',
+      weakness: 'Słabość',
+      resistance: 'Odporność',
     },
     kind: { attack: 'Atak', heal: 'Leczenie', buff: 'Wzmocnienie', debuff: 'Osłabienie' },
     core: 'Podstawowe / Drużyna',
     boss: 'Boss',
-    opponentsIntro: 'Każdy wróg w grze, pogrupowany według świata, w którym się pojawia.',
-    itemsIntro: 'Przedmioty jednorazowe spotykane i używane w całym Dryfie.',
+    opponentsIntro:
+      'Każdy wróg w grze, pogrupowany według świata, w którym się pojawia. Zwykli wrogowie mają jedną Słabość ' +
+      '(1.5x obrażeń od pasującego ataku); bossowie mają za to Odporność na jeden lub więcej typów obrażeń ' +
+      '(0.6x obrażeń) i nigdy nie są słabi na żaden atak — Pchnięcie Mocą jest jedynym typem ataku, na który ' +
+      'żaden boss nie jest odporny.',
+    itemsIntro:
+      'Przedmioty jednorazowe spotykane i używane w całym Dryfie. Wando i Gogu dzielą jeden portfel kredytów — ' +
+      'na początku nowej gry mają {credits} i zdobywają więcej za większość zadań — wydawanych u jedynego ' +
+      'kupca na każdym świecie (oznaczonego ★ w zakładce Światy i Zadania).',
     worldsIntro: 'Pięć światów Dryfu, w kolejności odwiedzania, z ich mapami i zadaniami.',
     maps: 'Mapy',
     npcs: 'NPC',
+    merchant: 'kupiec',
     enemiesHere: 'Wrogowie tutaj',
     quests: 'Zadania',
     giver: 'Zleceniodawca',
     reward: 'Nagroda',
     walkthrough: 'Przewodnik',
     none: 'brak',
+    price: 'Cena',
+    creditsShort: 'kr',
   },
 }
 
 const WORLD_LABELS = {
   core: { en: 'Core / Party', pl: 'Podstawowe / Drużyna' },
+}
+
+const DAMAGE_TYPE_LABELS = {
+  kinetic: { en: 'Kinetic', pl: 'Kinetyczny' },
+  fire: { en: 'Fire', pl: 'Ognisty' },
+  force: { en: 'Force', pl: 'Mocy' },
+}
+
+function damageTypeLabel(type, lang) {
+  if (!type) return '—'
+  return DAMAGE_TYPE_LABELS[type]?.[lang] || type
 }
 
 function readLang() {
@@ -128,6 +164,12 @@ function moveEffectText(move, s) {
   if (move.status) parts.push(`${move.status.type} (${move.status.duration}x, ${move.status.power})`)
   if (move.lifesteal) parts.push(s.lang === 'pl' ? 'wysysanie życia' : 'lifesteal')
   if (move.focusRestore) parts.push((s.lang === 'pl' ? '+Skupienie ' : '+Focus ') + move.focusRestore)
+  if (move.healAll) parts.push(s.lang === 'pl' ? 'leczy całą drużynę' : 'heals whole party')
+  if (move.upgradesFrom) {
+    const base = data.moves.find((m) => m.id === move.upgradesFrom)
+    const baseName = base ? base.name[s.lang] : move.upgradesFrom
+    parts.push(s.lang === 'pl' ? `ulepszenie: ${baseName}` : `upgrades ${baseName}`)
+  }
   return parts.length ? parts.join(', ') : '—'
 }
 
@@ -139,6 +181,7 @@ function renderAttacks(s) {
       <tr>
         <td data-label="${s.col.name}"><strong>${esc(name)}</strong></td>
         <td data-label="${s.col.kind}">${esc(s.kind[m.kind] || m.kind)}</td>
+        <td data-label="${s.col.damageType}">${esc(damageTypeLabel(m.damageType, s.lang))}</td>
         <td data-label="${s.col.power}">${m.power}</td>
         <td data-label="${s.col.focusCost}">${m.focusCost}</td>
         <td data-label="${s.col.accuracy}">${Math.round(m.accuracy * 100)}%</td>
@@ -155,7 +198,7 @@ function renderAttacks(s) {
       <table>
         <thead>
           <tr>
-            <th>${s.col.name}</th><th>${s.col.kind}</th><th>${s.col.power}</th>
+            <th>${s.col.name}</th><th>${s.col.kind}</th><th>${s.col.damageType}</th><th>${s.col.power}</th>
             <th>${s.col.focusCost}</th><th>${s.col.accuracy}</th><th>${s.col.effect}</th><th>${s.col.source}</th>
           </tr>
         </thead>
@@ -173,6 +216,10 @@ function renderOpponents(s) {
           return move ? move.name[s.lang] : id
         })
         .join(', ')
+      const weaknessText = e.weakTo ? damageTypeLabel(e.weakTo, s.lang) : '—'
+      const resistanceText = e.resistantTo && e.resistantTo.length
+        ? e.resistantTo.map((t) => damageTypeLabel(t, s.lang)).join(', ')
+        : '—'
       return `
       <tr class="${e.isBoss ? 'boss' : ''}">
         <td data-label="${s.col.name}"><strong>${esc(e.name[s.lang])}</strong>${e.isBoss ? ` <span class="tag">${s.boss}</span>` : ''}</td>
@@ -182,6 +229,8 @@ function renderOpponents(s) {
         <td data-label="${s.col.def}">${e.def}</td>
         <td data-label="${s.col.spd}">${e.spd}</td>
         <td data-label="${s.col.xp}">${e.xpReward}</td>
+        <td data-label="${s.col.weakness}">${esc(weaknessText)}</td>
+        <td data-label="${s.col.resistance}">${esc(resistanceText)}</td>
         <td data-label="${s.col.moves}">${esc(moveNames)}</td>
       </tr>`
     })
@@ -195,7 +244,8 @@ function renderOpponents(s) {
         <thead>
           <tr>
             <th>${s.col.name}</th><th>${s.col.world}</th><th>${s.col.hp}</th><th>${s.col.atk}</th>
-            <th>${s.col.def}</th><th>${s.col.spd}</th><th>${s.col.xp}</th><th>${s.col.moves}</th>
+            <th>${s.col.def}</th><th>${s.col.spd}</th><th>${s.col.xp}</th>
+            <th>${s.col.weakness}</th><th>${s.col.resistance}</th><th>${s.col.moves}</th>
           </tr>
         </thead>
         <tbody>${rows}</tbody>
@@ -209,17 +259,20 @@ function renderItems(s) {
       (item) => `
       <tr>
         <td data-label="${s.col.name}"><strong>${esc(item.name[s.lang])}</strong></td>
+        <td data-label="${s.price}">${item.price}${esc(s.creditsShort)}</td>
         <td data-label="${s.col.description}">${esc(item.description[s.lang])}</td>
       </tr>`
     )
     .join('')
 
+  const intro = s.itemsIntro.replace('{credits}', `${data.startingCredits}${s.creditsShort}`)
+
   return `
     <section class="panel">
       <h2>${s.tabs.items}</h2>
-      <p>${s.itemsIntro}</p>
+      <p>${intro}</p>
       <table>
-        <thead><tr><th>${s.col.name}</th><th>${s.col.description}</th></tr></thead>
+        <thead><tr><th>${s.col.name}</th><th>${s.price}</th><th>${s.col.description}</th></tr></thead>
         <tbody>${rows}</tbody>
       </table>
     </section>`
@@ -230,7 +283,9 @@ function renderWorlds(s) {
     .map((world) => {
       const maps = world.maps
         .map((map) => {
-          const npcList = map.npcs.length ? map.npcs.join(', ') : s.none
+          const npcList = map.npcs.length
+            ? map.npcs.map((npc) => esc(npc.id) + (npc.isMerchant ? ` ★ (${esc(s.merchant)})` : '')).join(', ')
+            : esc(s.none)
           const enemyList = map.enemySpawns.length
             ? map.enemySpawns
                 .map((id) => {
@@ -242,7 +297,7 @@ function renderWorlds(s) {
           return `
           <div class="map-card">
             <h4>${esc(map.name[s.lang])}</h4>
-            <p><strong>${s.npcs}:</strong> ${esc(npcList)}</p>
+            <p><strong>${s.npcs}:</strong> ${npcList}</p>
             <p><strong>${s.enemiesHere}:</strong> ${esc(enemyList)}</p>
           </div>`
         })

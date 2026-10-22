@@ -1,3 +1,5 @@
+import { getMove } from '../battle/moves.js'
+
 /**
  * @typedef {Object} PartyMember
  * @property {string} id
@@ -38,8 +40,8 @@ export function createInitialState() {
         id: 'kade',
         name: 'Wando',
         level: 1,
-        hp: 28,
-        maxHp: 28,
+        hp: 38,
+        maxHp: 38,
         focus: 6,
         maxFocus: 6,
         atk: 7,
@@ -55,8 +57,8 @@ export function createInitialState() {
         id: 'moss',
         name: 'Gogu',
         level: 1,
-        hp: 16,
-        maxHp: 16,
+        hp: 22,
+        maxHp: 22,
         focus: 10,
         maxFocus: 10,
         atk: 3,
@@ -70,6 +72,10 @@ export function createInitialState() {
       },
     },
     inventory: { medkit: 2 },
+    // Shared wallet — Wando and Gogu spend from the same pool at any
+    // merchant NPC (see shopScene.js), rather than tracking two separate
+    // balances neither of them would ever gate a purchase on individually.
+    credits: 30,
     flags: new Set(),
     // Only Rustmoor is reachable at the start. Each world's finale boss
     // trigger unlocks the next one on victory (see worlds/registry.js's
@@ -120,9 +126,12 @@ export function xpToNextLevel(level) {
 // Wando gets two more attacks on top of his starting pistol/rifle/flamethrower
 // (trickShot, grenadeToss) so by level 7 he has 5 known moves to pick from, per
 // issue #21 - only 3 of them can be equipped at once (see MAX_EQUIPPED_MOVES).
+// Gogu's Force Heal upgrades to Force Heal+ at level 7 (see battle/moves.js
+// mendPlus's `upgradesFrom: 'mend'`) rather than being a separate move he
+// learns alongside the old one.
 const MOVE_UNLOCKS = {
   kade: { 2: 'rifleShot', 5: 'flamethrower', 6: 'trickShot', 7: 'grenadeToss' },
-  moss: { 2: ['push', 'mend'] },
+  moss: { 2: ['push', 'mend'], 7: 'mendPlus' },
 }
 
 export function grantXp(member, amount) {
@@ -147,11 +156,19 @@ export function grantXp(member, amount) {
       if (!member.knownMoves.includes(unlockedMoveId)) {
         member.knownMoves.push(unlockedMoveId)
         unlockedMoves.push(unlockedMoveId)
-        // Auto-equip while there's a free slot, so a freshly-unlocked move is
-        // usable in battle right away and a member is never left with 0
-        // equipped moves - once the loadout is full the player has to swap
-        // moves in deliberately from the new Hero screen.
-        if (member.moves.length < MAX_EQUIPPED_MOVES) {
+        const upgradesFrom = getMove(unlockedMoveId)?.upgradesFrom
+        const upgradeSlot = upgradesFrom ? member.moves.indexOf(upgradesFrom) : -1
+        if (upgradeSlot !== -1) {
+          // A move that replaces one the member already has equipped (e.g.
+          // Force Heal -> Force Heal+) takes over that exact slot, so the
+          // upgrade is usable immediately even with a full loadout - unlike
+          // a brand new move, it never needs a free equip slot.
+          member.moves[upgradeSlot] = unlockedMoveId
+        } else if (member.moves.length < MAX_EQUIPPED_MOVES) {
+          // Auto-equip while there's a free slot, so a freshly-unlocked move is
+          // usable in battle right away and a member is never left with 0
+          // equipped moves - once the loadout is full the player has to swap
+          // moves in deliberately from the new Hero screen.
           member.moves.push(unlockedMoveId)
         }
       }

@@ -75,11 +75,11 @@ registerTranslations('pl', {
   [`Tamsin: The High Reaches are sealed in vine-lock.`]:
     `Tamsin: Wysokie Rubieże są zapieczętowane pnączami.`,
 
-  // --- skykinRefuge: Fenn --------------------------------------------------
+  // --- skykinRefuge: Fenn (merchant) ---------------------------------------
   [`Fenn: You're really Wando Ironhelm?`]:
     `Fenn: Naprawdę jesteś Wando Ironhelm?`,
-  [`Fenn: Gogu doesn't look scary at all.`]:
-    `Fenn: Gogu wcale nie wygląda strasznie.`,
+  [`Fenn: I trade medkits and tonics for credits, if you want some!`]:
+    `Fenn: Handluję apteczkami i eliksirami za kredyty, jeśli chcesz!`,
 
   // --- highReaches: Wren (ROOST_QUEST completion) --------------------------
   [`Wren: Wando! You found me.`]:
@@ -122,6 +122,6 @@ registerTranslations('pl', {
     `Egzekutorka Vane upada pokonana o poręcz.`,
   [`The refuge is safe — for now.`]:
     `Schronienie jest bezpieczne — przynajmniej na razie.`,
-  [`Head back to the Starskiff. The Hollow awaits.`]:
-    `Wróć na Starskiff. Pustka czeka.`,
+  [`Head back to the Starskiff. The Hollow awaits. (+25 credits)`]:
+    `Wróć na Starskiff. Pustka czeka. (+25 kredytów)`,
 })
