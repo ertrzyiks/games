@@ -25,9 +25,8 @@ const TONIC_DURATION = 3
 // never triggers both.
 const WEAKNESS_MULTIPLIER = 1.5
 const RESISTANCE_MULTIPLIER = 0.6
-// Colors for the super-effective / resisted hint lines (see Dialogue's
-// `{ text, color }` line support) - same green/red already used elsewhere
-// for HP bars and status text, so they read consistently.
+// Move-menu row colors for _moveEffectivenessColor - same green/red already
+// used elsewhere for HP bars and status text, so they read consistently.
 const WEAKNESS_COLOR = '#5bd17a'
 const RESISTANCE_COLOR = '#e0564b'
 // Short on-screen tags for active status effects, shown next to a unit's
@@ -75,6 +74,21 @@ export class BattleScene {
 
   _livingEnemies() {
     return this.enemies.filter((e) => e.hp > 0)
+  }
+
+  // Menu-row color hint for an attack move: green if it would be
+  // super-effective (weakTo) against at least one living enemy, red if
+  // every living enemy would resist it - so the player can see this before
+  // committing to a move, rather than only after the hit lands. null for
+  // non-attack moves (heal/buff) or when there's nothing to compare against.
+  _moveEffectivenessColor(moveId) {
+    const move = getMove(moveId)
+    if (!move || move.kind !== 'attack' || !move.damageType) return null
+    const living = this._livingEnemies()
+    if (living.length === 0) return null
+    if (living.some((e) => e.weakTo === move.damageType)) return WEAKNESS_COLOR
+    if (living.every((e) => (e.resistantTo || []).includes(move.damageType))) return RESISTANCE_COLOR
+    return null
   }
 
   _beginSelection() {
@@ -362,11 +376,8 @@ export class BattleScene {
         dmg,
       })
     )
-    if (isWeakHit) {
-      lines.push({ text: tf('{target} is weak to this attack!', { target: t(target.name) }), color: WEAKNESS_COLOR })
-    } else if (isResistedHit) {
-      lines.push({ text: tf('{target} resists this attack!', { target: t(target.name) }), color: RESISTANCE_COLOR })
-    }
+    if (isWeakHit) lines.push(tf('{target} is weak to this attack!', { target: t(target.name) }))
+    else if (isResistedHit) lines.push(tf('{target} resists this attack!', { target: t(target.name) }))
 
     if (move.lifesteal) {
       const healAmt = Math.max(1, Math.round(dmg / 2))
@@ -684,7 +695,10 @@ export class BattleScene {
     ctx.font = `${fontSize}px Consolas, Menlo, monospace`
     labels.forEach((label, i) => {
       const rowY = y + 8 + i * 10
-      ctx.fillStyle = i === this.menuIndex ? '#dfe3ea' : '#9ba1b4'
+      const effectivenessColor = typeof options[i] === 'string' && options[i] !== 'item' && options[i] !== 'tonic'
+        ? this._moveEffectivenessColor(options[i])
+        : null
+      ctx.fillStyle = effectivenessColor || (i === this.menuIndex ? '#dfe3ea' : '#9ba1b4')
       if (i === this.menuIndex) ctx.fillText('>', cursorX, rowY)
       ctx.fillText(label, labelX, rowY)
     })
