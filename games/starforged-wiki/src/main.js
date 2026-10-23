@@ -53,6 +53,14 @@ const STRINGS = {
     none: 'none',
     price: 'Price',
     creditsShort: 'cr',
+    howToDefeat: 'How to Defeat',
+    backToOpponents: '← Back to Opponents',
+    weakHintTitle: 'Weak Point',
+    weakHintBody: (type) => `This enemy takes 1.5x damage from ${type} attacks.`,
+    resistHintTitle: 'Resistances',
+    resistHintBody: (types) => `This enemy only takes 0.6x damage from ${types} attacks — try something else.`,
+    suggestedMoves: 'Suggested moves',
+    noHints: 'No known weakness or resistance.',
   },
   pl: {
     title: 'Wiki Starforged',
@@ -105,6 +113,14 @@ const STRINGS = {
     none: 'brak',
     price: 'Cena',
     creditsShort: 'kr',
+    howToDefeat: 'Jak Pokonać',
+    backToOpponents: '← Wróć do Przeciwników',
+    weakHintTitle: 'Słaby Punkt',
+    weakHintBody: (type) => `Ten wróg otrzymuje 1.5x obrażeń od ataków typu: ${type}.`,
+    resistHintTitle: 'Odporności',
+    resistHintBody: (types) => `Ten wróg otrzymuje tylko 0.6x obrażeń od ataków typu: ${types} — spróbuj czegoś innego.`,
+    suggestedMoves: 'Sugerowane ataki',
+    noHints: 'Brak znanej słabości lub odporności.',
   },
 }
 
@@ -117,6 +133,8 @@ const DAMAGE_TYPE_LABELS = {
   fire: { en: 'Fire', pl: 'Ognisty' },
   force: { en: 'Force', pl: 'Mocy' },
 }
+
+const DAMAGE_TYPES_ORDER = ['kinetic', 'fire', 'force']
 
 function damageTypeLabel(type, lang) {
   if (!type) return '—'
@@ -139,14 +157,23 @@ function writeLang(lang) {
   }
 }
 
-function readTab() {
+// A URL like #enemy/scavenger is its own page (an opponent's detail view)
+// rather than one of the four main tabs - readRoute() resolves either
+// shape to { tab, enemyId }, with the Opponents tab staying the "current"
+// tab underneath an open enemy detail page (so its nav button still shows
+// as active, and navigating straight back to #opponents just closes it).
+function readRoute() {
   const hash = location.hash.replace('#', '')
-  return ['attacks', 'opponents', 'items', 'worlds'].includes(hash) ? hash : 'attacks'
+  if (hash.startsWith('enemy/')) {
+    const id = decodeURIComponent(hash.slice('enemy/'.length))
+    if (data.enemies.some((e) => e.id === id)) return { tab: 'opponents', enemyId: id }
+  }
+  return { tab: ['attacks', 'opponents', 'items', 'worlds'].includes(hash) ? hash : 'attacks', enemyId: null }
 }
 
 const state = {
   lang: readLang(),
-  tab: readTab(),
+  ...readRoute(),
 }
 
 function esc(value) {
@@ -222,7 +249,7 @@ function renderOpponents(s) {
         : '—'
       return `
       <tr class="${e.isBoss ? 'boss' : ''}">
-        <td data-label="${s.col.name}"><strong>${esc(e.name[s.lang])}</strong>${e.isBoss ? ` <span class="tag">${s.boss}</span>` : ''}</td>
+        <td data-label="${s.col.name}"><a href="#enemy/${encodeURIComponent(e.id)}"><strong>${esc(e.name[s.lang])}</strong></a>${e.isBoss ? ` <span class="tag">${s.boss}</span>` : ''}</td>
         <td data-label="${s.col.world}"><span class="tag">${esc(worldLabel(e.world, s.lang))}</span></td>
         <td data-label="${s.col.hp}">${e.maxHp}</td>
         <td data-label="${s.col.atk}">${e.atk}</td>
@@ -250,6 +277,68 @@ function renderOpponents(s) {
         </thead>
         <tbody>${rows}</tbody>
       </table>
+    </section>`
+}
+
+// One page per opponent (#enemy/<id>, linked from the Opponents table's
+// name column) with concrete "how to defeat" hints: not just the raw
+// weakTo/resistantTo damage type, but which of the party's own moves
+// (data.partyMovesByDamageType) actually exploit or avoid it.
+function renderEnemyDetail(s, enemyId) {
+  const e = data.enemies.find((en) => en.id === enemyId)
+  if (!e) return renderOpponents(s)
+
+  const moveItems = e.moves
+    .map((id) => {
+      const m = data.moves.find((mm) => mm.id === id)
+      if (!m) return `<li>${esc(id)}</li>`
+      const typeTag = m.damageType ? ` <span class="tag">${esc(damageTypeLabel(m.damageType, s.lang))}</span>` : ''
+      return `<li>${esc(m.name[s.lang])}${typeTag}</li>`
+    })
+    .join('')
+
+  let hints = ''
+  if (e.weakTo) {
+    const weakMoves = data.partyMovesByDamageType[e.weakTo] || []
+    hints += `
+      <div class="hint hint-weak">
+        <p><strong>${esc(s.weakHintTitle)}</strong></p>
+        <p>${esc(s.weakHintBody(damageTypeLabel(e.weakTo, s.lang)))}</p>
+        ${weakMoves.length ? `<p>${esc(s.suggestedMoves)}: ${weakMoves.map((m) => esc(m.name[s.lang])).join(', ')}</p>` : ''}
+      </div>`
+  }
+  if (e.resistantTo && e.resistantTo.length) {
+    const resistLabels = e.resistantTo.map((t) => damageTypeLabel(t, s.lang)).join(', ')
+    const betterMoves = DAMAGE_TYPES_ORDER.filter((t) => !e.resistantTo.includes(t)).flatMap(
+      (t) => data.partyMovesByDamageType[t] || []
+    )
+    hints += `
+      <div class="hint hint-resist">
+        <p><strong>${esc(s.resistHintTitle)}</strong></p>
+        <p>${esc(s.resistHintBody(resistLabels))}</p>
+        ${betterMoves.length ? `<p>${esc(s.suggestedMoves)}: ${betterMoves.map((m) => esc(m.name[s.lang])).join(', ')}</p>` : ''}
+      </div>`
+  }
+  if (!hints) hints = `<p>${esc(s.noHints)}</p>`
+
+  return `
+    <section class="panel">
+      <p><a href="#opponents">${esc(s.backToOpponents)}</a></p>
+      <h2>${esc(e.name[s.lang])}${e.isBoss ? ` <span class="tag">${s.boss}</span>` : ''}</h2>
+      <p><span class="tag">${esc(worldLabel(e.world, s.lang))}</span></p>
+      <table>
+        <tbody>
+          <tr><th>${s.col.hp}</th><td>${e.maxHp}</td></tr>
+          <tr><th>${s.col.atk}</th><td>${e.atk}</td></tr>
+          <tr><th>${s.col.def}</th><td>${e.def}</td></tr>
+          <tr><th>${s.col.spd}</th><td>${e.spd}</td></tr>
+          <tr><th>${s.col.xp}</th><td>${e.xpReward}</td></tr>
+        </tbody>
+      </table>
+      <h3>${s.col.moves}</h3>
+      <ul>${moveItems}</ul>
+      <h3>${esc(s.howToDefeat)}</h3>
+      ${hints}
     </section>`
 }
 
@@ -345,7 +434,8 @@ function render() {
     .join('')
 
   let body = ''
-  if (state.tab === 'attacks') body = renderAttacks(s)
+  if (state.tab === 'opponents' && state.enemyId) body = renderEnemyDetail(s, state.enemyId)
+  else if (state.tab === 'attacks') body = renderAttacks(s)
   else if (state.tab === 'opponents') body = renderOpponents(s)
   else if (state.tab === 'items') body = renderItems(s)
   else body = renderWorlds(s)
@@ -375,6 +465,7 @@ function render() {
   for (const btn of document.querySelectorAll('nav.tabs button')) {
     btn.addEventListener('click', () => {
       state.tab = btn.dataset.tab
+      state.enemyId = null
       location.hash = state.tab
       render()
     })
@@ -382,7 +473,7 @@ function render() {
 }
 
 window.addEventListener('hashchange', () => {
-  state.tab = readTab()
+  Object.assign(state, readRoute())
   render()
 })
 

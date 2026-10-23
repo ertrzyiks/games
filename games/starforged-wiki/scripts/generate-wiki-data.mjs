@@ -91,6 +91,23 @@ const moves = getAllMoves().map((m) => ({
   world: moveWorld.get(m.id) || CORE,
 }))
 
+// The party's own attack moves (Wando's blaster kit + Gogu's Force kit,
+// see data/gameState.js's starting moves + MOVE_UNLOCKS) - kept as an
+// explicit id list rather than inferred from moves[].world === 'core',
+// since several shared *enemy* moves (strike, scavengerSlash, heavySlam,
+// drain) are registered in the same core file and would otherwise be
+// wrongly suggested as something the player can use. Used below to build
+// partyMovesByDamageType, so an opponent's detail page can name the actual
+// moves that counter it instead of just a damage-type label.
+const PARTY_ATTACK_MOVE_IDS = ['pistolShot', 'rifleShot', 'trickShot', 'grenadeToss', 'flamethrower', 'push', 'glimmer']
+const DAMAGE_TYPES = ['kinetic', 'fire', 'force']
+const partyMovesByDamageType = Object.fromEntries(
+  DAMAGE_TYPES.map((type) => [
+    type,
+    moves.filter((m) => PARTY_ATTACK_MOVE_IDS.includes(m.id) && m.damageType === type).map((m) => ({ id: m.id, name: m.name })),
+  ])
+)
+
 const enemies = getAllEnemies().map((e) => ({
   id: e.id,
   name: bilingual(e.name),
@@ -380,7 +397,7 @@ const quests = QUESTS.map((q) => ({
   solution: q.solution,
 }))
 
-const data = { moves, enemies, items, party, startingCredits, worlds, quests }
+const data = { moves, enemies, items, party, startingCredits, partyMovesByDamageType, worlds, quests }
 
 writeFileSync(OUT_FILE, JSON.stringify(data, null, 2))
 console.log(`Wrote ${OUT_FILE}`)

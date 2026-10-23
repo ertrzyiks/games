@@ -136,6 +136,39 @@ tr.boss td {
   color: var(--boss);
 }
 
+a {
+  color: var(--accent);
+}
+
+.hint {
+  border-radius: 8px;
+  padding: 0.7rem 0.9rem;
+  margin-bottom: 0.75rem;
+  border: 1px solid var(--panel-border);
+}
+
+.hint p {
+  margin: 0.2rem 0;
+}
+
+.hint-weak {
+  background: rgba(91, 209, 122, 0.1);
+  border-color: #3f8a56;
+}
+
+.hint-weak strong {
+  color: #5bd17a;
+}
+
+.hint-resist {
+  background: rgba(224, 86, 75, 0.1);
+  border-color: #a03f36;
+}
+
+.hint-resist strong {
+  color: var(--boss);
+}
+
 .tag {
   display: inline-block;
   font-size: 0.72rem;

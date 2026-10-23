@@ -1181,6 +1181,63 @@
     }
   ],
   "startingCredits": 30,
+  "partyMovesByDamageType": {
+    "kinetic": [
+      {
+        "id": "pistolShot",
+        "name": {
+          "en": "Pistol Shot",
+          "pl": "Strzał z Pistoletu"
+        }
+      },
+      {
+        "id": "rifleShot",
+        "name": {
+          "en": "Rifle Shot",
+          "pl": "Strzał z Karabinu"
+        }
+      },
+      {
+        "id": "trickShot",
+        "name": {
+          "en": "Trick Shot",
+          "pl": "Rykoszet"
+        }
+      },
+      {
+        "id": "grenadeToss",
+        "name": {
+          "en": "Grenade Toss",
+          "pl": "Rzut Granatem"
+        }
+      }
+    ],
+    "fire": [
+      {
+        "id": "flamethrower",
+        "name": {
+          "en": "Flamethrower",
+          "pl": "Miotacz Ognia"
+        }
+      }
+    ],
+    "force": [
+      {
+        "id": "push",
+        "name": {
+          "en": "Force Push",
+          "pl": "Pchnięcie Mocą"
+        }
+      },
+      {
+        "id": "glimmer",
+        "name": {
+          "en": "Force Spark",
+          "pl": "Iskra Mocy"
+        }
+      }
+    ]
+  },
   "worlds": [
     {
       "id": "rustmoor",
