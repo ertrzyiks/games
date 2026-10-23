@@ -332,7 +332,13 @@ const outerHollowMap = {
       onEnter(ctx) {
         startQuest(ctx.state, FINALE_QUEST_ID, FINALE_QUEST_NAME, FINALE_QUEST_KEY)
         setQuestStage(ctx.state, FINALE_QUEST_ID, 1)
-        ctx.showDialogue(['The shield relay hums before you.', 'Wando shuts it down — the alarms go silent.'])
+        // The finale is one long quest that only pays out at the very end
+        // (see the boss trigger below) - this milestone and freeing Rell
+        // further in are still meaningful actions on their own, so each
+        // gets its own small credit payout instead of feeling like nothing
+        // happened.
+        ctx.state.credits = (ctx.state.credits || 0) + 10
+        ctx.showDialogue(['The shield relay hums before you.', 'Wando shuts it down — the alarms go silent. (+10 credits)'])
       },
     },
   ],
@@ -439,7 +445,8 @@ const innerSanctumMap = {
       onEnter(ctx) {
         startQuest(ctx.state, FINALE_QUEST_ID, FINALE_QUEST_NAME, FINALE_QUEST_KEY)
         setQuestStage(ctx.state, FINALE_QUEST_ID, 2)
-        ctx.showDialogue(['The chains break at a touch.', 'Rell: "...Wando. You came."'])
+        ctx.state.credits = (ctx.state.credits || 0) + 15
+        ctx.showDialogue(['The chains break at a touch.', 'Rell: "...Wando. You came." (+15 credits)'])
       },
     },
   ],

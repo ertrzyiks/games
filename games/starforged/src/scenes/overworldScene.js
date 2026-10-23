@@ -18,7 +18,7 @@ import { getWorld } from '../worlds/registry.js'
 import { TILE_SIZE } from '../engine/constants.js'
 import { sceneManager } from '../engine/sceneManager.js'
 import { BattleScene } from '../battle/battleScene.js'
-import { saveGame, clearSave, loadCheckpoint, clearCheckpoint } from '../engine/save.js'
+import { saveGame, saveCheckpoint, clearSave, loadCheckpoint, clearCheckpoint } from '../engine/save.js'
 import { ShipScene } from './shipScene.js'
 import { GameOverScene } from './gameOverScene.js'
 import { TitleScene } from './titleScene.js'
@@ -424,6 +424,12 @@ export class OverworldScene {
   // boss triggers to unlock the next world / advance quests on a win,
   // without the battle engine itself needing to know about story state.
   startBattle(enemyIds, callbacks = {}) {
+    // Snapshot right before the fight (not just after each travel arrival),
+    // so losing offers to retry from right outside *this* fight - at
+    // whatever HP/position/inventory the party actually had walking into
+    // it - rather than potentially several fights back at the start of the
+    // world.
+    saveCheckpoint(this.state)
     sceneManager.push(new BattleScene(), {
       state: this.state,
       enemyIds,
@@ -435,10 +441,11 @@ export class OverworldScene {
         } else {
           if (callbacks.onDefeat) callbacks.onDefeat(this.state)
           // A full party wipe is a real Game Over now, instead of a silent
-          // full-heal-and-return-to-the-overworld. If a travel checkpoint
-          // exists (snapshotted the moment the player last arrived in a
-          // world - see shipScene.js's _confirmTravel), offer to retry from
-          // there instead of only "clear everything and start over".
+          // full-heal-and-return-to-the-overworld. If a checkpoint exists
+          // (snapshotted right before this fight started, see
+          // startBattle() above, or at worst at the last world arrival -
+          // see shipScene.js's _confirmTravel), offer to retry from there
+          // instead of only "clear everything and start over".
           const checkpoint = loadCheckpoint()
           sceneManager.replace(new GameOverScene(), {
             onRetry: checkpoint

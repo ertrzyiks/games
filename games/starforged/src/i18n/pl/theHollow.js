@@ -62,7 +62,7 @@ const pl = {
   [`This is the Hollow — it ends here.`]: `To jest Czeluść — tu się to kończy.`,
   [`Cut their defenses, then go for the one in charge.`]: `Przetnij ich obronę, a potem idź po tego, kto tu rządzi.`,
   [`The shield relay hums before you.`]: `Przekaźnik osłon brzęczy przed tobą.`,
-  [`Wando shuts it down — the alarms go silent.`]: `Wando wyłącza go — alarmy cichną.`,
+  [`Wando shuts it down — the alarms go silent. (+10 credits)`]: `Wando wyłącza go — alarmy cichną. (+10 kredytów)`,
 
   // --- rellDialogue ------------------------------------------------------
   [`Real air. I'd forgotten the feel.`]: `Prawdziwe powietrze. Zapomniałam, jak to jest.`,
@@ -79,7 +79,7 @@ const pl = {
   [`The sanctum's quiet — too quiet.`]: `W sanktuarium jest cicho — zbyt cicho.`,
   [`Alarms are still live. Move fast.`]: `Alarmy wciąż wyją. Ruszaj się szybko.`,
   [`The chains break at a touch.`]: `Łańcuchy pękają od jednego dotyku.`,
-  [`Rell: "...Wando. You came."`]: `Rell: "...Wando. Przyszedłeś."`,
+  [`Rell: "...Wando. You came." (+15 credits)`]: `Rell: "...Wando. Przyszedłeś." (+15 kredytów)`,
 
   // --- wardenChamber boss lead-in (4 lines, unchanged) --------------------
   [`The corridor opens onto a floor etched in cold red runes — the same sigils from Ashvault's vault, from the Bog Warden's hollow, all of it tracing back here.`]: `Korytarz otwiera się na podłogę wyżłobioną w zimnych, czerwonych runach — te same symbole, co w skarbcu Ashvault, w jamie Bagiennego Strażnika — wszystko prowadziło właśnie tutaj.`,

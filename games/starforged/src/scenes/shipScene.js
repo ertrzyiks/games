@@ -80,9 +80,10 @@ export class ShipScene {
         this.state.x = world.entry?.x ?? 2
         this.state.y = world.entry?.y ?? 2
         saveGame(this.state)
-        // Snapshot this exact arrival state as the retry checkpoint - if the
-        // party later wipes out in this world, Game Over can offer to retry
-        // from here instead of only "start a brand new game".
+        // Snapshot this arrival as the retry checkpoint too, in case the
+        // party wipes out before ever reaching their first fight here
+        // (overworldScene.startBattle takes its own, more up-to-date
+        // snapshot right before every fight after this one).
         saveCheckpoint(this.state)
         if (this.onClose) this.onClose()
       },
