@@ -25,7 +25,8 @@ function gameSrc(relPath) {
 
 const { getAllMoves } = await import(gameSrc('battle/moves.js'))
 const { getAllEnemies } = await import(gameSrc('battle/enemies.js'))
-const { MEDKIT_HEAL_AMOUNT, TONIC_FOCUS_RESTORE_AMOUNT, MEDKIT_PRICE, TONIC_PRICE } = await import(gameSrc('battle/items.js'))
+const { MEDKIT_HEAL_AMOUNT, ELIXIR_ATK_BOOST, ELIXIR_DEF_BOOST, ELIXIR_DURATION, MEDKIT_PRICE, ATK_ELIXIR_PRICE, RESIST_ELIXIR_PRICE } =
+  await import(gameSrc('battle/items.js'))
 const { createInitialState } = await import(gameSrc('data/gameState.js'))
 const { setLanguage, t } = await import(gameSrc('engine/i18n.js'))
 const { listWorldIds, getWorld } = await import(gameSrc('worlds/registry.js'))
@@ -138,11 +139,20 @@ const items = [
   },
   {
     id: 'tonic',
-    name: bilingual('Tonic'),
-    price: TONIC_PRICE,
+    name: bilingual('Attack Elixir'),
+    price: ATK_ELIXIR_PRICE,
     description: {
-      en: `Outside battle, restores ${TONIC_FOCUS_RESTORE_AMOUNT} Focus to one party member. In battle, raises that member's Attack for the fight instead. Sold by each world's merchant for ${TONIC_PRICE} credits.`,
-      pl: `Poza walką przywraca ${TONIC_FOCUS_RESTORE_AMOUNT} Skupienia jednemu członkowi drużyny. W walce zamiast tego zwiększa jego Atak do końca starcia. Kupiec na każdym świecie sprzedaje go za ${TONIC_PRICE} kredytów.`,
+      en: `Raises one party member's Attack by ${ELIXIR_ATK_BOOST} for ${ELIXIR_DURATION} turns. Used in battle, the buff applies immediately; used outside battle, it's queued onto that member and applies the moment the party's next fight begins. Sold by each world's merchant for ${ATK_ELIXIR_PRICE} credits.`,
+      pl: `Zwiększa Atak jednego członka drużyny o ${ELIXIR_ATK_BOOST} na ${ELIXIR_DURATION} tury. Użyty w walce działa od razu; użyty poza walką zostaje przypisany temu bohaterowi i zadziała na początku następnej walki drużyny. Kupiec na każdym świecie sprzedaje go za ${ATK_ELIXIR_PRICE} kredytów.`,
+    },
+  },
+  {
+    id: 'resistTonic',
+    name: bilingual('Resistance Elixir'),
+    price: RESIST_ELIXIR_PRICE,
+    description: {
+      en: `Raises one party member's Defense by ${ELIXIR_DEF_BOOST} for ${ELIXIR_DURATION} turns, reducing the damage they take. Used in battle, the buff applies immediately; used outside battle, it's queued onto that member and applies the moment the party's next fight begins. Sold by each world's merchant for ${RESIST_ELIXIR_PRICE} credits.`,
+      pl: `Zwiększa Obronę jednego członka drużyny o ${ELIXIR_DEF_BOOST} na ${ELIXIR_DURATION} tury, zmniejszając otrzymywane obrażenia. Użyty w walce działa od razu; użyty poza walką zostaje przypisany temu bohaterowi i zadziała na początku następnej walki drużyny. Kupiec na każdym świecie sprzedaje go za ${RESIST_ELIXIR_PRICE} kredytów.`,
     },
   },
 ]

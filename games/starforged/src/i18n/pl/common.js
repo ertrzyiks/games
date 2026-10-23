@@ -30,6 +30,9 @@ registerTranslations('pl', {
   'No quests yet. Talk to people!': 'Brak zadań. Porozmawiaj z kimś!',
   '[done]': '[gotowe]',
   'A/B: Back': 'A/B: Wstecz',
+  Sound: 'Dźwięk',
+  On: 'Wł.',
+  Off: 'Wył.',
 
   // HUD (top-right overworld readout)
   '{amount}cr': '{amount}kr',
@@ -38,12 +41,14 @@ registerTranslations('pl', {
   Shop: 'Sklep',
   'Credits: {amount}': 'Kredyty: {amount}',
   'Medkit — {price}cr': 'Apteczka — {price}kr',
-  'Tonic — {price}cr': 'Eliksir — {price}kr',
+  'Attack Elixir — {price}cr': 'Eliksir Ataku — {price}kr',
+  'Resistance Elixir — {price}cr': 'Eliksir Odporności — {price}kr',
   Leave: 'Wyjdź',
   'Not enough credits.': 'Niewystarczająca liczba kredytów.',
   'Bought a {item}!': 'Kupiono: {item}!',
   Medkit: 'Apteczka',
-  Tonic: 'Eliksir',
+  'Attack Elixir': 'Eliksir Ataku',
+  'Resistance Elixir': 'Eliksir Odporności',
   'A: Buy   B: Leave': 'A: Kup   B: Wyjdź',
 
   // Hero screen
@@ -53,9 +58,9 @@ registerTranslations('pl', {
   'A: Select   B: Back': 'A: Wybierz   B: Wstecz',
   'HP {hp}/{maxHp}  Focus {focus}/{maxFocus}': 'PŻ {hp}/{maxHp}  Skupienie {focus}/{maxFocus}',
   'Already at full HP.': 'Już przy pełnym PŻ.',
-  'Already at full Focus.': 'Już przy pełnym skupieniu.',
   '{name} recovers {amount} HP!': '{name} odzyskuje {amount} PŻ!',
-  '{name} restores {amount} Focus!': '{name} odzyskuje {amount} skupienia!',
+  '{name} will start the next fight with Attack raised!': '{name} rozpocznie następną walkę ze zwiększonym Atakiem!',
+  '{name} will start the next fight with Defense raised!': '{name} rozpocznie następną walkę ze zwiększoną Obroną!',
   '{name}: Equipped Moves': '{name}: Wybrane Ataki',
   '-- empty --': '-- brak --',
   'A: Assign   B: Back': 'A: Przypisz   B: Wstecz',
@@ -95,8 +100,10 @@ registerTranslations('pl', {
   '{name} takes {dmg} {status} damage!': '{name} otrzymuje {dmg} obrażeń ({status})!',
   burn: 'poparzenie',
   poison: 'trucizna',
-  '{name} drinks a tonic! Attack rises.': '{name} wypija eliksir! Atak wzrasta.',
-  'Tonic x{count}': 'Eliksir x{count}',
+  '{name} drinks an Attack Elixir! Attack rises.': '{name} wypija Eliksir Ataku! Atak wzrasta.',
+  '{name} drinks a Resistance Elixir! Defense rises.': '{name} wypija Eliksir Odporności! Obrona wzrasta.',
+  'Attack Elixir x{count}': 'Eliksir Ataku x{count}',
+  'Resistance Elixir x{count}': 'Eliksir Odporności x{count}',
   'Your party has been defeated...': 'Twoja drużyna została pokonana...',
 
   // Footer control hint (index.html)

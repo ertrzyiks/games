@@ -9,6 +9,33 @@
  */
 let ctx = null
 
+const MUTE_STORAGE_KEY = 'starforged-muted'
+
+let muted = false
+try {
+  muted = localStorage.getItem(MUTE_STORAGE_KEY) === '1'
+} catch {
+  // localStorage unavailable (private mode etc.) - default to unmuted.
+}
+
+export function isMuted() {
+  return muted
+}
+
+export function setMuted(value) {
+  muted = !!value
+  try {
+    localStorage.setItem(MUTE_STORAGE_KEY, muted ? '1' : '0')
+  } catch {
+    // ignore - mute state just won't persist across reloads
+  }
+}
+
+export function toggleMuted() {
+  setMuted(!muted)
+  return muted
+}
+
 function getContext() {
   try {
     if (!ctx) {
@@ -33,6 +60,7 @@ function getContext() {
  * @param {{ type?: OscillatorType, volume?: number }} [options]
  */
 export function playTone(freq = 880, durationMs = 80, options = {}) {
+  if (muted) return
   try {
     const audioCtx = getContext()
     if (!audioCtx) return

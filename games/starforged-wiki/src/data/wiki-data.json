@@ -1154,13 +1154,25 @@
     {
       "id": "tonic",
       "name": {
-        "en": "Tonic",
-        "pl": "Eliksir"
+        "en": "Attack Elixir",
+        "pl": "Eliksir Ataku"
       },
       "price": 20,
       "description": {
-        "en": "Outside battle, restores 6 Focus to one party member. In battle, raises that member's Attack for the fight instead. Sold by each world's merchant for 20 credits.",
-        "pl": "Poza walką przywraca 6 Skupienia jednemu członkowi drużyny. W walce zamiast tego zwiększa jego Atak do końca starcia. Kupiec na każdym świecie sprzedaje go za 20 kredytów."
+        "en": "Raises one party member's Attack by 5 for 3 turns. Used in battle, the buff applies immediately; used outside battle, it's queued onto that member and applies the moment the party's next fight begins. Sold by each world's merchant for 20 credits.",
+        "pl": "Zwiększa Atak jednego członka drużyny o 5 na 3 tury. Użyty w walce działa od razu; użyty poza walką zostaje przypisany temu bohaterowi i zadziała na początku następnej walki drużyny. Kupiec na każdym świecie sprzedaje go za 20 kredytów."
+      }
+    },
+    {
+      "id": "resistTonic",
+      "name": {
+        "en": "Resistance Elixir",
+        "pl": "Eliksir Odporności"
+      },
+      "price": 20,
+      "description": {
+        "en": "Raises one party member's Defense by 4 for 3 turns, reducing the damage they take. Used in battle, the buff applies immediately; used outside battle, it's queued onto that member and applies the moment the party's next fight begins. Sold by each world's merchant for 20 credits.",
+        "pl": "Zwiększa Obronę jednego członka drużyny o 4 na 3 tury, zmniejszając otrzymywane obrażenia. Użyty w walce działa od razu; użyty poza walką zostaje przypisany temu bohaterowi i zadziała na początku następnej walki drużyny. Kupiec na każdym świecie sprzedaje go za 20 kredytów."
       }
     }
   ],

@@ -4,17 +4,17 @@ import { saveGame } from '../engine/save.js'
 import { playBlip, playConfirm, playCancel } from '../engine/audio.js'
 import { t, tf } from '../engine/i18n.js'
 import { getMove } from '../battle/moves.js'
-import { healWithMedkit, restoreFocusWithTonic } from '../battle/items.js'
+import { healWithMedkit, queueElixirBuff } from '../battle/items.js'
 import { MAX_EQUIPPED_MOVES } from '../data/gameState.js'
 
 /**
  * Hero / party screen, reached from the Ship menu's "Heroes" option.
- * Lets the player, outside of any fight: use a medkit or tonic on a party
+ * Lets the player, outside of any fight: use a medkit or elixir on a party
  * member, and configure which ≤MAX_EQUIPPED_MOVES of a member's known
  * moves are currently equipped for battle.
  *
  * Four modes, drilling down: 'list' (pick a party member) -> 'actions'
- * (medkit / tonic / moves / back) -> 'moves' (pick an equipped slot) ->
+ * (medkit / elixirs / moves / back) -> 'moves' (pick an equipped slot) ->
  * 'pool' (assign a known move into that slot).
  */
 export class HeroScreen {
@@ -43,7 +43,10 @@ export class HeroScreen {
     const inv = this.state.inventory
     const opts = []
     if ((inv.medkit || 0) > 0) opts.push({ id: 'medkit', label: tf('Medkit x{count}', { count: inv.medkit }) })
-    if ((inv.tonic || 0) > 0) opts.push({ id: 'tonic', label: tf('Tonic x{count}', { count: inv.tonic }) })
+    if ((inv.tonic || 0) > 0) opts.push({ id: 'tonic', label: tf('Attack Elixir x{count}', { count: inv.tonic }) })
+    if ((inv.resistTonic || 0) > 0) {
+      opts.push({ id: 'resistTonic', label: tf('Resistance Elixir x{count}', { count: inv.resistTonic }) })
+    }
     opts.push({ id: 'moves', label: t('Moves') })
     opts.push({ id: 'back', label: t('Back') })
     return opts
@@ -63,16 +66,24 @@ export class HeroScreen {
     saveGame(this.state)
   }
 
-  _useTonic() {
+  // Drinking an elixir outside battle doesn't do anything immediately - it
+  // queues the same buff battle/battleScene.js applies in-battle onto
+  // state.pendingBuffs, which battleScene.enter() consumes the moment the
+  // party's next fight starts (see queueElixirBuff's own comment).
+  _useAttackElixir() {
     const member = this.selectedMember
-    if (member.focus >= member.maxFocus) {
-      this.message = t('Already at full Focus.')
-      playCancel()
-      return
-    }
     this.state.inventory.tonic -= 1
-    const restored = restoreFocusWithTonic(member)
-    this.message = tf('{name} restores {amount} Focus!', { name: t(member.name), amount: restored })
+    queueElixirBuff(this.state, this.memberKeys[this.listIndex], 'boostAtk')
+    this.message = tf('{name} will start the next fight with Attack raised!', { name: t(member.name) })
+    playConfirm()
+    saveGame(this.state)
+  }
+
+  _useResistElixir() {
+    const member = this.selectedMember
+    this.state.inventory.resistTonic -= 1
+    queueElixirBuff(this.state, this.memberKeys[this.listIndex], 'boostDef')
+    this.message = tf('{name} will start the next fight with Defense raised!', { name: t(member.name) })
     playConfirm()
     saveGame(this.state)
   }
@@ -136,7 +147,8 @@ export class HeroScreen {
       if (input.wasPressed('a')) {
         const choice = options[this.actionIndex]
         if (choice.id === 'medkit') this._useMedkit()
-        else if (choice.id === 'tonic') this._useTonic()
+        else if (choice.id === 'tonic') this._useAttackElixir()
+        else if (choice.id === 'resistTonic') this._useResistElixir()
         else if (choice.id === 'moves') {
           this.mode = 'moves'
           this.slotIndex = 0

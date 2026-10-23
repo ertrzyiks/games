@@ -4,7 +4,7 @@ import { drawSprite } from '../engine/sprite.js'
 import { input } from '../engine/input.js'
 import { getMove } from './moves.js'
 import { getEnemy } from './enemies.js'
-import { healWithMedkit } from './items.js'
+import { healWithMedkit, ELIXIR_ATK_BOOST, ELIXIR_DEF_BOOST, ELIXIR_DURATION } from './items.js'
 import { t, tf } from '../engine/i18n.js'
 import { getSprite } from '../assets/sprites/registry.js'
 import { heroSprite } from '../assets/sprites/hero.js'
@@ -17,8 +17,6 @@ const PARTY_SPRITES = { kade: heroSprite, moss: mossSprite }
 // visually consistent.
 const MENU_FONT_BIG = 7
 const MENU_FONT_SMALL = 5
-const TONIC_ATK_BOOST = 5
-const TONIC_DURATION = 3
 // Damage-type multipliers (see battle/moves.js `damageType` and
 // battle/enemies.js `weakTo`/`resistantTo`). Regular enemies only ever
 // carry weakTo, bosses only ever carry resistantTo, so a single target
@@ -48,8 +46,17 @@ export class BattleScene {
     this.state = state
     this.party = state.party
     this.onEnd = onEnd
-    // Status effects never carry over between separate battles.
+    // Status effects never carry over between separate battles...
     for (const member of Object.values(this.party)) member.statusEffects = []
+    // ...except an elixir drunk outside battle (see heroScreen.js's
+    // _useTonic/_useResistTonic, battle/items.js's queueElixirBuff): that
+    // queues a buff for exactly the party's next fight, applied here right
+    // after the wipe above, then cleared so it never reapplies to a later one.
+    for (const pending of this.state.pendingBuffs || []) {
+      const member = this.party[pending.memberKey]
+      if (member) this._applyStatus(member, { type: pending.type, duration: pending.duration, power: pending.power })
+    }
+    this.state.pendingBuffs = []
     this.enemies = enemyIds.map((id) => {
       const def = getEnemy(id)
       return { ...def, hp: def.maxHp, maxHp: def.maxHp, guarding: false, statusEffects: [] }
@@ -123,6 +130,7 @@ export class BattleScene {
     const options = usable.length > 0 ? usable : [unit.moves[0]]
     if ((this.state.inventory.medkit || 0) > 0) options.push('item')
     if ((this.state.inventory.tonic || 0) > 0) options.push('tonic')
+    if ((this.state.inventory.resistTonic || 0) > 0) options.push('resistTonic')
     return options
   }
 
@@ -146,13 +154,13 @@ export class BattleScene {
       return
     }
 
-    if (choice === 'tonic') {
-      if ((this.state.inventory.tonic || 0) <= 0) return
-      this.state.inventory.tonic -= 1
+    if (choice === 'tonic' || choice === 'resistTonic') {
+      if ((this.state.inventory[choice] || 0) <= 0) return
+      this.state.inventory[choice] -= 1
       this.queuedActions.push({
         unit,
         isParty: true,
-        special: 'tonic',
+        special: choice,
         speed: unit.spd,
         name: unit.name,
       })
@@ -283,8 +291,12 @@ export class BattleScene {
       return [tf('{name} uses a medkit and recovers {amount} HP!', { name: t(action.name), amount: healed })]
     }
     if (action.special === 'tonic') {
-      this._applyStatus(action.unit, { type: 'boostAtk', duration: TONIC_DURATION, power: TONIC_ATK_BOOST })
-      return [tf('{name} drinks a tonic! Attack rises.', { name: t(action.name) })]
+      this._applyStatus(action.unit, { type: 'boostAtk', duration: ELIXIR_DURATION, power: ELIXIR_ATK_BOOST })
+      return [tf('{name} drinks an Attack Elixir! Attack rises.', { name: t(action.name) })]
+    }
+    if (action.special === 'resistTonic') {
+      this._applyStatus(action.unit, { type: 'boostDef', duration: ELIXIR_DURATION, power: ELIXIR_DEF_BOOST })
+      return [tf('{name} drinks a Resistance Elixir! Defense rises.', { name: t(action.name) })]
     }
     const move = getMove(action.moveId)
     if (move.kind === 'buff') {
@@ -676,8 +688,10 @@ export class BattleScene {
       opt === 'item'
         ? tf('Medkit x{count}', { count: this.state.inventory.medkit || 0 })
         : opt === 'tonic'
-          ? tf('Tonic x{count}', { count: this.state.inventory.tonic || 0 })
-          : t(getMove(opt).name),
+          ? tf('Attack Elixir x{count}', { count: this.state.inventory.tonic || 0 })
+          : opt === 'resistTonic'
+            ? tf('Resistance Elixir x{count}', { count: this.state.inventory.resistTonic || 0 })
+            : t(getMove(opt).name),
     )
     // The cursor sits in its own fixed-width column and every label starts at
     // the same x, vertically centered in its 10px row, so the cursor moves in
@@ -695,9 +709,8 @@ export class BattleScene {
     ctx.font = `${fontSize}px Consolas, Menlo, monospace`
     labels.forEach((label, i) => {
       const rowY = y + 8 + i * 10
-      const effectivenessColor = typeof options[i] === 'string' && options[i] !== 'item' && options[i] !== 'tonic'
-        ? this._moveEffectivenessColor(options[i])
-        : null
+      const isSpecialOption = options[i] === 'item' || options[i] === 'tonic' || options[i] === 'resistTonic'
+      const effectivenessColor = !isSpecialOption ? this._moveEffectivenessColor(options[i]) : null
       ctx.fillStyle = effectivenessColor || (i === this.menuIndex ? '#dfe3ea' : '#9ba1b4')
       if (i === this.menuIndex) ctx.fillText('>', cursorX, rowY)
       ctx.fillText(label, labelX, rowY)

@@ -3,12 +3,16 @@ import { input } from '../engine/input.js'
 import { saveGame } from '../engine/save.js'
 import { playBlip, playConfirm, playCancel } from '../engine/audio.js'
 import { t, tf } from '../engine/i18n.js'
-import { MEDKIT_PRICE, TONIC_PRICE } from '../battle/items.js'
+import { MEDKIT_PRICE, ATK_ELIXIR_PRICE, RESIST_ELIXIR_PRICE } from '../battle/items.js'
+
+// Name shown in the "Bought a {item}!" message - keyed by inventory id,
+// same ids ShopScene/battleScene/heroScreen already use.
+const ITEM_NAME = { medkit: 'Medkit', tonic: 'Attack Elixir', resistTonic: 'Resistance Elixir' }
 
 /**
  * Merchant shop, reached by talking to a world's one merchant NPC (see
  * overworldScene.js's `npc.isMerchant` branch). Spends from the party's
- * single shared `state.credits` wallet to buy medkits/tonics into the
+ * single shared `state.credits` wallet to buy medkits/elixirs into the
  * shared `state.inventory` - there's nothing per-hero to pick here, unlike
  * the Hero screen's per-member actions.
  */
@@ -25,7 +29,18 @@ export class ShopScene {
   get options() {
     return [
       { id: 'medkit', label: tf('Medkit — {price}cr', { price: MEDKIT_PRICE }), price: MEDKIT_PRICE, item: 'medkit' },
-      { id: 'tonic', label: tf('Tonic — {price}cr', { price: TONIC_PRICE }), price: TONIC_PRICE, item: 'tonic' },
+      {
+        id: 'tonic',
+        label: tf('Attack Elixir — {price}cr', { price: ATK_ELIXIR_PRICE }),
+        price: ATK_ELIXIR_PRICE,
+        item: 'tonic',
+      },
+      {
+        id: 'resistTonic',
+        label: tf('Resistance Elixir — {price}cr', { price: RESIST_ELIXIR_PRICE }),
+        price: RESIST_ELIXIR_PRICE,
+        item: 'resistTonic',
+      },
       { id: 'close', label: t('Leave') },
     ]
   }
@@ -38,7 +53,7 @@ export class ShopScene {
     }
     this.state.credits -= option.price
     this.state.inventory[option.item] = (this.state.inventory[option.item] || 0) + 1
-    this.message = tf('Bought a {item}!', { item: t(option.id === 'medkit' ? 'Medkit' : 'Tonic') })
+    this.message = tf('Bought a {item}!', { item: t(ITEM_NAME[option.item]) })
     playConfirm()
     saveGame(this.state)
   }

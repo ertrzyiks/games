@@ -3,14 +3,14 @@ import { input } from '../engine/input.js'
 import { sceneManager } from '../engine/sceneManager.js'
 import { getWorld, listWorldIds } from '../worlds/registry.js'
 import { saveGame, saveCheckpoint } from '../engine/save.js'
-import { playBlip, playConfirm, playCancel } from '../engine/audio.js'
+import { playBlip, playConfirm, playCancel, isMuted, toggleMuted } from '../engine/audio.js'
 import { t, tf, getLanguage, cycleLanguage, LANGUAGES } from '../engine/i18n.js'
 import { TravelMinigameScene } from './travelMinigameScene.js'
 import { HeroScreen } from './heroScreen.js'
 
 /**
  * Ship / pause screen, reached from the overworld via the B button.
- * Top-level hub: Travel (world-select) / Quest Log / Heroes / Language / Close.
+ * Top-level hub: Travel (world-select) / Quest Log / Heroes / Language / Sound / Close.
  *
  * World-entry contract: this scene only talks to worlds through the
  * registry (`getWorld`/`listWorldIds`), so it stays decoupled from exactly
@@ -53,6 +53,7 @@ export class ShipScene {
       { id: 'questlog', label: t('Quest Log') },
       { id: 'heroes', label: t('Heroes') },
       { id: 'language', label: tf('{label}: {value}', { label: t('Language'), value: current.label }) },
+      { id: 'sound', label: tf('{label}: {value}', { label: t('Sound'), value: isMuted() ? t('Off') : t('On') }) },
       { id: 'close', label: t('Close') },
     ]
   }
@@ -127,6 +128,13 @@ export class ShipScene {
           this._openHeroes()
         } else if (choice.id === 'language') {
           cycleLanguage()
+          playBlip()
+        } else if (choice.id === 'sound') {
+          // Toggle first, then let the blip itself prove it worked: it
+          // stays silent when sound just turned off, and plays normally
+          // when it just turned back on - playTone() already no-ops while
+          // muted, so no extra branching needed here.
+          toggleMuted()
           playBlip()
         } else {
           this._close()
