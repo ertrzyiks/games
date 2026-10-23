@@ -1362,10 +1362,7 @@
           "secrets": [
             {
               "id": "approachHiddenPassage",
-              "reward": {
-                "tonic": 1,
-                "medkit": 1
-              }
+              "reward": {}
             }
           ]
         },

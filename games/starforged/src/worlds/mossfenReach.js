@@ -4,7 +4,7 @@ import { registerSprites } from '../assets/sprites/registry.js'
 import { registerEnemies } from '../battle/enemies.js'
 import { registerMoves } from '../battle/moves.js'
 import { startQuest, setQuestStage, completeQuest } from '../data/gameState.js'
-import { CHILD_TEMPLATE, CREATURE_TEMPLATE, LAMP_TEMPLATE, CONSOLE_TEMPLATE, buildSprite } from '../assets/spriteTemplates.js'
+import { CHILD_TEMPLATE, CREATURE_TEMPLATE, LAMP_TEMPLATE, CONSOLE_TEMPLATE, CACHE_TEMPLATE, buildSprite } from '../assets/spriteTemplates.js'
 
 // Builds a width x height grid filled with a single tile id.
 function buildGrid(width, height, fillId) {
@@ -155,6 +155,14 @@ const siphonRigSprite = buildSprite(CONSOLE_TEMPLATE, {
   L: '#8a9a3a',
 })
 
+// The approach's hidden-passage cache (26-29,6-9 beyond the map's original
+// edge): worn crate colors matching the swamp, same template rustmoor.js
+// uses for Yara's cache.
+const hiddenCacheSprite = buildSprite(CACHE_TEMPLATE, {
+  C: '#4f5a3a',
+  B: '#2f3a28',
+})
+
 registerSprites({
   mossfen_fenling: fenlingSprite,
   mossfen_sentry: sentrySprite,
@@ -168,6 +176,7 @@ registerSprites({
   mossfen_bogWarden: bogWardenSprite,
   mossfen_kinlightLamp: kinlightLampSprite,
   mossfen_siphonRig: siphonRigSprite,
+  mossfen_hiddenCache: hiddenCacheSprite,
 })
 
 // --- World-specific moves ------------------------------------------------
@@ -368,7 +377,12 @@ export const mossfenReachWorld = {
           id: 'approachHiddenPassage',
           x: 25,
           y: 8,
-          reward: { tonic: 1, medkit: 1 },
+          // No reward here anymore - opening the passage only reveals the
+          // chamber beyond. The actual cache sits inside it (see `items`
+          // and the matching trigger below), so the hero walks up to and
+          // picks up something visible instead of the reward just
+          // appearing the moment the wall is bumped, with nothing to show
+          // for it once inside.
           // Opens the entrance tile itself, a one-tile corridor at (26,8),
           // and a 3x3 chamber at x=27-29,y=7-9 - all of it beyond the
           // map's original width (26), so none of it was ever reachable
@@ -389,12 +403,30 @@ export const mossfenReachWorld = {
           dialogue: [
             'The moss-rock grinds aside, revealing a hidden passage!',
             'You push through into a small hollow beyond the reach...',
-            'Found a tonic and a medkit!',
           ],
         },
       ],
+      // Visible marker for the hidden-passage cache, same tile as its
+      // Trigger below - sits in the middle of the revealed chamber, so it's
+      // only ever drawn once the passage is actually open (the tile itself
+      // isn't walkable, and this map item isn't reachable, before then).
+      items: [{ id: 'approachHiddenCache', x: 28, y: 8, spriteId: 'mossfen_hiddenCache', hideWhenFlag: 'mossfen_hiddenCacheFound' }],
       warps: [{ x: 13, y: 1, toMap: 'settlement', toX: 10, toY: 13 }],
       triggers: [
+        // The hidden-passage cache itself - reachable only once the secret
+        // above has opened a path to it. Grants the reward the secret used
+        // to hand out immediately on reveal.
+        {
+          x: 28,
+          y: 8,
+          once: true,
+          setsFlag: 'mossfen_hiddenCacheFound',
+          onEnter: (ctx) => {
+            ctx.state.inventory.tonic = (ctx.state.inventory.tonic || 0) + 1
+            ctx.state.inventory.medkit = (ctx.state.inventory.medkit || 0) + 1
+            ctx.showDialogue(['A sealed cache, tucked into the hollow.', 'Found an Attack Elixir and a medkit!'])
+          },
+        },
         {
           x: 5,
           y: 13,

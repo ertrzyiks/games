@@ -30,8 +30,10 @@ registerTranslations('pl', {
     `Omszały głaz odsuwa się, odkrywając skryte przejście!`,
   [`You push through into a small hollow beyond the reach...`]:
     `Wchodzisz do niewielkiej wnęki poza granicami Reach...`,
-  [`Found a tonic and a medkit!`]:
-    `Znaleziono eliksir i apteczkę!`,
+  [`A sealed cache, tucked into the hollow.`]:
+    `Zapieczętowana skrzynka, ukryta we wnęce.`,
+  [`Found an Attack Elixir and a medkit!`]:
+    `Znaleziono Eliksir Ataku i apteczkę!`,
 
   // --- approach: lore trigger ---
   [`Gogu goes still. "I was born here."`]:
