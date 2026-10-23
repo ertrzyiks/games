@@ -85,7 +85,7 @@
       "status": null,
       "lifesteal": false,
       "focusRestore": 0,
-      "damageType": "kinetic",
+      "damageType": null,
       "healAll": false,
       "upgradesFrom": null,
       "world": "core"
@@ -1195,13 +1195,6 @@
   "startingCredits": 30,
   "partyMovesByDamageType": {
     "kinetic": [
-      {
-        "id": "pistolShot",
-        "name": {
-          "en": "Pistol Shot",
-          "pl": "Strzał z Pistoletu"
-        }
-      },
       {
         "id": "rifleShot",
         "name": {

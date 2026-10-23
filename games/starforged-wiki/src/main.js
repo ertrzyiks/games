@@ -9,7 +9,10 @@ const STRINGS = {
     langToggle: 'Polski',
     backToGame: '← Back to the game',
     tabs: { attacks: 'Attacks', opponents: 'Opponents', items: 'Items', worlds: 'Worlds & Quests' },
-    attacksIntro: 'Every move used by the party or an enemy, with its real battle stats.',
+    attacksIntro:
+      'Every move used by the party or an enemy, with its real battle stats. Pistol Shot is the one exception ' +
+      'to the Damage Type system below: it always deals neutral damage, never super-effective but never ' +
+      "resisted either — Rifle Shot is the one that can actually exploit an enemy's kinetic weakness.",
     col: {
       name: 'Name',
       kind: 'Kind',
@@ -68,7 +71,11 @@ const STRINGS = {
     langToggle: 'English',
     backToGame: '← Wróć do gry',
     tabs: { attacks: 'Ataki', opponents: 'Przeciwnicy', items: 'Przedmioty', worlds: 'Światy i Zadania' },
-    attacksIntro: 'Każdy atak używany przez drużynę lub wrogów, z prawdziwymi statystykami z gry.',
+    attacksIntro:
+      'Każdy atak używany przez drużynę lub wrogów, z prawdziwymi statystykami z gry. Strzał z Pistoletu to ' +
+      'jedyny wyjątek od systemu Typów Obrażeń poniżej: zawsze zadaje neutralne obrażenia, nigdy nie jest ' +
+      'szczególnie skuteczny, ale też nigdy nie jest odparty — to Strzał z Karabinu potrafi realnie wykorzystać ' +
+      'kinetyczną słabość przeciwnika.',
     col: {
       name: 'Nazwa',
       kind: 'Typ',

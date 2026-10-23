@@ -28,7 +28,11 @@ export function getAllMoves() {
 // it against a target's `weakTo`/`resistantTo` (see battle/enemies.js) to
 // apply a damage multiplier — purely additive, a move with no damageType
 // (heals/buffs, or an attack nobody's been tagged weak/resistant to yet)
-// just never triggers either multiplier.
+// just never triggers either multiplier. pistolShot is deliberately left
+// with no damageType even though it's kinetic like rifleShot/trickShot/
+// grenadeToss: it's Wando's always-reliable fallback (100% accuracy), and
+// stays damage-neutral to match - never super-effective, but also never
+// resisted, unlike the rest of his kit.
 registerMoves({
   // Still used by various enemies/bosses across world files by id — kept
   // as-is even though Wando's own loadout moved to the blaster-themed
@@ -41,8 +45,11 @@ registerMoves({
   // Wando's kit: a blaster pistol/rifle, a trick shot, and (unlocked later,
   // see data/gameState.js MOVE_UNLOCKS) a ricochet shot and a grenade.
   // pistolShot never misses - it's Wando's reliable fallback whenever
-  // Focus is tight, so it has to always land.
-  pistolShot: { name: 'Pistol Shot', kind: 'attack', power: 6, focusCost: 0, accuracy: 1, damageType: 'kinetic' },
+  // Focus is tight, so it has to always land. No damageType: always
+  // neutral damage, never super-effective and never resisted either (see
+  // the registry comment above) - rifleShot is the one that can actually
+  // exploit a kinetic weakness.
+  pistolShot: { name: 'Pistol Shot', kind: 'attack', power: 6, focusCost: 0, accuracy: 1 },
   rifleShot: { name: 'Rifle Shot', kind: 'attack', power: 12, focusCost: 3, accuracy: 0.78, damageType: 'kinetic' },
   flamethrower: {
     name: 'Flamethrower',
