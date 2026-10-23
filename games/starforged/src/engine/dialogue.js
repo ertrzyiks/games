@@ -48,8 +48,14 @@ export class Dialogue {
     this.active = true
     // Translate here, once, so every dialogue source across the game (NPC
     // conversations, quest text, battle messages) gets localized for free
-    // without any world/content file needing to call t() itself.
-    this.lines = (Array.isArray(lines) ? lines : [lines]).map(t)
+    // without any world/content file needing to call t() itself. A line may
+    // be a plain string (the common case, drawn in the default color) or
+    // `{ text, color }` (e.g. battleScene's weak-point/resisted hints) to
+    // render that one line in a specific color; `.text` is still what gets
+    // translated either way.
+    this.lines = (Array.isArray(lines) ? lines : [lines]).map((line) =>
+      typeof line === 'string' ? { text: t(line), color: null } : { text: t(line.text), color: line.color }
+    )
     this.lineIndex = 0
     this.charIndex = 0
     this.timer = 0
@@ -62,7 +68,11 @@ export class Dialogue {
   }
 
   get currentLine() {
-    return this.lines[this.lineIndex] || ''
+    return this.lines[this.lineIndex]?.text || ''
+  }
+
+  get currentLineColor() {
+    return this.lines[this.lineIndex]?.color || null
   }
 
   get isLineFullyShown() {
@@ -113,7 +123,7 @@ export class Dialogue {
     }
     const { fontSize, lineHeight } = this._layout
 
-    ctx.fillStyle = '#e8e8e8'
+    ctx.fillStyle = this.currentLineColor || '#e8e8e8'
     ctx.font = `${fontSize}px Consolas, Menlo, monospace`
     ctx.textBaseline = 'top'
     // Only the REVEALED portion is drawn (typewriter effect); the font

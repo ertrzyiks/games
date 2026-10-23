@@ -30,9 +30,9 @@ registerTranslations('pl', {
   'No quests yet. Talk to people!': 'Brak zadań. Porozmawiaj z kimś!',
   '[done]': '[gotowe]',
   'A/B: Back': 'A/B: Wstecz',
-  'Rest (30s)': 'Odpoczynek (30s)',
-  'Resting...': 'Odpoczynek...',
-  'B: Cancel': 'B: Odwołaj',
+
+  // HUD (top-right overworld readout)
+  '{amount}cr': '{amount}kr',
 
   // Shop (merchant NPCs)
   Shop: 'Sklep',

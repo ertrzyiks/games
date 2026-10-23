@@ -35,8 +35,26 @@ export function drawMap(ctx, mapDef, camera) {
         if (hash2(tx, ty) > 0.5) ctx.fillRect(px + 2, py + 2, 2, 2)
         if (hash2(tx + 50, ty + 50) > 0.6) ctx.fillRect(px + 10, py + 9, 2, 2)
       }
+      // 'door' is the one tile id every world's warp-to-another-segment
+      // tile uses (see worlds/*.js's `setTile(..., 'door')`) - drawing its
+      // icon here, keyed only off that shared id, marks every such warp the
+      // same way in all five worlds for free, with no per-world changes.
+      if (tileId === 'door') drawDoorIcon(ctx, px, py)
     }
   }
+}
+
+function drawDoorIcon(ctx, px, py) {
+  const w = 8
+  const h = 12
+  const x = px + Math.floor((TILE_SIZE - w) / 2)
+  const y = py + TILE_SIZE - h - 1
+  ctx.fillStyle = '#2a1708'
+  ctx.fillRect(x, y, w, h)
+  ctx.fillStyle = '#c9a876'
+  ctx.fillRect(x + 1, y + 1, w - 2, h - 2)
+  ctx.fillStyle = '#2a1708'
+  ctx.fillRect(x + w - 3, y + Math.floor(h / 2), 1, 1)
 }
 
 export function tileAt(mapDef, x, y) {

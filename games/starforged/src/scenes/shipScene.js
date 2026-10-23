@@ -8,13 +8,6 @@ import { t, tf, getLanguage, cycleLanguage, LANGUAGES } from '../engine/i18n.js'
 import { TravelMinigameScene } from './travelMinigameScene.js'
 import { HeroScreen } from './heroScreen.js'
 
-// Fallback full heal once medkits have run out: wait this long (ship time,
-// not real battle time - this menu is only reachable from the overworld)
-// and the whole party is restored to full HP. Deliberately much slower
-// than a medkit so it never replaces carrying/buying them, just backstops
-// a run that's completely out.
-const REST_DURATION_MS = 30000
-
 /**
  * Ship / pause screen, reached from the overworld via the B button.
  * Top-level hub: Travel (world-select) / Quest Log / Heroes / Language / Close.
@@ -59,7 +52,6 @@ export class ShipScene {
       { id: 'travel', label: t('Travel') },
       { id: 'questlog', label: t('Quest Log') },
       { id: 'heroes', label: t('Heroes') },
-      { id: 'rest', label: t('Rest (30s)') },
       { id: 'language', label: tf('{label}: {value}', { label: t('Language'), value: current.label }) },
       { id: 'close', label: t('Close') },
     ]
@@ -109,35 +101,7 @@ export class ShipScene {
     })
   }
 
-  _startRest() {
-    this.mode = 'resting'
-    this.restElapsed = 0
-    playConfirm()
-  }
-
-  _finishRest() {
-    for (const member of Object.values(this.state.party)) {
-      if (member.hp <= 0) continue
-      member.hp = member.maxHp
-    }
-    saveGame(this.state)
-    this.mode = 'main'
-    playConfirm()
-  }
-
   update(dt) {
-    if (this.mode === 'resting') {
-      if (input.wasPressed('b')) {
-        // Cancel early: no heal, just back out to the main menu.
-        this.mode = 'main'
-        playCancel()
-        return
-      }
-      this.restElapsed += dt
-      if (this.restElapsed >= REST_DURATION_MS) this._finishRest()
-      return
-    }
-
     if (this.mode === 'main') {
       const options = this.mainOptions
       if (input.wasPressed('down')) {
@@ -160,8 +124,6 @@ export class ShipScene {
         } else if (choice.id === 'heroes') {
           playConfirm()
           this._openHeroes()
-        } else if (choice.id === 'rest') {
-          this._startRest()
         } else if (choice.id === 'language') {
           cycleLanguage()
           playBlip()
@@ -207,30 +169,6 @@ export class ShipScene {
     if (this.mode === 'main') this._drawMain(ctx)
     else if (this.mode === 'travel') this._drawTravel(ctx)
     else if (this.mode === 'questlog') this._drawQuestLog(ctx)
-    else if (this.mode === 'resting') this._drawResting(ctx)
-  }
-
-  _drawResting(ctx) {
-    ctx.font = '7px Consolas, Menlo, monospace'
-    ctx.fillStyle = '#9ba1b4'
-    ctx.fillText(t('Resting...'), 6, 12)
-
-    const boxX = 6
-    const boxY = 50
-    const boxW = CANVAS_WIDTH - 12
-    const boxH = 14
-    ctx.fillStyle = '#0b0d12'
-    ctx.fillRect(boxX, boxY, boxW, boxH)
-    ctx.strokeStyle = '#e8e8e8'
-    ctx.lineWidth = 1
-    ctx.strokeRect(boxX, boxY, boxW, boxH)
-    const progress = Math.min(1, this.restElapsed / REST_DURATION_MS)
-    ctx.fillStyle = '#5bd17a'
-    ctx.fillRect(boxX + 2, boxY + 2, (boxW - 4) * progress, boxH - 4)
-
-    ctx.font = '6px Consolas, Menlo, monospace'
-    ctx.fillStyle = '#52586a'
-    ctx.fillText(t('B: Cancel'), boxX + 4, CANVAS_HEIGHT - 6)
   }
 
   _drawMain(ctx) {

@@ -1,5 +1,5 @@
 import { CANVAS_WIDTH } from '../engine/constants.js'
-import { t } from '../engine/i18n.js'
+import { t, tf } from '../engine/i18n.js'
 
 /**
  * Small, unobtrusive party status readout drawn in the top-right corner of
@@ -38,5 +38,5 @@ export function drawHud(ctx, state) {
   })
 
   ctx.fillStyle = '#f4d35b'
-  ctx.fillText(`${state.credits || 0}cr`, x + padding, y + padding + (members.length + 1) * lineH - 2)
+  ctx.fillText(tf('{amount}cr', { amount: state.credits || 0 }), x + padding, y + padding + (members.length + 1) * lineH - 2)
 }

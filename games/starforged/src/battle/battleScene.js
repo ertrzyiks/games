@@ -25,6 +25,11 @@ const TONIC_DURATION = 3
 // never triggers both.
 const WEAKNESS_MULTIPLIER = 1.5
 const RESISTANCE_MULTIPLIER = 0.6
+// Colors for the super-effective / resisted hint lines (see Dialogue's
+// `{ text, color }` line support) - same green/red already used elsewhere
+// for HP bars and status text, so they read consistently.
+const WEAKNESS_COLOR = '#5bd17a'
+const RESISTANCE_COLOR = '#e0564b'
 // Short on-screen tags for active status effects, shown next to a unit's
 // name on its HP bar.
 const STATUS_TAG = { burn: 'BRN', poison: 'PSN', boostAtk: 'ATK+', boostDef: 'DEF+' }
@@ -302,12 +307,18 @@ export class BattleScene {
       for (const target of targets) {
         const before = target.hp
         target.hp = Math.min(target.maxHp, target.hp + move.power)
+        const amount = target.hp - before
+        // Force Heal+ tops up everyone at once - an ally already at full HP
+        // gets 0, which isn't worth a message of its own (most noticeable
+        // with only 2 party members: it would otherwise read like a second,
+        // redundant line for the one hero who didn't need healing).
+        if (amount <= 0) continue
         lines.push(
           tf('{name} uses {move} on {target}, healing {amount} HP!', {
             name: t(action.name),
             move: t(move.name),
             target: t(target.name),
-            amount: target.hp - before,
+            amount,
           })
         )
       }
@@ -351,8 +362,11 @@ export class BattleScene {
         dmg,
       })
     )
-    if (isWeakHit) lines.push(tf('{target} is weak to this attack!', { target: t(target.name) }))
-    else if (isResistedHit) lines.push(tf('{target} resists this attack!', { target: t(target.name) }))
+    if (isWeakHit) {
+      lines.push({ text: tf('{target} is weak to this attack!', { target: t(target.name) }), color: WEAKNESS_COLOR })
+    } else if (isResistedHit) {
+      lines.push({ text: tf('{target} resists this attack!', { target: t(target.name) }), color: RESISTANCE_COLOR })
+    }
 
     if (move.lifesteal) {
       const healAmt = Math.max(1, Math.round(dmg / 2))

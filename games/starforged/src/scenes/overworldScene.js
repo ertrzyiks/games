@@ -28,9 +28,9 @@ import { t } from '../engine/i18n.js'
 
 const BUMP_COOLDOWN_MS = 90
 // Both heroes trickle back HP while exploring, independent of medkits - a
-// slow safety net, not a substitute for them (compare ShipScene's 30s full
-// "Rest", the deliberate fallback once medkits run out).
-const HP_REGEN_INTERVAL_MS = 4000
+// slow safety net, not a substitute for them. Deliberately slow (half a
+// minute per tick) so it never substitutes for carrying/buying medkits.
+const HP_REGEN_INTERVAL_MS = 30000
 const HP_REGEN_AMOUNT = 1
 
 export class OverworldScene {

@@ -13,7 +13,13 @@ const HIT_INVULN_MS = 700
 const HIT_FLASH_MS = 250
 const WEAPON_LOCK_MS = 500
 
-const ASTEROID_TOTAL = 12
+// More than before, spawning denser toward the end of the run (see
+// _updateAsteroids's timer formula) rather than at one flat rate the whole
+// time - it should feel like the field gets busier, not just longer.
+const ASTEROID_TOTAL = 18
+const ASTEROID_GAP_EARLY = [450, 800] // ms, [min, max] between spawns near the start
+const ASTEROID_GAP_LATE = [150, 350] // ms, [min, max] once most asteroids have spawned
+const BULLET_HIT_RADIUS = 3
 
 // Movement patterns, not just stats, are what make the 5 extra types read
 // as different hazards rather than recolored fighters: patrol/bounce2d
@@ -216,9 +222,22 @@ export class TravelMinigameScene {
         }
       }
 
+      // Shooting down an incoming enemy bullet destroys both it and the
+      // laser - gives the player an active way to clear bullets instead of
+      // only ever dodging them.
+      for (const bullet of this.enemyBullets) {
+        if (bullet.dead) continue
+        if (this._dist(laser.x, laser.y, bullet.x, bullet.y) <= BULLET_HIT_RADIUS) {
+          bullet.dead = true
+          playImpact()
+          return false
+        }
+      }
+
       return true
     })
     this.asteroids = this.asteroids.filter((a) => !a.dead)
+    this.enemyBullets = this.enemyBullets.filter((b) => !b.dead)
   }
 
   _updateAsteroids(dt) {
@@ -227,7 +246,15 @@ export class TravelMinigameScene {
       if (this.asteroidTimer <= 0) {
         this._spawnAsteroid()
         this.asteroidsSpawned += 1
-        this.asteroidTimer = 450 + Math.random() * 350
+        // Interpolate the gap between spawns from the "early" range down to
+        // the "late" range as asteroidsSpawned approaches the total, so the
+        // back half of the run is noticeably denser than the front half.
+        const progress = this.asteroidsSpawned / ASTEROID_TOTAL
+        const [minGap, maxGap] = [
+          ASTEROID_GAP_EARLY[0] + (ASTEROID_GAP_LATE[0] - ASTEROID_GAP_EARLY[0]) * progress,
+          ASTEROID_GAP_EARLY[1] + (ASTEROID_GAP_LATE[1] - ASTEROID_GAP_EARLY[1]) * progress,
+        ]
+        this.asteroidTimer = minGap + Math.random() * (maxGap - minGap)
       }
     }
 
