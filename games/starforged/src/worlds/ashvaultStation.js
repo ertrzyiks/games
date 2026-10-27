@@ -622,46 +622,41 @@ export const ashvaultStationWorld = {
       height: 14,
       tiles: extractorVaultTiles,
       npcs: [],
-      enemySpawns: [],
-      warps: [],
-      triggers: [
-        // Mandatory boss encounter: the only tile connecting the corridor
-        // to the vault chamber, so it cannot be bypassed (see map comment
-        // above). once:true so re-entering after the fight doesn't replay
-        // the lead-in or restart the battle.
+      // Boss: the only tile connecting the corridor to the vault chamber,
+      // so the fight cannot be bypassed (see map comment above). A visible
+      // spawn like every other enemy here (not a one-shot Trigger) so
+      // losing and retrying from the pre-fight checkpoint re-engages it the
+      // same way - the spawn just stays on the map, undefeated, until it's
+      // actually won.
+      enemySpawns: [
         {
+          id: 'extractorVaultBoss',
           x: 7,
           y: 5,
-          once: true,
-          setsFlag: 'ashvault_bossEngaged',
-          onEnter(ctx) {
+          enemyId: 'ashvault_foreman',
+          spriteId: 'ashvault_foreman',
+          leadInDialogue: [
+            'The Extractor hums behind the Foreman, half-built.',
+            '"The device stays. You don\'t," he growls.',
+            'Wando steps forward. "Try it."',
+          ],
+          onVictory: (state, ctx) => {
+            const nextWorldId = unlockNextWorld(state, 'ashvaultStation')
+            completeQuest(state, 'ashvault_extractorSabotage')
+            state.credits = (state.credits || 0) + 25
             ctx.showDialogue(
               [
-                'The Extractor hums behind the Foreman, half-built.',
-                '"The device stays. You don\'t," he growls.',
-                'Wando steps forward. "Try it."',
+                'The Foreman gives up — the Extractor sparks and shuts down.',
+                'Gogu breathes out: "It\'s gone quiet."',
+                'Head back to the Starskiff for Skyreach Canopy. (+25 credits)',
               ],
-              () => {
-                ctx.startBattle(['ashvault_foreman'], {
-                  onVictory: (state) => {
-                    const nextWorldId = unlockNextWorld(state, 'ashvaultStation')
-                    completeQuest(state, 'ashvault_extractorSabotage')
-                    state.credits = (state.credits || 0) + 25
-                    ctx.showDialogue(
-                      [
-                        'The Foreman gives up — the Extractor sparks and shuts down.',
-                        'Gogu breathes out: "It\'s gone quiet."',
-                        'Head back to the Starskiff for Skyreach Canopy. (+25 credits)',
-                      ],
-                      () => ctx.openShip({ preselectWorldId: nextWorldId })
-                    )
-                  },
-                })
-              }
+              () => ctx.openShip({ preselectWorldId: nextWorldId })
             )
           },
         },
       ],
+      warps: [],
+      triggers: [],
     },
   },
 }

@@ -1321,7 +1321,8 @@
           "enemySpawns": [
             "scavenger",
             "rustmoor_raider",
-            "rustmoor_raiderScout"
+            "rustmoor_raiderScout",
+            "rustmoor_scavengerCaptain"
           ],
           "secrets": []
         }
@@ -1412,7 +1413,9 @@
             "pl": "Legowisko Strażnika"
           },
           "npcs": [],
-          "enemySpawns": [],
+          "enemySpawns": [
+            "mossfen_bogWarden"
+          ],
           "secrets": []
         }
       ]
@@ -1507,7 +1510,9 @@
             "pl": "Skarbiec Ekstraktora"
           },
           "npcs": [],
-          "enemySpawns": [],
+          "enemySpawns": [
+            "ashvault_foreman"
+          ],
           "secrets": []
         }
       ]
@@ -1597,7 +1602,9 @@
             "pl": "Arena Egzekutora"
           },
           "npcs": [],
-          "enemySpawns": [],
+          "enemySpawns": [
+            "skyreach_enforcerVane"
+          ],
           "secrets": []
         }
       ]
@@ -1671,7 +1678,8 @@
           "npcs": [],
           "enemySpawns": [
             "hollow_eliteGuard",
-            "hollow_shadowAgent"
+            "hollow_shadowAgent",
+            "hollow_syndicateWarden"
           ],
           "secrets": []
         }

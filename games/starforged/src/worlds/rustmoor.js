@@ -479,6 +479,37 @@ export const rustmoorWorld = {
         { id: 'depthsRaider1', x: 15, y: 3, enemyId: 'rustmoor_raider', spriteId: 'rustmoor_raider' },
         { id: 'depthsScout1', x: 8, y: 9, enemyId: 'rustmoor_raiderScout', spriteId: 'rustmoor_raiderScout' },
         { id: 'depthsRaider2', x: 14, y: 11, enemyId: 'rustmoor_raider', spriteId: 'rustmoor_raider' },
+        // Boss: the single tile connecting the corridor to the arena room
+        // (walled on both sides at this row), so the fight cannot be
+        // bypassed once the rubble is cleared. A visible spawn like every
+        // other enemy here (not a one-shot Trigger) so losing and retrying
+        // from the pre-fight checkpoint re-engages it the same way - the
+        // spawn just stays on the map, undefeated, until it's actually won.
+        {
+          id: 'depthsBoss',
+          x: DEPTHS_CORR2_X,
+          y: 17,
+          enemyId: 'rustmoor_scavengerCaptain',
+          spriteId: 'rustmoor_scavengerCaptain',
+          leadInDialogue: [
+            'The tunnel opens into a torch-lit chamber.',
+            '"Hand him over — the Syndicate pays well," the raider sneers.',
+            'Wando steps between them. "Not a chance."',
+          ],
+          onVictory: (state, ctx) => {
+            const nextWorldId = unlockNextWorld(state, 'rustmoor')
+            completeQuest(state, 'rustmoor_syndicateSigns')
+            state.credits = (state.credits || 0) + 25
+            ctx.showDialogue(
+              [
+                'The captain gives up — a Syndicate sigil-coin rolls free.',
+                "Rustmoor's shakedown is over. Wando's skiff is fueled and ready. (+25 credits)",
+                'Head back to the Starskiff — a new world awaits.',
+              ],
+              () => ctx.openShip({ preselectWorldId: nextWorldId })
+            )
+          },
+        },
       ],
       // Visible marker for Yara's buried cache, same tile as its
       // (unchanged) Trigger below.
@@ -545,38 +576,6 @@ export const rustmoorWorld = {
                 "You'd need the right tool to clear it.",
               ])
             }
-          },
-        },
-        // Boss chokepoint: the single tile connecting the corridor to the
-        // arena room (walled on both sides at this row, same pattern as
-        // theHollow.js), so the fight cannot be bypassed once the rubble
-        // is cleared.
-        {
-          x: DEPTHS_CORR2_X,
-          y: 17,
-          once: true,
-          setsFlag: 'rustmoor_bossEngaged',
-          onEnter: (ctx) => {
-            ctx.showDialogue([
-              'The tunnel opens into a torch-lit chamber.',
-              '"Hand him over — the Syndicate pays well," the raider sneers.',
-              'Wando steps between them. "Not a chance."',
-            ])
-            ctx.startBattle(['rustmoor_scavengerCaptain'], {
-              onVictory: (state) => {
-                const nextWorldId = unlockNextWorld(state, 'rustmoor')
-                completeQuest(state, 'rustmoor_syndicateSigns')
-                state.credits = (state.credits || 0) + 25
-                ctx.showDialogue(
-                  [
-                    'The captain gives up — a Syndicate sigil-coin rolls free.',
-                    "Rustmoor's shakedown is over. Wando's skiff is fueled and ready. (+25 credits)",
-                    'Head back to the Starskiff — a new world awaits.',
-                  ],
-                  () => ctx.openShip({ preselectWorldId: nextWorldId })
-                )
-              },
-            })
           },
         },
       ],

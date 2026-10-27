@@ -57,11 +57,11 @@ for (const w of WORLD_FILES) {
   for (const e of getAllEnemies()) if (!enemyWorld.has(e.id)) enemyWorld.set(e.id, w.id)
 }
 
-// Bosses are only referenced inside each world's finale-trigger closure
-// (ctx.startBattle([...])), not via any statically-scannable list, so the
-// registration-order tagging above (which only sees enemySpawns-independent
-// registerEnemies calls) already assigns them correctly: each boss is
-// registered in its own chapter's world file, same as its regular enemies.
+// Bosses are placed as a regular EnemySpawn on their chapter's arena map
+// (see overworldScene.js's _engageEnemySpawn), same as any other enemy, so
+// the registration-order tagging above already assigns them correctly:
+// each boss is registered in its own chapter's world file, same as its
+// regular enemies.
 
 function bilingual(nameEn) {
   setLanguage('en')

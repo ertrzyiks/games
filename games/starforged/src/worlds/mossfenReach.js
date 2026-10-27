@@ -636,46 +636,41 @@ export const mossfenReachWorld = {
       height: 12,
       tiles: wardenLairTiles,
       npcs: [],
-      enemySpawns: [],
-      warps: [{ x: 5, y: 11, toMap: 'deepMire', toX: 22, toY: 12 }],
-      triggers: [
-        // Mandatory boss encounter: the single tile connecting the
-        // corridor to the grotto room, so it cannot be bypassed (see map
-        // comment above). once:true so re-entering after the fight does
-        // not replay the lead-in or restart the battle.
+      // Boss: the single tile connecting the corridor to the grotto room,
+      // so the fight cannot be bypassed (see map comment above). A visible
+      // spawn like every other enemy here (not a one-shot Trigger) so
+      // losing and retrying from the pre-fight checkpoint re-engages it the
+      // same way - the spawn just stays on the map, undefeated, until it's
+      // actually won.
+      enemySpawns: [
         {
+          id: 'wardenLairBoss',
           x: 5,
           y: 6,
-          once: true,
-          setsFlag: 'mossfen_bossEngaged',
-          onEnter: (ctx) => {
+          enemyId: 'mossfen_bogWarden',
+          spriteId: 'mossfen_bogWarden',
+          leadInDialogue: [
+            'The corridor opens on a sunken grotto.',
+            '"Bog Warden..." Gogu\'s voice shakes. "What did they do to it?"',
+            'Wando raises his shield. "Gogu — stay close."',
+          ],
+          onVictory: (state, ctx) => {
+            const nextWorldId = unlockNextWorld(state, 'mossfenReach')
+            completeQuest(state, 'mossfen_syndicateTrail')
+            state.credits = (state.credits || 0) + 25
             ctx.showDialogue(
               [
-                'The corridor opens on a sunken grotto.',
-                '"Bog Warden..." Gogu\'s voice shakes. "What did they do to it?"',
-                'Wando raises his shield. "Gogu — stay close."',
+                'The corrupted plating cracks away; only still water remains.',
+                'Wando finds a scorched Syndicate medallion. "There\'s a bigger station out there — Ashvault."',
+                '"Then that\'s where we go," Gogu says. Head back to the Starskiff. (+25 credits)',
               ],
-              () => {
-                ctx.startBattle(['mossfen_bogWarden'], {
-                  onVictory: (state) => {
-                    const nextWorldId = unlockNextWorld(state, 'mossfenReach')
-                    completeQuest(state, 'mossfen_syndicateTrail')
-                    state.credits = (state.credits || 0) + 25
-                    ctx.showDialogue(
-                      [
-                        'The corrupted plating cracks away; only still water remains.',
-                        'Wando finds a scorched Syndicate medallion. "There\'s a bigger station out there — Ashvault."',
-                        '"Then that\'s where we go," Gogu says. Head back to the Starskiff. (+25 credits)',
-                      ],
-                      () => ctx.openShip({ preselectWorldId: nextWorldId })
-                    )
-                  },
-                })
-              }
+              () => ctx.openShip({ preselectWorldId: nextWorldId })
             )
           },
         },
       ],
+      warps: [{ x: 5, y: 11, toMap: 'deepMire', toX: 22, toY: 12 }],
+      triggers: [],
     },
   },
 }

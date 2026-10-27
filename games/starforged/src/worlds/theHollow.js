@@ -504,53 +504,49 @@ const wardenChamberMap = {
     { id: 'warden_corridor_guard1', x: 4, y: 8, enemyId: 'hollow_eliteGuard', spriteId: 'hollow_eliteGuard' },
     { id: 'warden_corridor_guard2', x: 4, y: 11, enemyId: 'hollow_shadowAgent', spriteId: 'hollow_shadowAgent' },
     { id: 'warden_corridor_guard3', x: 4, y: 14, enemyId: 'hollow_eliteGuard', spriteId: 'hollow_eliteGuard' },
-  ],
-  warps: [],
-  triggers: [
-    // Mandatory boss encounter — the only tile connecting the corridor to
-    // the arena, so it cannot be bypassed (see map comment above). This
-    // stays a Trigger, not an enemySpawn, specifically because it must be
-    // a forced, unavoidable fight. once: true so re-entering the arena
-    // after the fight doesn't replay the lead-in or restart the battle.
+    // Final boss — the only tile connecting the corridor to the arena, so
+    // it cannot be bypassed (see map comment above). A visible spawn like
+    // every other enemy here (not a one-shot Trigger) so losing and
+    // retrying from the pre-fight checkpoint re-engages it the same way -
+    // the spawn just stays on the map, undefeated, until it's actually won.
     {
+      id: 'warden_boss',
       x: 4,
       y: 4,
-      once: true,
-      setsFlag: 'hollow_bossEngaged',
-      onEnter: (ctx) => {
-        ctx.showDialogue([
-          "The corridor opens onto a floor etched in cold red runes — the same sigils from Ashvault's vault, from the Bog Warden's hollow, all of it tracing back here.",
-          'At the center, wreathed in Syndicate light, the Warden rises to meet you.',
-          '"The little psychic comes to us after all," it rasps. "Every world you crossed to get here, and it ends the same. Kneel, armorer, and hand him over."',
-          'Wando plants his feet, shield raised. "Gogu — stay behind me. This ends now. Not with him."',
-        ])
-        ctx.startBattle(['hollow_syndicateWarden'], {
-          onVictory: (state) => {
-            completeQuest(state, FINALE_QUEST_ID)
-            // Final chapter's climactic completion — a bigger reward than
-            // every other world's +25, since there's no next chapter to
-            // bankroll the trip into; it's spent on whatever's left to buy
-            // back at the Starskiff instead.
-            state.credits = (state.credits || 0) + 45
-            state.flags.add('gameCompleted')
-            ctx.showDialogue(
-              [
-                'The Warden sinks down, beaten. The rune-light flickers, dims, and finally goes dark — the Hollow has nothing left to throw at you.',
-                'Among the wreckage, salvaged Syndicate tech is worth a small fortune back at the Starskiff. (+45 credits)',
-                'Gogu steps out from behind Wando, small fingers finding his armored hand. "...It\'s quiet. I\'ve never felt it this quiet before."',
-                'Wando kneels to his level. "That\'s the Current settling. Nobody\'s hunting it anymore — not here, not in the Reach, not anywhere we\'ve been."',
-                "Rell, and everyone else the Syndicate dragged down here, will walk out into daylight they didn't expect to see again.",
-                "Wando thinks of the forge-clan that exiled him, a raider's canyon, a drowned bog shrine, a station full of smoke, a refuge in the clouds — every place this road ran through to get here.",
-                '"Come on, Gogu," he says, straightening up. "Let\'s go see what the Drift looks like without the Hollow watching it."',
-                'THE END — head back to the Starskiff to revisit any world of the Drift.',
-              ],
-              () => ctx.openShip()
-            )
-          },
-        })
+      enemyId: 'hollow_syndicateWarden',
+      spriteId: 'hollow_syndicateWarden',
+      leadInDialogue: [
+        "The corridor opens onto a floor etched in cold red runes — the same sigils from Ashvault's vault, from the Bog Warden's hollow, all of it tracing back here.",
+        'At the center, wreathed in Syndicate light, the Warden rises to meet you.',
+        '"The little psychic comes to us after all," it rasps. "Every world you crossed to get here, and it ends the same. Kneel, armorer, and hand him over."',
+        'Wando plants his feet, shield raised. "Gogu — stay behind me. This ends now. Not with him."',
+      ],
+      onVictory: (state, ctx) => {
+        completeQuest(state, FINALE_QUEST_ID)
+        // Final chapter's climactic completion — a bigger reward than
+        // every other world's +25, since there's no next chapter to
+        // bankroll the trip into; it's spent on whatever's left to buy
+        // back at the Starskiff instead.
+        state.credits = (state.credits || 0) + 45
+        state.flags.add('gameCompleted')
+        ctx.showDialogue(
+          [
+            'The Warden sinks down, beaten. The rune-light flickers, dims, and finally goes dark — the Hollow has nothing left to throw at you.',
+            'Among the wreckage, salvaged Syndicate tech is worth a small fortune back at the Starskiff. (+45 credits)',
+            'Gogu steps out from behind Wando, small fingers finding his armored hand. "...It\'s quiet. I\'ve never felt it this quiet before."',
+            'Wando kneels to his level. "That\'s the Current settling. Nobody\'s hunting it anymore — not here, not in the Reach, not anywhere we\'ve been."',
+            "Rell, and everyone else the Syndicate dragged down here, will walk out into daylight they didn't expect to see again.",
+            "Wando thinks of the forge-clan that exiled him, a raider's canyon, a drowned bog shrine, a station full of smoke, a refuge in the clouds — every place this road ran through to get here.",
+            '"Come on, Gogu," he says, straightening up. "Let\'s go see what the Drift looks like without the Hollow watching it."',
+            'THE END — head back to the Starskiff to revisit any world of the Drift.',
+          ],
+          () => ctx.openShip()
+        )
       },
     },
   ],
+  warps: [],
+  triggers: [],
 }
 
 // --- World ------------------------------------------------------------

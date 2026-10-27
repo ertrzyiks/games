@@ -71,6 +71,13 @@
  * @property {number} y
  * @property {string} enemyId      - id from battle/enemies.js
  * @property {string} spriteId     - id from assets/sprites/registry.js
+ * @property {string[]} [leadInDialogue] - shown (typewriter, blocking) before the fight starts, every
+ *   time this spawn is engaged; used for boss build-up lines. Omit for a plain fight-on-contact enemy.
+ * @property {function(state, {showDialogue, openShip}):void} [onVictory] - extra story beats beyond the
+ *   defeated-flag bookkeeping (handled automatically by OverworldScene) — completing quests, granting
+ *   credits, unlocking the next world, chaining a victory dialogue into openShip(), etc. Used by bosses;
+ *   a plain enemy omits this. Unlike a boss Trigger's onVictory, this only fires on an actual win, and
+ *   the spawn itself stays on the map (re-engageable on retry) until it does.
  *
  * @typedef {Object} Trigger
  * @property {number} x

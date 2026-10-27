@@ -235,13 +235,32 @@ export class OverworldScene {
     return null
   }
 
+  // Plain enemies fight immediately; a boss spawn (leadInDialogue set) shows
+  // its build-up lines first and only starts the battle once the player has
+  // clicked through them. Either way the fight is driven by this same
+  // adjacency-triggered path (see _adjacentLiveEnemySpawn), not a one-shot
+  // Trigger - so a boss defeat-and-retry-from-checkpoint re-engages exactly
+  // like any other enemy: the spawn is simply still on the map, undefeated.
   _engageEnemySpawn(enemySpawn) {
     const key = this._enemyDefeatedKey(enemySpawn)
-    this.startBattle([enemySpawn.enemyId], {
-      onVictory: (state) => {
-        state.flags.add(key)
-      },
-    })
+    const engage = () => {
+      this.startBattle([enemySpawn.enemyId], {
+        onVictory: (state) => {
+          state.flags.add(key)
+          if (enemySpawn.onVictory) {
+            enemySpawn.onVictory(state, {
+              showDialogue: (lines, cb) => this.dialogue.start(lines, cb),
+              openShip: (opts) => this._openShip(opts),
+            })
+          }
+        },
+      })
+    }
+    if (enemySpawn.leadInDialogue) {
+      this.dialogue.start(enemySpawn.leadInDialogue, engage)
+    } else {
+      engage()
+    }
   }
 
   _talkToNpc(npc) {

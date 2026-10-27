@@ -618,44 +618,40 @@ export const skyreachCanopyWorld = {
       height: ARENA_H,
       tiles: enforcerArenaTiles,
       npcs: [],
-      enemySpawns: [],
-      warps: [{ x: 7, y: 11, toMap: 'highReaches', toX: 15, toY: 5 }],
-      triggers: [
-        // Mandatory boss encounter: the only tile connecting the corridor
-        // to the arena room, so it cannot be bypassed.
+      // Boss: the only tile connecting the corridor to the arena room, so
+      // the fight cannot be bypassed. A visible spawn like every other
+      // enemy here (not a one-shot Trigger) so losing and retrying from the
+      // pre-fight checkpoint re-engages it the same way - the spawn just
+      // stays on the map, undefeated, until it's actually won.
+      enemySpawns: [
         {
+          id: 'enforcerArenaBoss',
           x: 7,
           y: 6,
-          once: true,
-          setsFlag: 'skyreach_enforcerEngaged',
-          onEnter: (ctx) => {
+          enemyId: 'skyreach_enforcerVane',
+          spriteId: 'skyreach_enforcerVane',
+          leadInDialogue: [
+            'A figure drops from above on a glider-rig.',
+            '"Enforcer Vane," she says. "Hiding ends today."',
+            'Wando steps in front of Gogu. "Not today."',
+          ],
+          onVictory: (state, ctx) => {
+            const nextWorldId = unlockNextWorld(state, 'skyreachCanopy')
+            completeQuest(state, WATCH_QUEST)
+            state.credits = (state.credits || 0) + 25
             ctx.showDialogue(
               [
-                'A figure drops from above on a glider-rig.',
-                '"Enforcer Vane," she says. "Hiding ends today."',
-                'Wando steps in front of Gogu. "Not today."',
+                'Enforcer Vane crashes against the rail, defeated.',
+                'The refuge is safe — for now.',
+                'Head back to the Starskiff. The Hollow awaits. (+25 credits)',
               ],
-              () => {
-                ctx.startBattle(['skyreach_enforcerVane'], {
-                  onVictory: (state) => {
-                    const nextWorldId = unlockNextWorld(state, 'skyreachCanopy')
-                    completeQuest(state, WATCH_QUEST)
-                    state.credits = (state.credits || 0) + 25
-                    ctx.showDialogue(
-                      [
-                        'Enforcer Vane crashes against the rail, defeated.',
-                        'The refuge is safe — for now.',
-                        'Head back to the Starskiff. The Hollow awaits. (+25 credits)',
-                      ],
-                      () => ctx.openShip({ preselectWorldId: nextWorldId })
-                    )
-                  },
-                })
-              }
+              () => ctx.openShip({ preselectWorldId: nextWorldId })
             )
           },
         },
       ],
+      warps: [{ x: 7, y: 11, toMap: 'highReaches', toX: 15, toY: 5 }],
+      triggers: [],
     },
   },
 }
