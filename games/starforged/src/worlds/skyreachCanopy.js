@@ -451,7 +451,18 @@ export const skyreachCanopyWorld = {
               return ['Senna: The enforcer is gone. The refuge stands.']
             }
             if (q.stage >= 1) {
-              return ['Senna: You stilled it. Thank the Current.', "Senna: She's almost here — stand with us."]
+              // First time reporting the well stilled: a small finder's-fee
+              // payout, not just flavor text - the chapter's boss fight
+              // already pays off the quest itself separately.
+              const firstReport = !state.flags.has('skyreach_toldSenna')
+              if (firstReport) {
+                state.flags.add('skyreach_toldSenna')
+                state.credits = (state.credits || 0) + 10
+              }
+              return [
+                'Senna: You stilled it. Thank the Current.',
+                firstReport ? "Senna: She's almost here — stand with us. (+10 credits)" : "Senna: She's almost here — stand with us.",
+              ]
             }
             return ["Senna: Please hurry — they're getting closer."]
           },

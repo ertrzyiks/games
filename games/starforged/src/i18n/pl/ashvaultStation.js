@@ -66,6 +66,8 @@ registerTranslations('pl', {
     `Więc schematy to potwierdzają — zbudowane dla Gogu.`,
   [`The vault door should open now. Hurry.`]:
     `Drzwi skarbca powinny się już otworzyć. Szybko.`,
+  [`The vault door should open now. Hurry. (+10 credits)`]:
+    `Drzwi skarbca powinny się już otworzyć. Szybko. (+10 kredytów)`,
   [`Find the console. Don't touch the Extractor yet.`]:
     `Znajdź konsolę. Nie dotykaj jeszcze Ekstraktora.`,
 

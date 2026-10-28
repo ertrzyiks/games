@@ -320,9 +320,20 @@ export const rustmoorWorld = {
               ]
             }
             if (q.stage >= 2) {
+              // First time bringing her the proof: a small finder's-fee
+              // payout, same shape as the shield-relay/Rell-rescue
+              // milestones in theHollow.js - not every reward has to wait
+              // for the chapter's final boss.
+              const firstReport = !state.flags.has('rustmoor_toldDessa')
+              if (firstReport) {
+                state.flags.add('rustmoor_toldDessa')
+                state.credits = (state.credits || 0) + 10
+              }
               return [
                 "So it's real — they're not done with Rustmoor.",
-                'Stop that raider captain and cut their leash.',
+                firstReport
+                  ? 'Stop that raider captain and cut their leash. (+10 credits)'
+                  : 'Stop that raider captain and cut their leash.',
               ]
             }
             return [

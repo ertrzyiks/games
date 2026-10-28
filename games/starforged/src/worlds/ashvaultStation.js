@@ -493,7 +493,18 @@ export const ashvaultStationWorld = {
               return ["The Extractor's slag now — it's over.", "Skyreach Canopy's next. They'll be there too."]
             }
             if (quest.stage >= 1) {
-              return ['So the schematics confirm it — built for Gogu.', 'The vault door should open now. Hurry.']
+              // First time reporting the schematics confirmed: a small
+              // finder's-fee payout, not just flavor text - the chapter's
+              // boss fight already pays off the quest itself separately.
+              const firstReport = !state.flags.has('ashvault_toldTechnician')
+              if (firstReport) {
+                state.flags.add('ashvault_toldTechnician')
+                state.credits = (state.credits || 0) + 10
+              }
+              return [
+                'So the schematics confirm it — built for Gogu.',
+                firstReport ? 'The vault door should open now. Hurry. (+10 credits)' : 'The vault door should open now. Hurry.',
+              ]
             }
             return ["Find the console. Don't touch the Extractor yet."]
           },

@@ -498,9 +498,19 @@ export const mossfenReachWorld = {
               return ['"The Warden\'s quiet now, but the Syndicate won\'t stop."', '"Watch the sky when you leave, Wando."']
             }
             if (quest.stage >= 1) {
+              // First time reporting the siphon-rig evidence back: a small
+              // finder's-fee payout, not just flavor text - the chapter's
+              // boss fight already pays off the quest itself separately.
+              const firstReport = !state.flags.has('mossfen_reportedEvidence')
+              if (firstReport) {
+                state.flags.add('mossfen_reportedEvidence')
+                state.credits = (state.credits || 0) + 10
+              }
               return [
                 '"A siphon rig — they were draining the Current itself."',
-                '"Something corrupted guards the rest. Go in strength."',
+                firstReport
+                  ? '"Something corrupted guards the rest. Go in strength." (+10 credits)'
+                  : '"Something corrupted guards the rest. Go in strength."',
               ]
             }
             return ['"Follow the shrine path into the Mire."']

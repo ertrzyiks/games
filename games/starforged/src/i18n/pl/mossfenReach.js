@@ -76,6 +76,8 @@ registerTranslations('pl', {
     `"Instalacja ssąca — wyciągali sam Nurt."`,
   [`"Something corrupted guards the rest. Go in strength."`]:
     `"Coś skażone strzeże resztek. Idź w sile."`,
+  [`"Something corrupted guards the rest. Go in strength." (+10 credits)`]:
+    `"Coś skażone strzeże resztek. Idź w sile." (+10 kredytów)`,
   [`"Follow the shrine path into the Mire."`]:
     `"Idź ścieżką do świątyni w głąb Mokradeł."`,
 

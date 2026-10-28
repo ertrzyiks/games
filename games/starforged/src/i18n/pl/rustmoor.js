@@ -32,6 +32,8 @@ registerTranslations('pl', {
   "But the Syndicate's still watching the Drift.": 'Ale Syndykat wciąż obserwuje Dryf.',
   "So it's real — they're not done with Rustmoor.": 'Więc to prawda — nie skończyli z Rustmoor.',
   'Stop that raider captain and cut their leash.': 'Powstrzymaj tego kapitana rajderów i przetnij ich uzdę.',
+  'Stop that raider captain and cut their leash. (+10 credits)':
+    'Powstrzymaj tego kapitana rajderów i przetnij ich uzdę. (+10 kredytów)',
   'No proof yet? Check the old mine tunnels.': 'Wciąż bez dowodów? Sprawdź stare tunele kopalni.',
   "That raider camp isn't just scavengers anymore.": 'Ten obóz rajderów to już nie tylko zbieracze złomu.',
   "This raider captain's squeezing us dry.": 'Ten kapitan rajderów wyciska z nas ostatnie soki.',

@@ -52,6 +52,8 @@ registerTranslations('pl', {
     `Senna: Uciszyliście ją. Chwała Nurtowi.`,
   [`Senna: She's almost here — stand with us.`]:
     `Senna: Ona już niemal tu jest — stań z nami.`,
+  [`Senna: She's almost here — stand with us. (+10 credits)`]:
+    `Senna: Ona już niemal tu jest — stań z nami. (+10 kredytów)`,
   [`Senna: Please hurry — they're getting closer.`]:
     `Senna: Pospiesz się — są coraz bliżej.`,
 
