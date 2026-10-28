@@ -237,7 +237,7 @@
       },
       "lifesteal": false,
       "focusRestore": 0,
-      "damageType": "force",
+      "damageType": "fire",
       "healAll": false,
       "upgradesFrom": null,
       "world": "core"
@@ -1217,6 +1217,13 @@
           "en": "Flamethrower",
           "pl": "Miotacz Ognia"
         }
+      },
+      {
+        "id": "glimmer",
+        "name": {
+          "en": "Force Spark",
+          "pl": "Iskra Mocy"
+        }
       }
     ],
     "force": [
@@ -1225,13 +1232,6 @@
         "name": {
           "en": "Force Push",
           "pl": "Pchnięcie Mocą"
-        }
-      },
-      {
-        "id": "glimmer",
-        "name": {
-          "en": "Force Spark",
-          "pl": "Iskra Mocy"
         }
       }
     ],

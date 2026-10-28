@@ -77,22 +77,25 @@ registerMoves({
   // resistantTo list - see the registry comment above.
   grenadeToss: { name: 'Grenade Toss', kind: 'attack', power: 16, focusCost: 5, accuracy: 0.68, damageType: 'blast' },
 
-  // Gogu's kit: Force-themed. glimmer is Gogu's free move — every party
-  // member needs at least one 0-focus-cost option so the battle menu can
-  // never be left with nothing selectable.
+  // Gogu's kit: mostly Force-themed, except glimmer (see below). glimmer
+  // is Gogu's free move — every party member needs at least one
+  // 0-focus-cost option so the battle menu can never be left with nothing
+  // selectable.
   push: { name: 'Force Push', kind: 'attack', power: 7, focusCost: 2, accuracy: 0.9, damageType: 'force' },
   mend: { name: 'Force Heal', kind: 'heal', power: 10, focusCost: 4, accuracy: 1 },
   // Force Heal's level-7 upgrade (see data/gameState.js MOVE_UNLOCKS /
   // grantXp's `upgradesFrom` handling) — heals the whole party at once
   // instead of just the lowest-HP ally, and for more per target.
   mendPlus: { name: 'Force Heal+', kind: 'heal', power: 14, focusCost: 6, accuracy: 1, healAll: true, upgradesFrom: 'mend' },
+  // 'fire', not 'force' - it inflicts burn, so its own damage type matches
+  // the status it applies, even though the rest of Gogu's kit is Force.
   glimmer: {
     name: 'Force Spark',
     kind: 'attack',
     power: 3,
     focusCost: 0,
     accuracy: 0.95,
-    damageType: 'force',
+    damageType: 'fire',
     applyStatus: { type: 'burn', duration: 3, power: 3 },
   },
 
