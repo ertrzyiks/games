@@ -3,7 +3,15 @@ import { registerTileTypes } from '../assets/tiles.js'
 import { registerSprites } from '../assets/sprites/registry.js'
 import { registerEnemies } from '../battle/enemies.js'
 import { registerMoves } from '../battle/moves.js'
-import { HUMANOID_TEMPLATE, CHILD_TEMPLATE, ARMORED_TEMPLATE, CACHE_TEMPLATE, buildSprite } from '../assets/spriteTemplates.js'
+import {
+  HUMANOID_TEMPLATE,
+  CHILD_TEMPLATE,
+  ARMORED_TEMPLATE,
+  ARMORED_SCOUT_TEMPLATE,
+  BOSS_RAIDER_TEMPLATE,
+  CACHE_TEMPLATE,
+  buildSprite,
+} from '../assets/spriteTemplates.js'
 import { PALETTE } from '../assets/palette.js'
 import { startQuest, setQuestStage, completeQuest } from '../data/gameState.js'
 
@@ -21,15 +29,15 @@ import { startQuest, setQuestStage, completeQuest } from '../data/gameState.js'
 
 // --- Tile types (namespaced 'rustmoor_') ---------------------------------
 registerTileTypes({
-  rustmoor_wreck: { color: '#4a3a2a', walkable: false },
-  rustmoor_rubble: { color: '#5a5248', walkable: false },
+  rustmoor_wreck: { color: '#4a3a2a', walkable: false, shape: 'wreckage' },
+  rustmoor_rubble: { color: '#5a5248', walkable: false, shape: 'rubble' },
   rustmoor_tunnelFloor: { color: '#3a3228', dither: '#2c261e', walkable: true },
-  rustmoor_tunnelWall: { color: '#6b5f4e', walkable: false },
+  rustmoor_tunnelWall: { color: '#6b5f4e', walkable: false, shape: 'wall' },
   // New decorative terrain for the bigger maps — all unwalkable scenery.
-  rustmoor_boulder: { color: '#7d6f5c', dither: '#5e5342', walkable: false },
-  rustmoor_scrub: { color: '#8a7a42', dither: '#6b5e30', walkable: false },
-  rustmoor_debris: { color: '#6a4a32', dither: '#4a3322', walkable: false },
-  rustmoor_fence: { color: '#2e2520', walkable: false },
+  rustmoor_boulder: { color: '#7d6f5c', dither: '#5e5342', walkable: false, shape: 'rock' },
+  rustmoor_scrub: { color: '#8a7a42', dither: '#6b5e30', walkable: false, shape: 'bush' },
+  rustmoor_debris: { color: '#6a4a32', dither: '#4a3322', walkable: false, shape: 'rubble' },
+  rustmoor_fence: { color: '#2e2520', walkable: false, shape: 'fence' },
 })
 
 // --- Sprites ---------------------------------------------------------------
@@ -73,22 +81,30 @@ const raiderSprite = buildSprite(ARMORED_TEMPLATE, {
   L: '#2a2018',
 })
 
-const raiderScoutSprite = buildSprite(ARMORED_TEMPLATE, {
+// Lighter/faster than raiderSprite - ARMORED_SCOUT_TEMPLATE's hooded,
+// scarf-wrapped silhouette instead of raiderSprite's bulky closed-visor
+// armor, so the scout actually reads as quicker at a glance.
+const raiderScoutSprite = buildSprite(ARMORED_SCOUT_TEMPLATE, {
   H: '#3a4a38',
-  F: '#1a1d26',
-  S: '#1a2a1a',
-  T: '#6a8a5a',
+  E: '#1a1d26',
+  C: '#6a8a5a',
   A: '#3f5a3a',
+  T: '#2a3a26',
   L: '#1a2a1a',
 })
 
-const captainSprite = buildSprite(ARMORED_TEMPLATE, {
+// Boss: BOSS_RAIDER_TEMPLATE's spiked crest/trophy-collar/weapon-arm
+// silhouette instead of raiderSprite's plain armor - distinct in shape,
+// not just color, from every regular raider.
+const captainSprite = buildSprite(BOSS_RAIDER_TEMPLATE, {
   H: '#2a1818',
-  F: PALETTE.danger,
-  S: '#1a0e0e',
+  V: PALETTE.danger,
+  C: '#8a7256',
   T: '#8a2a2a',
   A: '#4a1a1a',
   L: '#1a0e0e',
+  K: '#6b6258',
+  W: '#9a9088',
 })
 
 // Yara's buried cache (depths, 19,11): the physical payoff of "Yara's

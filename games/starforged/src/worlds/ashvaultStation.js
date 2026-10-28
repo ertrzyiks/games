@@ -1,7 +1,15 @@
 import { registerWorld, unlockNextWorld } from './registry.js'
 import { registerTileTypes } from '../assets/tiles.js'
 import { registerSprites } from '../assets/sprites/registry.js'
-import { buildSprite, HUMANOID_TEMPLATE, ARMORED_TEMPLATE, ROBOT_TEMPLATE, CONSOLE_TEMPLATE } from '../assets/spriteTemplates.js'
+import {
+  buildSprite,
+  HUMANOID_TEMPLATE,
+  ARMORED_TEMPLATE,
+  BOSS_FOREMAN_TEMPLATE,
+  ROBOT_TEMPLATE,
+  ROBOT_DRONE_TEMPLATE,
+  CONSOLE_TEMPLATE,
+} from '../assets/spriteTemplates.js'
 import { registerEnemies } from '../battle/enemies.js'
 import { registerMoves } from '../battle/moves.js'
 import { startQuest, setQuestStage, completeQuest } from '../data/gameState.js'
@@ -59,15 +67,15 @@ registerTileTypes({
   ashvault_hazardStripe: { color: WARNING_YELLOW, dither: VOID_BLACK, walkable: true },
   ashvault_rustFloor: { color: RUST_ORANGE, dither: RUST_DARK, walkable: true, encounter: true },
   // Exterior-only tiles for the Docking Approach.
-  ashvault_hullPlate: { color: '#23262e', walkable: false },
-  ashvault_wreckage: { color: RUST_DARK, dither: VOID_BLACK, walkable: false },
+  ashvault_hullPlate: { color: '#23262e', walkable: false, shape: 'wall' },
+  ashvault_wreckage: { color: RUST_DARK, dither: VOID_BLACK, walkable: false, shape: 'wreckage' },
   ashvault_voidGap: { color: VOID_BLACK, walkable: false },
   // Decorative, mostly-unwalkable clutter for the bigger maps.
-  ashvault_cargoCrate: { color: '#8a5a2e', dither: '#5c3a1c', walkable: false },
-  ashvault_supportPillar: { color: '#555f6e', dither: '#2e343d', walkable: false },
-  ashvault_warningBarrier: { color: '#d9a62c', dither: VOID_BLACK, walkable: false },
-  ashvault_brokenMachinery: { color: '#6b7280', dither: '#3a3f47', walkable: false },
-  ashvault_hullBreach: { color: '#223044', dither: VOID_BLACK, walkable: false },
+  ashvault_cargoCrate: { color: '#8a5a2e', dither: '#5c3a1c', walkable: false, shape: 'crate' },
+  ashvault_supportPillar: { color: '#555f6e', dither: '#2e343d', walkable: false, shape: 'pillar' },
+  ashvault_warningBarrier: { color: '#d9a62c', dither: VOID_BLACK, walkable: false, shape: 'barrier' },
+  ashvault_brokenMachinery: { color: '#6b7280', dither: '#3a3f47', walkable: false, shape: 'machinery' },
+  ashvault_hullBreach: { color: '#223044', dither: VOID_BLACK, walkable: false, shape: 'wreckage' },
 })
 
 // --- Sprites, built from the shared humanoid silhouette with a cold,
@@ -98,13 +106,17 @@ const cinderTrooperSprite = buildSprite(ARMORED_TEMPLATE, {
   L: VOID_BLACK,
 })
 
-const foremanSprite = buildSprite(ARMORED_TEMPLATE, {
+// Boss: BOSS_FOREMAN_TEMPLATE's industrial exo-rig silhouette (backpack/
+// vent stacks, welding-goggle visor) instead of ARMORED_TEMPLATE's plain
+// trooper shape - distinct in shape, not just color, from cinderTrooper.
+const foremanSprite = buildSprite(BOSS_FOREMAN_TEMPLATE, {
   H: VOID_BLACK,
-  F: EMBER_RED,
+  O: EMBER_RED,
   S: STEEL_DARK,
   T: WARNING_YELLOW,
   A: STEEL_DARK,
   L: VOID_BLACK,
+  K: STEEL,
 })
 
 const scrapRunnerSprite = buildSprite(HUMANOID_TEMPLATE, {
@@ -148,13 +160,15 @@ const scrapLurkerSprite = buildSprite(ROBOT_TEMPLATE, {
   L: VOID_BLACK,
 })
 
-const reclaimerDroneSprite = buildSprite(ROBOT_TEMPLATE, {
+// Hovers - ROBOT_DRONE_TEMPLATE's round optic-band chassis with no legs,
+// instead of ROBOT_TEMPLATE's bipedal walker, so it actually reads as
+// flying rather than stalking like scrapLurkerSprite.
+const reclaimerDroneSprite = buildSprite(ROBOT_DRONE_TEMPLATE, {
   N: COOLANT_TEAL,
   H: COOLANT_TEAL,
   O: VOID_BLACK,
-  T: STEEL,
   A: '#2c4a47',
-  L: VOID_BLACK,
+  G: VOID_BLACK,
 })
 
 // Schematics console (engineCore, 4,13): the identification device that

@@ -585,10 +585,17 @@ export class BattleScene {
     this.enemies.forEach((enemy, i) => {
       if (enemy.hp <= 0) return
       const sprite = getSprite(enemy.spriteId)
-      const x = 60 + i * 36
+      // Bosses are drawn noticeably bigger than regular enemies - they
+      // always fight solo (see every world's boss EnemySpawn), so there's
+      // no neighboring sprite slot to collide with. Centered on the same
+      // slot a scale-1 sprite would occupy, so the HP bar above it doesn't
+      // need to move.
+      const scale = enemy.isBoss ? 2 : 1
+      const baseX = 60 + i * 36
+      const x = baseX - (16 * scale - 16) / 2
       const y = 18
-      if (sprite) drawSprite(ctx, sprite, 0, x, y, { scale: 1 })
-      this._drawBar(ctx, x - 4, y - 8, this._barLabel(enemy), enemy.hp, enemy.maxHp, null, null, 30)
+      if (sprite) drawSprite(ctx, sprite, 0, x, y, { scale })
+      this._drawBar(ctx, baseX - 4, y - 8, this._barLabel(enemy), enemy.hp, enemy.maxHp, null, null, 30)
       if (enemy === targetedEnemy) {
         ctx.font = '7px Consolas, Menlo, monospace'
         ctx.fillStyle = '#f4d35b'

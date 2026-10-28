@@ -7,7 +7,9 @@ import {
   HUMANOID_TEMPLATE,
   CHILD_TEMPLATE,
   CREATURE_TEMPLATE,
+  CREATURE_FLYER_TEMPLATE,
   ARMORED_TEMPLATE,
+  BOSS_ENFORCER_TEMPLATE,
   LAMP_TEMPLATE,
   buildSprite,
 } from '../assets/spriteTemplates.js'
@@ -64,20 +66,25 @@ function setBorder(grid, id) {
 registerTileTypes({
   skyreach_walkway: { color: '#3c6b74', dither: '#2a4e55', walkable: true },
   skyreach_canopy: { color: '#4a2f6e', dither: '#381f57', walkable: true },
-  skyreach_railing: { color: '#1f2d33', walkable: false },
-  skyreach_door: { color: '#39c6b0', walkable: true },
+  skyreach_railing: { color: '#1f2d33', walkable: false, shape: 'fence' },
+  // This world's own warp-to-another-segment tile id (every other world
+  // reuses the shared core 'door' tile instead) — previously missed the
+  // door icon entirely since the old hardcoded check only matched the
+  // literal id 'door'. Tagged the same way now that the icon is keyed off
+  // `shape` instead of the tile id.
+  skyreach_door: { color: '#39c6b0', walkable: true, shape: 'door' },
   skyreach_refugeFloor: { color: '#2f4a52', dither: '#22363c', walkable: true },
   skyreach_rootPath: { color: '#3a2f52', dither: '#2a2240', walkable: true },
-  skyreach_vinewall: { color: '#241a38', walkable: false },
+  skyreach_vinewall: { color: '#241a38', walkable: false, shape: 'vine' },
   skyreach_depthCanopy: { color: '#5c2f7a', dither: '#431f5c', walkable: true },
   skyreach_vineGate: { color: '#2f6b57', dither: '#1f4d3d', walkable: true },
   skyreach_arenaFloor: { color: '#3d3450', dither: '#2a2440', walkable: true },
-  skyreach_arenaWall: { color: '#17121f', walkable: false },
+  skyreach_arenaWall: { color: '#17121f', walkable: false, shape: 'wall' },
   // --- new decorative tile types (floating-forest / treetop theme) --------
-  skyreach_giantTrunk: { color: '#2e1f14', dither: '#1c1209', walkable: false },
-  skyreach_ropeRail: { color: '#6b4a2f', dither: '#4a3220', walkable: false },
-  skyreach_glowFungus: { color: '#5ce3a8', dither: '#2f9e73', walkable: false },
-  skyreach_brokenEdge: { color: '#14181c', dither: '#0a0c0e', walkable: false },
+  skyreach_giantTrunk: { color: '#2e1f14', dither: '#1c1209', walkable: false, shape: 'trunk' },
+  skyreach_ropeRail: { color: '#6b4a2f', dither: '#4a3220', walkable: false, shape: 'fence' },
+  skyreach_glowFungus: { color: '#5ce3a8', dither: '#2f9e73', walkable: false, shape: 'fungus' },
+  skyreach_brokenEdge: { color: '#14181c', dither: '#0a0c0e', walkable: false, shape: 'rubble' },
   skyreach_mistPatch: { color: '#aee6e0', dither: '#7fc9c2', walkable: true },
 })
 
@@ -128,20 +135,23 @@ const wrenSprite = buildSprite(CHILD_TEMPLATE, {
   B: '#dfe3ea',
 })
 
-const galeStalkerSprite = buildSprite(CREATURE_TEMPLATE, {
+// Winged - CREATURE_FLYER_TEMPLATE's wide wing-sweep instead of
+// CREATURE_TEMPLATE's four ground legs, so Skyreach's aerial beasts
+// actually read as flying, not stalking.
+const galeStalkerSprite = buildSprite(CREATURE_FLYER_TEMPLATE, {
+  W: '#6fe3d0',
+  B: '#2a4e55',
   H: '#1f2d33',
   E: '#39c6b0',
-  B: '#2a4e55',
-  T: '#6fe3d0',
-  L: '#101820',
+  T: '#101820',
 })
 
-const windReaverSprite = buildSprite(CREATURE_TEMPLATE, {
+const windReaverSprite = buildSprite(CREATURE_FLYER_TEMPLATE, {
+  W: '#6fe3d0',
+  B: '#2f6b74',
   H: '#214047',
   E: '#dfffe8',
-  B: '#2f6b74',
-  T: '#6fe3d0',
-  L: '#12282c',
+  T: '#12282c',
 })
 
 const rootLurkerSprite = buildSprite(CREATURE_TEMPLATE, {
@@ -152,14 +162,16 @@ const rootLurkerSprite = buildSprite(CREATURE_TEMPLATE, {
   L: '#160f24',
 })
 
-// Elite Syndicate enforcer boss — a human combatant, not wildlife, so she
-// gets the bulkier armored-trooper silhouette instead of the creature one.
-const enforcerVaneSprite = buildSprite(ARMORED_TEMPLATE, {
+// Elite Syndicate enforcer boss — BOSS_ENFORCER_TEMPLATE's glider-wing
+// silhouette instead of ARMORED_TEMPLATE's plain trooper shape, befitting
+// an aerial combatant in a sky-canopy world.
+const enforcerVaneSprite = buildSprite(BOSS_ENFORCER_TEMPLATE, {
   H: '#2e2440',
-  F: '#dfe3ea',
-  S: '#17121f',
+  V: '#dfe3ea',
   T: '#8a6fd1',
   A: '#3d3450',
+  W: '#5a3f7a',
+  C: '#39c6b0',
   L: '#17121f',
 })
 

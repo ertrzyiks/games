@@ -4,7 +4,16 @@ import { registerSprites } from '../assets/sprites/registry.js'
 import { registerEnemies } from '../battle/enemies.js'
 import { registerMoves } from '../battle/moves.js'
 import { startQuest, setQuestStage, completeQuest } from '../data/gameState.js'
-import { CHILD_TEMPLATE, CREATURE_TEMPLATE, LAMP_TEMPLATE, CONSOLE_TEMPLATE, CACHE_TEMPLATE, buildSprite } from '../assets/spriteTemplates.js'
+import {
+  CHILD_TEMPLATE,
+  CREATURE_TEMPLATE,
+  CREATURE_SERPENT_TEMPLATE,
+  BOSS_BOG_TEMPLATE,
+  LAMP_TEMPLATE,
+  CONSOLE_TEMPLATE,
+  CACHE_TEMPLATE,
+  buildSprite,
+} from '../assets/spriteTemplates.js'
 
 // Builds a width x height grid filled with a single tile id.
 function buildGrid(width, height, fillId) {
@@ -43,22 +52,22 @@ function setTile(grid, x, y, id) {
 // worlds being built in parallel) ---------------------------------------
 registerTileTypes({
   mossfen_mud: { color: '#4a3b2a', dither: '#3a2d20', walkable: true },
-  mossfen_murkwater: { color: '#1f4a4a', walkable: false },
+  mossfen_murkwater: { color: '#1f4a4a', walkable: false, shape: 'water' },
   mossfen_reeds: { color: '#2f6b4a', dither: '#245438', walkable: true },
   mossfen_glowFloor: { color: '#2a4a46', dither: '#1d3330', walkable: true },
-  mossfen_hutWall: { color: '#5a4a33', walkable: false },
+  mossfen_hutWall: { color: '#5a4a33', walkable: false, shape: 'wall' },
   mossfen_hutFloor: { color: '#7a6240', dither: '#5f4c30', walkable: true },
   mossfen_mireFloor: { color: '#2e3a2a', dither: '#232d20', walkable: true },
-  mossfen_mireWall: { color: '#1b2419', walkable: false },
+  mossfen_mireWall: { color: '#1b2419', walkable: false, shape: 'wall' },
   mossfen_wardenFloor: { color: '#33242e', dither: '#23161c', walkable: true },
-  mossfen_wardenWall: { color: '#1c1420', walkable: false },
+  mossfen_wardenWall: { color: '#1c1420', walkable: false, shape: 'wall' },
   // Decorative swamp/bog dressing, mostly unwalkable, scattered through
   // the bigger maps below for visual variety.
-  mossfen_deadTree: { color: '#2f2a24', dither: '#1f1b17', walkable: false },
-  mossfen_mossRock: { color: '#4f5a3a', dither: '#3c4530', walkable: false },
-  mossfen_bogPool: { color: '#163838', dither: '#0e2626', walkable: false },
-  mossfen_ruins: { color: '#6b6f72', dither: '#52565a', walkable: false },
-  mossfen_rootTangle: { color: '#3a2f1e', dither: '#2a2014', walkable: false },
+  mossfen_deadTree: { color: '#2f2a24', dither: '#1f1b17', walkable: false, shape: 'deadTree' },
+  mossfen_mossRock: { color: '#4f5a3a', dither: '#3c4530', walkable: false, shape: 'mossyRock' },
+  mossfen_bogPool: { color: '#163838', dither: '#0e2626', walkable: false, shape: 'water' },
+  mossfen_ruins: { color: '#6b6f72', dither: '#52565a', walkable: false, shape: 'rubble' },
+  mossfen_rootTangle: { color: '#3a2f1e', dither: '#2a2014', walkable: false, shape: 'roots' },
 })
 
 // --- World-specific sprites ----------------------------------------------
@@ -120,19 +129,25 @@ const mireLurkerSprite = buildSprite(CREATURE_TEMPLATE, {
   L: '#101c14',
 })
 
-const reedViperSprite = buildSprite(CREATURE_TEMPLATE, {
+// Legless, sinuous - CREATURE_SERPENT_TEMPLATE's diagonal coil instead of
+// CREATURE_TEMPLATE's four-legged stalking beast, so the viper actually
+// reads as a snake.
+const reedViperSprite = buildSprite(CREATURE_SERPENT_TEMPLATE, {
+  B: '#3a5a20',
   H: '#5a7a2a',
   E: '#1a2a0e',
-  B: '#3a5a20',
-  T: '#8fae4a',
-  L: '#17240c',
+  F: '#d9e6a0',
 })
 
-const bogWardenSprite = buildSprite(CREATURE_TEMPLATE, {
+// Boss: BOSS_BOG_TEMPLATE's reared-up, mossy-horned, glowing-core
+// silhouette instead of CREATURE_TEMPLATE's low stalking beast - distinct
+// in shape, not just color, from every regular swamp creature.
+const bogWardenSprite = buildSprite(BOSS_BOG_TEMPLATE, {
+  M: '#4f5a3a',
   H: '#2e3a1e',
   E: '#e0564b',
   B: '#3a2a38',
-  T: '#8a9a3a',
+  G: '#b8d94a',
   L: '#1c1420',
 })
 

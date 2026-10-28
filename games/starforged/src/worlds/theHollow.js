@@ -3,7 +3,14 @@ import { registerTileTypes } from '../assets/tiles.js'
 import { registerSprites } from '../assets/sprites/registry.js'
 import { registerEnemies } from '../battle/enemies.js'
 import { registerMoves } from '../battle/moves.js'
-import { HUMANOID_TEMPLATE, ARMORED_TEMPLATE, CONSOLE_TEMPLATE, buildSprite } from '../assets/spriteTemplates.js'
+import {
+  HUMANOID_TEMPLATE,
+  ARMORED_TEMPLATE,
+  ARMORED_SCOUT_TEMPLATE,
+  BOSS_WARDEN_TEMPLATE,
+  CONSOLE_TEMPLATE,
+  buildSprite,
+} from '../assets/spriteTemplates.js'
 import { startQuest, setQuestStage, completeQuest } from '../data/gameState.js'
 
 /**
@@ -44,16 +51,16 @@ function setTile(tiles, x, y, id) {
 // --- Tile types (namespaced 'hollow_' — deep reds/blacks/purples) --------
 registerTileTypes({
   hollow_floor: { color: '#1a0e14', dither: '#120a0e', walkable: true },
-  hollow_wall: { color: '#2e0f16', walkable: false },
-  hollow_rune: { color: '#6e1620', dither: '#4a0f16', walkable: true },
+  hollow_wall: { color: '#2e0f16', walkable: false, shape: 'wall' },
+  hollow_rune: { color: '#6e1620', dither: '#4a0f16', walkable: true, shape: 'rune' },
   hollow_courtyard: { color: '#241018', dither: '#1a0c12', walkable: true, encounter: true },
   hollow_cellFloor: { color: '#2a1620', dither: '#1c0f16', walkable: true },
   // Decorative additions for the enlarged maps — mostly unwalkable so they
   // read as stronghold debris/fixtures rather than new floor space.
-  hollow_brokenPillar: { color: '#241c1c', dither: '#160f0f', walkable: false },
-  hollow_crackedRune: { color: '#4a0a1e', dither: '#2e0612', walkable: true },
-  hollow_cage: { color: '#15151c', dither: '#0a0a10', walkable: false },
-  hollow_machinery: { color: '#241c08', dither: '#160f04', walkable: false },
+  hollow_brokenPillar: { color: '#241c1c', dither: '#160f0f', walkable: false, shape: 'brokenPillar' },
+  hollow_crackedRune: { color: '#4a0a1e', dither: '#2e0612', walkable: true, shape: 'rune' },
+  hollow_cage: { color: '#15151c', dither: '#0a0a10', walkable: false, shape: 'cage' },
+  hollow_machinery: { color: '#241c08', dither: '#160f04', walkable: false, shape: 'machinery' },
 })
 
 // --- Sprites ---------------------------------------------------------------
@@ -98,21 +105,28 @@ const eliteGuardSprite = buildSprite(ARMORED_TEMPLATE, {
   L: '#120a0e',
 })
 
-const shadowAgentSprite = buildSprite(ARMORED_TEMPLATE, {
+// Lighter/faster than eliteGuardSprite - ARMORED_SCOUT_TEMPLATE's hooded
+// silhouette instead of eliteGuard's bulky armor, befitting an infiltrator.
+const shadowAgentSprite = buildSprite(ARMORED_SCOUT_TEMPLATE, {
   H: '#1a0e14',
-  F: '#e0564b',
-  S: '#0b0d12',
-  T: '#4a0f16',
+  E: '#e0564b',
+  C: '#0b0d12',
   A: '#120a0e',
+  T: '#4a0f16',
   L: '#0b0d12',
 })
 
-const wardenSprite = buildSprite(ARMORED_TEMPLATE, {
+// Boss: BOSS_WARDEN_TEMPLATE's crowned, caped, glowing-emblem silhouette -
+// the single most imposing shape in the game, never shared with any
+// regular enemy, fitting the Drift's final boss.
+const wardenSprite = buildSprite(BOSS_WARDEN_TEMPLATE, {
+  K: '#120a0e',
   H: '#2e0f16',
-  F: '#e0564b',
-  S: '#120a0e',
+  V: '#e0564b',
+  C: '#6e1620',
+  A: '#3a0c12',
   T: '#8a1526',
-  A: '#4a0f16',
+  G: '#f4846b',
   L: '#120a0e',
 })
 
