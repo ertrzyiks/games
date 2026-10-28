@@ -38,6 +38,9 @@
  * @property {Array<{x: number, y: number, tileId: string}>} [opensTiles] - tiles on the
  *   same map to mutate once this secret is found (e.g. turning the fake-wall tile and a
  *   short corridor into walkable floor to open a hidden passage/chamber)
+ * @property {string} [setsFlag] - an extra flag (beyond the secret's own internal found-key) to set once
+ *   found — e.g. to gate a MapItem's `showWhenFlag` sitting in the chamber this secret opens, so that
+ *   item doesn't render while the passage to it is still sealed (see MapItem below).
  *
  * @typedef {Object} MapItem
  * @property {string} id           - unique within the map
@@ -52,6 +55,10 @@
  *   entirely, instead of lingering on a tile whose one-time payoff has already been collected/used. Set this
  *   to whatever flag the item's own Trigger already sets on pickup (its `setsFlag`, or one it adds to
  *   `ctx.state.flags` manually) — the item doesn't read quest/inventory state itself, only this one flag.
+ * @property {string} [showWhenFlag] - opposite of hideWhenFlag: the marker stays undrawn until this flag is
+ *   set. Used for an item sitting behind a Secret (e.g. a cache in a chamber a fake wall still blocks) so
+ *   it isn't visible in the camera viewport before the secret is actually found — pair with that Secret's
+ *   own `setsFlag`. Independent of hideWhenFlag; an item can use either, both, or neither.
  *
  * @typedef {Object} EncounterZone
  * @deprecated random encounters are disabled — OverworldScene no longer

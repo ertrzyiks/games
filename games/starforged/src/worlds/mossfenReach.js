@@ -404,13 +404,25 @@ export const mossfenReachWorld = {
             'The moss-rock grinds aside, revealing a hidden passage!',
             'You push through into a small hollow beyond the reach...',
           ],
+          setsFlag: 'mossfen_hiddenPassageOpen',
         },
       ],
       // Visible marker for the hidden-passage cache, same tile as its
-      // Trigger below - sits in the middle of the revealed chamber, so it's
-      // only ever drawn once the passage is actually open (the tile itself
-      // isn't walkable, and this map item isn't reachable, before then).
-      items: [{ id: 'approachHiddenCache', x: 28, y: 8, spriteId: 'mossfen_hiddenCache', hideWhenFlag: 'mossfen_hiddenCacheFound' }],
+      // Trigger below - sits in the middle of the revealed chamber.
+      // showWhenFlag gates it on the secret above's setsFlag, so it only
+      // renders once the moss-rock has actually been found and the passage
+      // opened - the camera viewport can otherwise see this tile (and so
+      // draw the item) well before the player ever reaches it.
+      items: [
+        {
+          id: 'approachHiddenCache',
+          x: 28,
+          y: 8,
+          spriteId: 'mossfen_hiddenCache',
+          showWhenFlag: 'mossfen_hiddenPassageOpen',
+          hideWhenFlag: 'mossfen_hiddenCacheFound',
+        },
+      ],
       warps: [{ x: 13, y: 1, toMap: 'settlement', toX: 10, toY: 13 }],
       triggers: [
         // The hidden-passage cache itself - reachable only once the secret

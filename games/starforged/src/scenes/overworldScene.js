@@ -374,6 +374,7 @@ export class OverworldScene {
         this.mapDef.tiles[y][x] = tileId
       }
     }
+    if (secret.setsFlag) this.state.flags.add(secret.setsFlag)
     this.dialogue.start(secret.dialogue && secret.dialogue.length ? secret.dialogue : ['You found a hidden stash!'])
     saveGame(this.state)
   }
@@ -519,6 +520,7 @@ export class OverworldScene {
     // drives all the actual gameplay, untouched.
     for (const item of this.mapDef.items || []) {
       if (item.hideWhenFlag && this.state.flags.has(item.hideWhenFlag)) continue
+      if (item.showWhenFlag && !this.state.flags.has(item.showWhenFlag)) continue
       const sprite = getSprite(item.spriteId)
       if (!sprite) continue
       const sx = (item.x - camera.camX) * TILE_SIZE
