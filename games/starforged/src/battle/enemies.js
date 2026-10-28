@@ -25,12 +25,15 @@ export function getAllEnemies() {
   return [...registry.values()]
 }
 
-// `weakTo` (a damage type from battle/moves.js: 'kinetic'|'fire'|'force')
-// marks a regular enemy as taking extra damage from attacks of that type;
-// `resistantTo` (an array of damage types) marks a boss as taking reduced
-// damage from those types instead. See battleScene._resolveAction for the
-// multipliers. Regular enemies only ever get `weakTo` and bosses only ever
-// get `resistantTo` — never both on the same enemy.
+// `weakTo` (a damage type from battle/moves.js: 'kinetic'|'fire'|'force'|
+// 'blast') marks a regular enemy as taking extra damage from attacks of
+// that type; `resistantTo` (an array of damage types) marks a boss as
+// taking reduced damage from those types instead. See
+// battleScene._resolveAction for the multipliers. Regular enemies only
+// ever get `weakTo` and bosses only ever get `resistantTo` — never both
+// on the same enemy. Every boss's resistantTo is ['kinetic', 'fire'] —
+// never 'force' or 'blast' — so grenadeToss (Wando) and the Force kit
+// (Gogu) stay reliable against every boss in the game.
 registerEnemies({
   scavenger: {
     name: 'Rustmoor Scavenger',

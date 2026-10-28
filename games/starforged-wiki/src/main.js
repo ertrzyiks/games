@@ -12,7 +12,9 @@ const STRINGS = {
     attacksIntro:
       'Every move used by the party or an enemy, with its real battle stats. Pistol Shot is the one exception ' +
       'to the Damage Type system below: it always deals neutral damage, never super-effective but never ' +
-      "resisted either — Rifle Shot is the one that can actually exploit an enemy's kinetic weakness.",
+      "resisted either — Rifle Shot is the one that can actually exploit an enemy's kinetic weakness. Grenade " +
+      "Toss carries its own Blast type rather than Rifle/Trick Shot's Kinetic, so a boss resisting Kinetic " +
+      "doesn't blunt it too.",
     col: {
       name: 'Name',
       kind: 'Kind',
@@ -39,7 +41,7 @@ const STRINGS = {
     opponentsIntro:
       'Every enemy in the game, grouped by the world they appear in. Regular enemies have one Weakness ' +
       '(1.5x damage from a matching attack); bosses instead Resist one or more damage types (0.6x damage) ' +
-      'and are never weak to anything — Force Push is the one attack type no boss resists.',
+      'and are never weak to anything — Force Push and Grenade Toss are the two attack types no boss resists.',
     itemsIntro:
       'Consumables found and used throughout the Drift. Wando and Gogu share one wallet of Credits — they ' +
       'start a new game with {credits} and earn more from most quests — spent at the one merchant NPC on ' +
@@ -75,7 +77,8 @@ const STRINGS = {
       'Każdy atak używany przez drużynę lub wrogów, z prawdziwymi statystykami z gry. Strzał z Pistoletu to ' +
       'jedyny wyjątek od systemu Typów Obrażeń poniżej: zawsze zadaje neutralne obrażenia, nigdy nie jest ' +
       'szczególnie skuteczny, ale też nigdy nie jest odparty — to Strzał z Karabinu potrafi realnie wykorzystać ' +
-      'kinetyczną słabość przeciwnika.',
+      'kinetyczną słabość przeciwnika. Rzut Granatem ma własny typ Wybuchowy, inny niż Kinetyczny ze Strzału z ' +
+      'Karabinu/Chwytu, więc odporność bossa na Kinetyczny go nie osłabia.',
     col: {
       name: 'Nazwa',
       kind: 'Typ',
@@ -102,8 +105,8 @@ const STRINGS = {
     opponentsIntro:
       'Każdy wróg w grze, pogrupowany według świata, w którym się pojawia. Zwykli wrogowie mają jedną Słabość ' +
       '(1.5x obrażeń od pasującego ataku); bossowie mają za to Odporność na jeden lub więcej typów obrażeń ' +
-      '(0.6x obrażeń) i nigdy nie są słabi na żaden atak — Pchnięcie Mocą jest jedynym typem ataku, na który ' +
-      'żaden boss nie jest odporny.',
+      '(0.6x obrażeń) i nigdy nie są słabi na żaden atak — Pchnięcie Mocą i Rzut Granatem to dwa typy ataku, na ' +
+      'które żaden boss nie jest odporny.',
     itemsIntro:
       'Przedmioty jednorazowe spotykane i używane w całym Dryfie. Wando i Gogu dzielą jeden portfel kredytów — ' +
       'na początku nowej gry mają {credits} i zdobywają więcej za większość zadań — wydawanych u jedynego ' +
@@ -139,9 +142,10 @@ const DAMAGE_TYPE_LABELS = {
   kinetic: { en: 'Kinetic', pl: 'Kinetyczny' },
   fire: { en: 'Fire', pl: 'Ognisty' },
   force: { en: 'Force', pl: 'Mocy' },
+  blast: { en: 'Blast', pl: 'Wybuchowy' },
 }
 
-const DAMAGE_TYPES_ORDER = ['kinetic', 'fire', 'force']
+const DAMAGE_TYPES_ORDER = ['kinetic', 'fire', 'force', 'blast']
 
 function damageTypeLabel(type, lang) {
   if (!type) return '—'

@@ -161,7 +161,7 @@
       "status": null,
       "lifesteal": false,
       "focusRestore": 0,
-      "damageType": "kinetic",
+      "damageType": "blast",
       "healAll": false,
       "upgradesFrom": null,
       "world": "core"
@@ -1208,13 +1208,6 @@
           "en": "Trick Shot",
           "pl": "Rykoszet"
         }
-      },
-      {
-        "id": "grenadeToss",
-        "name": {
-          "en": "Grenade Toss",
-          "pl": "Rzut Granatem"
-        }
       }
     ],
     "fire": [
@@ -1239,6 +1232,15 @@
         "name": {
           "en": "Force Spark",
           "pl": "Iskra Mocy"
+        }
+      }
+    ],
+    "blast": [
+      {
+        "id": "grenadeToss",
+        "name": {
+          "en": "Grenade Toss",
+          "pl": "Rzut Granatem"
         }
       }
     ]

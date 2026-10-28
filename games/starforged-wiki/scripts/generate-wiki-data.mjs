@@ -101,7 +101,7 @@ const moves = getAllMoves().map((m) => ({
 // partyMovesByDamageType, so an opponent's detail page can name the actual
 // moves that counter it instead of just a damage-type label.
 const PARTY_ATTACK_MOVE_IDS = ['pistolShot', 'rifleShot', 'trickShot', 'grenadeToss', 'flamethrower', 'push', 'glimmer']
-const DAMAGE_TYPES = ['kinetic', 'fire', 'force']
+const DAMAGE_TYPES = ['kinetic', 'fire', 'force', 'blast']
 const partyMovesByDamageType = Object.fromEntries(
   DAMAGE_TYPES.map((type) => [
     type,

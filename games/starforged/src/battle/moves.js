@@ -24,15 +24,21 @@ export function getAllMoves() {
 }
 
 // `damageType` tags every attack move as 'kinetic' (blasters/blunt/metal),
-// 'fire', or 'force' (Current/psychic). battleScene._resolveAction compares
-// it against a target's `weakTo`/`resistantTo` (see battle/enemies.js) to
+// 'fire', 'force' (Current/psychic), or 'blast' (grenadeToss's own
+// explosive type — see below). battleScene._resolveAction compares it
+// against a target's `weakTo`/`resistantTo` (see battle/enemies.js) to
 // apply a damage multiplier — purely additive, a move with no damageType
 // (heals/buffs, or an attack nobody's been tagged weak/resistant to yet)
 // just never triggers either multiplier. pistolShot is deliberately left
-// with no damageType even though it's kinetic like rifleShot/trickShot/
-// grenadeToss: it's Wando's always-reliable fallback (100% accuracy), and
-// stays damage-neutral to match - never super-effective, but also never
-// resisted, unlike the rest of his kit.
+// with no damageType even though it's kinetic like rifleShot/trickShot:
+// it's Wando's always-reliable fallback (100% accuracy), and stays
+// damage-neutral to match - never super-effective, but also never
+// resisted, unlike the rest of his kit. Every boss's resistantTo is
+// ['kinetic', 'fire'] (see enemies.js), so without this grenadeToss being
+// its own 'blast' type, bosses would resist pistol's two kinetic siblings
+// AND the grenade - leaving Wando with only his weakest move (pistolShot)
+// never reduced against a boss. 'blast' isn't on any resistantTo list, so
+// the grenade stays a reliable (if inaccurate) anti-boss option instead.
 registerMoves({
   // Still used by various enemies/bosses across world files by id — kept
   // as-is even though Wando's own loadout moved to the blaster-themed
@@ -66,8 +72,10 @@ registerMoves({
   trickShot: { name: 'Trick Shot', kind: 'attack', power: 7, focusCost: 1, accuracy: 0.92, lifesteal: true, damageType: 'kinetic' },
   // Wando's heaviest hit: highest power of his kit, but costly - slightly
   // more reliable than it used to be, still the least accurate of his kit,
-  // a real risk/reward pick next to rifleShot.
-  grenadeToss: { name: 'Grenade Toss', kind: 'attack', power: 16, focusCost: 5, accuracy: 0.68, damageType: 'kinetic' },
+  // a real risk/reward pick next to rifleShot. Its own 'blast' damage type
+  // (not 'kinetic' like the rest of his kit) keeps it off every boss's
+  // resistantTo list - see the registry comment above.
+  grenadeToss: { name: 'Grenade Toss', kind: 'attack', power: 16, focusCost: 5, accuracy: 0.68, damageType: 'blast' },
 
   // Gogu's kit: Force-themed. glimmer is Gogu's free move — every party
   // member needs at least one 0-focus-cost option so the battle menu can
