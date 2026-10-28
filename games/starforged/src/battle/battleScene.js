@@ -23,6 +23,12 @@ const MENU_FONT_SMALL = 5
 // never triggers both.
 const WEAKNESS_MULTIPLIER = 1.5
 const RESISTANCE_MULTIPLIER = 0.6
+// Caps how many times a single enemy can heal itself in one battle (see
+// _chooseEnemyMove). Without this, a boss sitting below the low-HP
+// threshold with a 0-focus-cost, always-accurate heal move (Bog Warden's
+// Mire Regeneration, the Hollow Warden's Resolve) could keep healing back
+// above it forever, turning the fight into an unwinnable stall loop.
+const MAX_ENEMY_SELF_HEALS = 3
 // Move-menu row colors for _moveEffectivenessColor - same green/red already
 // used elsewhere for HP bars and status text, so they read consistently.
 const WEAKNESS_COLOR = '#5bd17a'
@@ -59,7 +65,7 @@ export class BattleScene {
     this.state.pendingBuffs = []
     this.enemies = enemyIds.map((id) => {
       const def = getEnemy(id)
-      return { ...def, hp: def.maxHp, maxHp: def.maxHp, guarding: false, statusEffects: [] }
+      return { ...def, hp: def.maxHp, maxHp: def.maxHp, guarding: false, statusEffects: [], healsUsed: 0 }
     })
     this.phase = 'intro'
     this.menuIndex = 0
@@ -229,7 +235,8 @@ export class BattleScene {
   _chooseEnemyMove(enemy) {
     const healMoves = enemy.moves.filter((id) => getMove(id).kind === 'heal')
     const isLowHp = enemy.hp / enemy.maxHp < 0.4
-    if (isLowHp && healMoves.length > 0) {
+    if (isLowHp && healMoves.length > 0 && enemy.healsUsed < MAX_ENEMY_SELF_HEALS) {
+      enemy.healsUsed += 1
       return healMoves[Math.floor(Math.random() * healMoves.length)]
     }
     const nonHealMoves = enemy.moves.filter((id) => getMove(id).kind !== 'heal')
