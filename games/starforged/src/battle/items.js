@@ -18,7 +18,7 @@
  * buff to the party's very next fight instead of losing it entirely.
  */
 export const MEDKIT_HEAL_AMOUNT = 35
-export const ELIXIR_ATK_BOOST = 5
+export const ELIXIR_ATK_BOOST = 9
 export const ELIXIR_DEF_BOOST = 4
 export const ELIXIR_DURATION = 3
 

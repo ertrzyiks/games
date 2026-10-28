@@ -1159,8 +1159,8 @@
       },
       "price": 20,
       "description": {
-        "en": "Raises one party member's Attack by 5 for 3 turns. Used in battle, the buff applies immediately; used outside battle, it's queued onto that member and applies the moment the party's next fight begins. Sold by each world's merchant for 20 credits.",
-        "pl": "Zwiększa Atak jednego członka drużyny o 5 na 3 tury. Użyty w walce działa od razu; użyty poza walką zostaje przypisany temu bohaterowi i zadziała na początku następnej walki drużyny. Kupiec na każdym świecie sprzedaje go za 20 kredytów."
+        "en": "Raises one party member's Attack by 9 for 3 turns. Used in battle, the buff applies immediately; used outside battle, it's queued onto that member and applies the moment the party's next fight begins. Sold by each world's merchant for 20 credits.",
+        "pl": "Zwiększa Atak jednego członka drużyny o 9 na 3 tury. Użyty w walce działa od razu; użyty poza walką zostaje przypisany temu bohaterowi i zadziała na początku następnej walki drużyny. Kupiec na każdym świecie sprzedaje go za 20 kredytów."
       }
     },
     {
