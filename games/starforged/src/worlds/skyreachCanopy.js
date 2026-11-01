@@ -87,6 +87,10 @@ registerTileTypes({
   skyreach_glowFungus: { color: '#5ce3a8', dither: '#2f9e73', walkable: false, shape: 'fungus' },
   skyreach_brokenEdge: { color: '#14181c', dither: '#0a0c0e', walkable: false, shape: 'rubble' },
   skyreach_mistPatch: { color: '#aee6e0', dither: '#7fc9c2', walkable: true },
+  // A proper treehouse-lodge wall for the Refuge's bolder redesign -
+  // distinct wood tone from both the dark giant-trunk bark and the
+  // rope-rail fencing.
+  skyreach_lodgeWall: { color: '#5c3f28', dither: '#3a2718', walkable: false, shape: 'wall' },
 })
 
 // --- Sprites -------------------------------------------------------------
@@ -332,8 +336,11 @@ setTile(canopyApproachTiles, 23, 16, 'skyreach_brokenEdge')
 setTile(canopyApproachTiles, 20, 13, 'skyreach_glowFungus')
 setTile(canopyApproachTiles, 22, 14, 'skyreach_mistPatch')
 
-// Map 2 — Skykin Refuge (20x18 hub). A single clearing of root-plank floor;
-// a south door back to the Approach, a north door up into the High Reaches.
+// Map 2 — Skykin Refuge (20x18 hub). Four treehouse-lodge facades frame
+// the clearing - Senna/Orin to the north, Tamsin/Fenn to the south, each
+// built up against one of the giant trunks - instead of bare root-plank
+// floor. A south door back to the Approach, a north door up into the
+// High Reaches, connected by a crossroads of worn plank walkways.
 const REFUGE_W = 20
 const REFUGE_H = 18
 const skykinRefugeTiles = makeGrid(REFUGE_W, REFUGE_H, 'skyreach_refugeFloor')
@@ -344,8 +351,28 @@ setTile(skykinRefugeTiles, 4, 9, 'skyreach_giantTrunk')
 setTile(skykinRefugeTiles, 15, 9, 'skyreach_giantTrunk')
 setTile(skykinRefugeTiles, 7, 7, 'skyreach_glowFungus')
 setTile(skykinRefugeTiles, 12, 7, 'skyreach_glowFungus')
-setTile(skykinRefugeTiles, 7, 12, 'skyreach_mistPatch')
-setTile(skykinRefugeTiles, 12, 12, 'skyreach_mistPatch')
+setTile(skykinRefugeTiles, 7, 14, 'skyreach_mistPatch')
+setTile(skykinRefugeTiles, 12, 14, 'skyreach_mistPatch')
+// Worn plank-walkway crossroads: a spine between both doors, a mid
+// street crossing it, and short spurs up to Senna/Orin's yards.
+for (let y = 1; y <= 16; y++) skykinRefugeTiles[y][10] = 'skyreach_walkway'
+for (let x = 5; x <= 15; x++) skykinRefugeTiles[8][x] = 'skyreach_walkway'
+for (let y = 4; y <= 8; y++) skykinRefugeTiles[y][5] = 'skyreach_walkway' // Senna's spur
+for (let y = 4; y <= 8; y++) skykinRefugeTiles[y][14] = 'skyreach_walkway' // Orin's spur
+for (let x = 5; x <= 10; x++) skykinRefugeTiles[12][x] = 'skyreach_walkway' // Tamsin's spur
+for (let x = 10; x <= 14; x++) skykinRefugeTiles[12][x] = 'skyreach_walkway' // Fenn's spur
+// Lodge facades, each with a one-tile yard gap to the NPC standing in
+// front.
+for (const [x0, y0] of [
+  [4, 1], // Senna's lodge, above (5,4)
+  [13, 1], // Orin's lodge, above (14,4)
+  [4, 10], // Tamsin's lodge, above (5,13)
+  [13, 10], // Fenn's lodge, above (14,13)
+]) {
+  for (let y = y0; y <= y0 + 1; y++) {
+    for (let x = x0; x <= x0 + 2; x++) skykinRefugeTiles[y][x] = 'skyreach_lodgeWall'
+  }
+}
 
 // Map 3 — High Reaches (24x24, maze-like dungeon). The Roost (rows 1-6) is
 // sealed off from the rest of the maze by a vine-lock gate (row 7) that

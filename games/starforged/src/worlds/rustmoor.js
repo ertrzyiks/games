@@ -38,6 +38,12 @@ registerTileTypes({
   rustmoor_scrub: { color: '#8a7a42', dither: '#6b5e30', walkable: false, shape: 'bush' },
   rustmoor_debris: { color: '#6a4a32', dither: '#4a3322', walkable: false, shape: 'rubble' },
   rustmoor_fence: { color: '#2e2520', walkable: false, shape: 'fence' },
+  // Village/terrain variety for a bolder redesign pass: a proper wooden
+  // hut wall (distinct from the stone rustmoor_tunnelWall), a creek
+  // cutting through the canyon, and a village well.
+  rustmoor_hutWall: { color: '#6b4a2f', dither: '#4a3220', walkable: false, shape: 'wall' },
+  rustmoor_creek: { color: '#2b5f82', walkable: false, shape: 'water' },
+  rustmoor_well: { color: '#1f4a6b', walkable: false, shape: 'water' },
 })
 
 // --- Sprites ---------------------------------------------------------------
@@ -205,18 +211,25 @@ registerEnemies({
 // decorative rock/scrub/debris/fence terrain and 4 visible enemySpawns; a
 // raided caravan (Dessa) sits south of the field; path lanes lead to the
 // settlement door at the bottom.
-const CANYON_W = 26
+// CANYON_BASE_W is the original rectangle the generation loop below fills
+// in (unchanged, so every existing coordinate - NPCs, enemySpawns,
+// secrets, the watchtower - stays exactly where it was). CANYON_W is the
+// map's real width once the east bulge (a hidden spring beyond the old
+// border wall, same "columns past the original edge" technique
+// mossfenReach.js's hidden passage uses) is appended afterward.
+const CANYON_BASE_W = 26
+const CANYON_W = 31
 const CANYON_H = 20
 const canyonTiles = []
 for (let y = 0; y < CANYON_H; y++) {
   const row = []
-  for (let x = 0; x < CANYON_W; x++) {
+  for (let x = 0; x < CANYON_BASE_W; x++) {
     let tile
-    if (x === 0 || x === CANYON_W - 1 || y === 0 || y === CANYON_H - 1) {
+    if (x === 0 || x === CANYON_BASE_W - 1 || y === 0 || y === CANYON_H - 1) {
       tile = 'rock'
     } else if (y === 1 || (y >= 17 && y <= 18)) {
       tile = 'path'
-    } else if (x === 1 || x === CANYON_W - 2) {
+    } else if (x === 1 || x === CANYON_BASE_W - 2) {
       tile = 'path'
     } else {
       tile = 'grass'
@@ -231,8 +244,6 @@ canyonTiles[14][5] = 'rustmoor_wreck'
 canyonTiles[14][6] = 'rustmoor_wreck'
 canyonTiles[15][5] = 'rustmoor_wreck'
 // Decorative scatter: boulders, scrub, debris piles, fence/watchtower silhouettes.
-canyonTiles[3][3] = 'rustmoor_boulder'
-canyonTiles[3][22] = 'rustmoor_scrub'
 canyonTiles[4][8] = 'rustmoor_scrub'
 canyonTiles[4][17] = 'rustmoor_boulder'
 canyonTiles[8][4] = 'rustmoor_debris'
@@ -240,13 +251,22 @@ canyonTiles[7][12] = 'rustmoor_fence'
 canyonTiles[9][20] = 'rustmoor_fence'
 canyonTiles[13][9] = 'rustmoor_scrub'
 canyonTiles[12][16] = 'rustmoor_boulder'
-canyonTiles[15][23] = 'rustmoor_debris'
-// Jagged canyon-wall notches: a few inward bites out of the otherwise
-// dead-straight border, so the canyon reads as a natural ravine instead
-// of a rectangle. Purely cosmetic (border tiles were already unwalkable).
-for (const [x, y] of [[2, 2], [2, 3], [23, 2], [24, 2], [23, 17], [2, 17], [2, 18]]) {
-  canyonTiles[y][x] = 'rock'
+// A creek bends down through the canyon's east half, crossed by two
+// fords (left as plain grass) so it adds terrain variety without ever
+// blocking a path to existing content.
+for (const [x, y] of [
+  [17, 2], [17, 3], [16, 4], [16, 5], [16, 6], [17, 7], [17, 8], [17, 9],
+  [16, 10], [16, 11], [17, 14], [17, 15], [17, 16],
+]) {
+  canyonTiles[y][x] = 'rustmoor_creek'
 }
+// Real corner bites instead of single-tile notches, so the canyon wall
+// reads as a jagged natural ravine rather than a straight rectangle.
+for (let y = 1; y <= 3; y++) for (let x = 1; x <= 4; x++) canyonTiles[y][x] = 'rock'
+for (let y = 1; y <= 4; y++) for (let x = 21; x <= 24; x++) canyonTiles[y][x] = 'rock'
+for (let y = 16; y <= 18; y++) for (let x = 1; x <= 3; x++) canyonTiles[y][x] = 'rock'
+canyonTiles[3][3] = 'rustmoor_boulder' // half-buried in the NW bite
+canyonTiles[16][2] = 'rustmoor_debris' // tucked into the SW bite
 // A small ruined watchtower off the beaten path (18-21, 14-17) - a
 // scavenger took shelter here. Perimeter walls with a gap on the south
 // side for an entrance (no special door graphic - this isn't a warp to
@@ -265,12 +285,36 @@ canyonTiles[15][20] = 'rustmoor_tunnelFloor'
 canyonTiles[16][19] = 'rustmoor_tunnelFloor'
 canyonTiles[16][20] = 'rustmoor_tunnelFloor'
 
+// East bulge (26-30, 7-12): a hidden spring beyond the canyon wall,
+// entirely past the original rectangle's edge, same technique
+// mossfenReach.js's hidden passage uses. Solid rock everywhere outside
+// the spring itself; a single gap through the old border column (25)
+// is the only way in, so the bulge reads as a real hidden pocket, not
+// just more open ground.
+for (let y = 0; y < CANYON_H; y++) {
+  for (let x = CANYON_BASE_W; x < CANYON_W; x++) {
+    canyonTiles[y][x] = 'rock'
+  }
+}
+for (let y = 7; y <= 12; y++) {
+  for (let x = 26; x <= 29; x++) canyonTiles[y][x] = 'grass'
+}
+canyonTiles[9][25] = 'grass' // gap through the old border wall
+canyonTiles[10][25] = 'grass'
+canyonTiles[8][27] = 'rustmoor_well'
+canyonTiles[11][28] = 'rustmoor_scrub'
+canyonTiles[7][28] = 'rustmoor_boulder'
+canyonTiles[12][27] = 'rustmoor_boulder'
+
 export const ENTRY = { x: 9, y: 1 }
 
 // --- Map: Settlement hub (20x18) ----------------------------------------
-// An exterior plaza ringed by a palisade wall: door north back to the
+// A village plaza ringed by a palisade wall: door north back to the
 // canyon, door south down into the mine tunnels (Depths). A safe hub —
 // no enemySpawns here, matching the original's empty encounterZones.
+// Four small hut facades (elder/yara/pip/bram each stand in their own
+// yard, not scattered across bare floor) and worn dirt paths connecting
+// both doors through the plaza, instead of one undifferentiated square.
 const SETTLEMENT_W = 20
 const SETTLEMENT_H = 18
 const settlementTiles = []
@@ -287,15 +331,30 @@ for (let y = 0; y < SETTLEMENT_H; y++) {
 }
 settlementTiles[0][10] = 'door' // north: back to the canyon
 settlementTiles[SETTLEMENT_H - 1][10] = 'door' // south: down into the Depths
-// Decorative scatter: palisade fence posts, boulders, scrub, debris.
-settlementTiles[2][3] = 'rustmoor_fence'
-settlementTiles[2][16] = 'rustmoor_fence'
-settlementTiles[15][3] = 'rustmoor_fence'
-settlementTiles[15][16] = 'rustmoor_fence'
-settlementTiles[8][2] = 'rustmoor_debris'
-settlementTiles[8][17] = 'rustmoor_boulder'
-settlementTiles[4][9] = 'rustmoor_scrub'
-settlementTiles[13][11] = 'rustmoor_scrub'
+// Worn dirt paths: a north-south spine connecting both doors, with a
+// short spur branching off to each NPC's yard.
+for (let y = 1; y <= 16; y++) settlementTiles[y][10] = 'path'
+for (let x = 6; x <= 10; x++) settlementTiles[5][x] = 'path' // elder's spur
+for (let x = 10; x <= 14; x++) settlementTiles[5][x] = 'path' // yara's spur
+for (let x = 6; x <= 10; x++) settlementTiles[12][x] = 'path' // pip's spur
+for (let x = 10; x <= 12; x++) settlementTiles[13][x] = 'path' // bram's spur
+// Hut facades: small wood-wall blocks framing the plaza, each with a
+// one-tile yard gap between the hut and the NPC standing in front of it.
+for (const [x0, y0] of [
+  [4, 2], // elder's hut, above (5,5)
+  [13, 2], // yara's hut, above (14,5)
+  [5, 9], // pip's market stall, above (6,12)
+  [11, 10], // bram's hut, above (12,13)
+]) {
+  for (let y = y0; y <= y0 + 1; y++) {
+    for (let x = x0; x <= x0 + 2; x++) settlementTiles[y][x] = 'rustmoor_hutWall'
+  }
+}
+// A little extra scatter, clear of the huts/paths/NPCs above.
+settlementTiles[9][2] = 'rustmoor_fence'
+settlementTiles[9][17] = 'rustmoor_fence'
+settlementTiles[5][17] = 'rustmoor_boulder'
+settlementTiles[13][3] = 'rustmoor_scrub'
 
 // --- Map: Depths (24x24) -------------------------------------------------
 // Entrance chamber -> single-column corridor (x=6) -> mid chamber (Tamsin,

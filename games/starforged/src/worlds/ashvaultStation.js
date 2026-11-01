@@ -77,6 +77,9 @@ registerTileTypes({
   ashvault_warningBarrier: { color: '#d9a62c', dither: VOID_BLACK, walkable: false, shape: 'barrier' },
   ashvault_brokenMachinery: { color: '#6b7280', dither: '#3a3f47', walkable: false, shape: 'machinery' },
   ashvault_hullBreach: { color: '#223044', dither: VOID_BLACK, walkable: false, shape: 'wreckage' },
+  // Prefab worker-pod wall for the Habitation Ring's bolder redesign -
+  // distinct teal-steel tone from the exterior hull plating.
+  ashvault_podWall: { color: '#3d4a52', dither: '#262e33', walkable: false, shape: 'wall' },
 })
 
 // --- Sprites, built from the shared humanoid silhouette with a cold,
@@ -354,11 +357,22 @@ fillRect(habitationRingTiles, 1, 13, 18, 13, 'ashvault_hazardStripe')
 
 fillRect(habitationRingTiles, 6, 5, 6, 6, 'ashvault_supportPillar')
 fillRect(habitationRingTiles, 14, 5, 14, 6, 'ashvault_supportPillar')
-fillRect(habitationRingTiles, 3, 11, 4, 11, 'ashvault_cargoCrate')
 fillRect(habitationRingTiles, 15, 11, 16, 11, 'ashvault_cargoCrate')
 fillRect(habitationRingTiles, 8, 15, 9, 15, 'ashvault_warningBarrier')
-setTile(habitationRingTiles, 2, 2, 'ashvault_brokenMachinery')
 setTile(habitationRingTiles, 17, 2, 'ashvault_brokenMachinery')
+// Prefab worker-pod facades for dockHand/technician/restingWorker,
+// instead of bare floor - each with a one-tile yard gap to the NPC
+// standing in front (restingWorker's merchant stall sits behind them to
+// the south, since they face up/north).
+fillRect(habitationRingTiles, 2, 1, 4, 1, 'ashvault_podWall') // dockHand's pod, above (3,2)
+fillRect(habitationRingTiles, 11, 1, 13, 2, 'ashvault_podWall') // technician's pod, above (12,4)
+fillRect(habitationRingTiles, 5, 11, 7, 12, 'ashvault_podWall') // restingWorker's stall, below (5,10)
+// Worn deck-plate walkways: a spine between both doors, a mid street,
+// and spurs to each pod.
+for (let y = 1; y <= 16; y++) habitationRingTiles[y][10] = 'ashvault_gratedFloor'
+for (let x = 3; x <= 16; x++) habitationRingTiles[7][x] = 'ashvault_gratedFloor'
+for (let y = 2; y <= 7; y++) habitationRingTiles[y][3] = 'ashvault_gratedFloor' // dockHand's spur
+for (let x = 7; x <= 10; x++) habitationRingTiles[10][x] = 'ashvault_gratedFloor' // restingWorker's spur
 
 // Engine Core (depths, 24x24): maze-like industrial corridors. Entrance
 // hall -> narrow neck -> junction room (Tamsin's restraint pit) -> narrow

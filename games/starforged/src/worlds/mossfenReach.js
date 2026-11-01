@@ -329,17 +329,39 @@ setTile(approachTiles, 19, 11, 'mossfen_mossRock')
 setTile(approachTiles, 23, 11, 'mossfen_deadTree')
 
 // === Map 2: Fenling Settlement (21x18) — hub. A glow-floor patch at its
-// heart marks where the old shrine light still lingers. ===
+// heart marks where the old shrine light still lingers. Real reed-hut
+// facades for Finn/Birch Keeper/Sela instead of bare floor, worn mud
+// paths connecting both doors through the green, and a bog pool eating
+// into one corner so the plaza itself isn't a plain square either. ===
 const settlementTiles = buildGrid(21, 18, 'mossfen_hutWall')
 fillRect(settlementTiles, 1, 1, 19, 16, 'mossfen_hutFloor')
 fillRect(settlementTiles, 9, 8, 3, 2, 'mossfen_glowFloor')
+setTile(settlementTiles, 10, 14, 'door')
+setTile(settlementTiles, 20, 6, 'door')
+// Worn mud paths: a main street past Finn/Birch Keeper's yards, a spine
+// down to the south door, and a spur to Sela's yard.
+for (let x = 4; x <= 16; x++) settlementTiles[6][x] = 'mossfen_mud' // main street
+for (let y = 6; y <= 14; y++) settlementTiles[y][10] = 'mossfen_mud' // spine to the south door
+for (let x = 10; x <= 15; x++) settlementTiles[11][x] = 'mossfen_mud' // Sela's spur
+// Reed-hut facades, each with a one-tile yard gap to the NPC standing
+// in front.
+for (const [x0, y0] of [
+  [3, 2], // Finn's hut, above (4,5)
+  [15, 2], // Birch Keeper's hut, above (16,5)
+  [14, 9], // Sela's hut, above (15,12)
+]) {
+  for (let y = y0; y <= y0 + 1; y++) {
+    for (let x = x0; x <= x0 + 2; x++) settlementTiles[y][x] = 'mossfen_hutWall'
+  }
+}
+// A bog pool eats into the SW corner of the plaza - the settlement
+// isn't a clean rectangle any more than the Reach around it is.
+for (let y = 11; y <= 16; y++) for (let x = 1; x <= 4; x++) settlementTiles[y][x] = 'mossfen_bogPool'
 setTile(settlementTiles, 2, 14, 'mossfen_deadTree')
 setTile(settlementTiles, 18, 13, 'mossfen_mossRock')
 setTile(settlementTiles, 2, 3, 'mossfen_rootTangle')
 setTile(settlementTiles, 18, 3, 'mossfen_ruins')
-setTile(settlementTiles, 3, 12, 'mossfen_bogPool')
-setTile(settlementTiles, 10, 14, 'door')
-setTile(settlementTiles, 20, 6, 'door')
+setTile(settlementTiles, 18, 9, 'mossfen_mossRock')
 
 // === Map 3: Deep Mire (24x24) — maze-like bog/cave. A corridor descends
 // from the settlement door into an entrance room, with a side branch up to
