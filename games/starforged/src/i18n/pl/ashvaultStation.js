@@ -126,4 +126,15 @@ registerTranslations('pl', {
     `Gogu wypuszcza powietrze: „Zrobiło się cicho.”`,
   [`Head back to the Starskiff for Skyreach Canopy. (+25 credits)`]:
     `Wróć na Starskiff, kurs na Skyreach Canopy. (+25 kredytów)`,
+
+  // --- dockingApproach: Jael's parts crate side quest ---
+  "Jael's Parts Crate": 'Skrzynka z Częściami Jael',
+  'Jael: Sealed a crate of good parts in here before a patrol swept through.':
+    'Jael: Zapieczętowałem skrzynkę dobrych części tutaj, zanim przeszedł patrol.',
+  'Jael: Forgot which one. Split the find if you crack it open?':
+    'Jael: Zapomniałem którą. Podzielimy się, jeśli ją otworzysz?',
+  "Jael: Those parts'll keep me running for months. Thanks.": 'Jael: Te części starczą mi na miesiące. Dzięki.',
+  "Jael: One of these crates, I swear.": 'Jael: Jedna z tych skrzynek, przysięgam.',
+  'This crate pops open - good parts, still sealed!': 'Ta skrzynka się otwiera — dobre części, wciąż zapieczętowane!',
+  'Jael pays you for half the haul. (+12 credits)': 'Jael płaci ci za połowę zdobyczy. (+12 kredytów)',
 })

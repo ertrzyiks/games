@@ -70,4 +70,16 @@ registerTranslations('pl', {
   "Rustmoor's shakedown is over. Wando's skiff is fueled and ready. (+25 credits)":
     'Wyzysk Rustmoor się skończył. Szkuner Wando jest zatankowany i gotowy. (+25 kredytów)',
   'Head back to the Starskiff — a new world awaits.': 'Wróć na Gwiezdny Szkuner — czeka nowy świat.',
+
+  // --- canyonApproach: Finch's watchtower side quest ---
+  "Finch's Buried Toolkit": 'Zakopana Skrzynka Narzędziowa Fincha',
+  'Finch: Rode out a sandstorm in this tower - found a sealed toolbox under the floor.':
+    'Finch: Przeczekałem burzę piaskową w tej wieży — znalazłem zapieczętowaną skrzynkę narzędziową pod podłogą.',
+  "Finch: Can't crack it myself. Dig it out and split what's inside?":
+    'Finch: Sam jej nie otworzę. Wykopiesz ją i podzielimy się zawartością?',
+  "Finch: Toolbox paid off. I'll remember this place fondly.":
+    'Finch: Skrzynka się opłaciła. Będę mile wspominał to miejsce.',
+  "Finch: It's under the floor, right there in the corner.": 'Finch: Jest pod podłogą, tam w rogu.',
+  'The floorboards give way - a sealed toolbox!': 'Deski podłogi ustępują — zapieczętowana skrzynka narzędziowa!',
+  'Finch splits the take with you. (+12 credits)': 'Finch dzieli się z tobą zdobyczą. (+12 kredytów)',
 })

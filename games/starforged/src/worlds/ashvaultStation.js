@@ -9,6 +9,7 @@ import {
   ROBOT_TEMPLATE,
   ROBOT_DRONE_TEMPLATE,
   CONSOLE_TEMPLATE,
+  CACHE_TEMPLATE,
 } from '../assets/spriteTemplates.js'
 import { registerEnemies } from '../battle/enemies.js'
 import { registerMoves } from '../battle/moves.js'
@@ -127,6 +128,15 @@ const scrapRunnerSprite = buildSprite(HUMANOID_TEMPLATE, {
   L: VOID_BLACK,
 })
 
+// Jael, the yard scavenger (dockingApproach's new lean-to side quest).
+const jaelSprite = buildSprite(HUMANOID_TEMPLATE, {
+  H: COOLANT_TEAL,
+  V: VOID_BLACK,
+  T: WARNING_YELLOW,
+  A: '#2c4a47',
+  L: VOID_BLACK,
+})
+
 const restingWorkerSprite = buildSprite(HUMANOID_TEMPLATE, {
   H: CIVILIAN_DARK,
   V: VOID_BLACK,
@@ -190,6 +200,12 @@ const releaseSwitchSprite = buildSprite(CONSOLE_TEMPLATE, {
   L: '#9adf8a',
 })
 
+// Jael's parts crate (dockingApproach's new lean-to, 17,16).
+const partsCrateSprite = buildSprite(CACHE_TEMPLATE, {
+  C: COOLANT_TEAL,
+  B: '#1a3632',
+})
+
 registerSprites({
   ashvault_dockHand: dockHandSprite,
   ashvault_technician: technicianSprite,
@@ -199,10 +215,12 @@ registerSprites({
   ashvault_restingWorker: restingWorkerSprite,
   ashvault_tamsin: tamsinSprite,
   ashvault_ventTech: ventTechSprite,
+  ashvault_jael: jaelSprite,
   ashvault_scrapLurker: scrapLurkerSprite,
   ashvault_reclaimerDrone: reclaimerDroneSprite,
   ashvault_schematicsConsole: schematicsConsoleSprite,
   ashvault_releaseSwitch: releaseSwitchSprite,
+  ashvault_partsCrate: partsCrateSprite,
 })
 
 // --- Moves ---
@@ -313,6 +331,11 @@ fillRect(dockingApproachTiles, 3, 16, 3, 17, 'ashvault_brokenMachinery')
 fillRect(dockingApproachTiles, 22, 16, 22, 17, 'ashvault_brokenMachinery')
 setTile(dockingApproachTiles, 2, 2, 'ashvault_hullBreach')
 setTile(dockingApproachTiles, 23, 2, 'ashvault_hullBreach')
+// A scavenged lean-to (15-18, 15-17) - Jael's claimed corner of the yard,
+// marked with a ring of crates instead of walls.
+setTile(dockingApproachTiles, 15, 16, 'ashvault_cargoCrate')
+setTile(dockingApproachTiles, 18, 15, 'ashvault_cargoCrate')
+setTile(dockingApproachTiles, 18, 17, 'ashvault_cargoCrate')
 
 // Habitation Ring (hub, 20x18): where Syndicate-controlled workers live.
 // South door (10,17) back to the Docking Approach, east door (19,8) down
@@ -426,6 +449,30 @@ export const ashvaultStationWorld = {
             "That support pillar near the middle sounds hollow when you knock it.",
           ],
         },
+        {
+          id: 'jael',
+          x: 16,
+          y: 16,
+          facing: 'down',
+          spriteId: 'ashvault_jael',
+          watchesQuests: ['ashvault_partsCrate'],
+          // Small side quest, self-contained in this one corner: no plot
+          // stakes, just a few extra credits for poking around the crates.
+          dialogue: (state) => {
+            const q = state.quests['ashvault_partsCrate']
+            if (!q) {
+              startQuest(state, 'ashvault_partsCrate', "Jael's Parts Crate", 'S4')
+              return [
+                "Jael: Sealed a crate of good parts in here before a patrol swept through.",
+                "Jael: Forgot which one. Split the find if you crack it open?",
+              ]
+            }
+            if (q.complete) {
+              return ["Jael: Those parts'll keep me running for months. Thanks."]
+            }
+            return ["Jael: One of these crates, I swear."]
+          },
+        },
       ],
       enemySpawns: [
         { id: 'dock_cinder1', x: 18, y: 5, enemyId: 'ashvault_cinderTrooper', spriteId: 'ashvault_cinderTrooper' },
@@ -442,6 +489,8 @@ export const ashvaultStationWorld = {
           dialogue: ['The pillar panel pops loose — a smuggler stash!', 'Found a medkit and a tonic!'],
         },
       ],
+      // Visible marker for Jael's parts crate, same tile as its Trigger below.
+      items: [{ id: 'partsCrate', x: 17, y: 16, spriteId: 'ashvault_partsCrate', hideWhenFlag: 'ashvault_partsCrateFound' }],
       warps: [{ x: 13, y: 1, toMap: 'habitationRing', toX: 10, toY: 16 }],
       triggers: [
         {
@@ -452,6 +501,22 @@ export const ashvaultStationWorld = {
           onEnter(ctx) {
             ctx.state.inventory.medkit = (ctx.state.inventory.medkit || 0) + 1
             ctx.showDialogue(['A sealed supply case, wedged in the wreckage.', 'Found a medkit!'])
+          },
+        },
+        {
+          x: 17,
+          y: 16,
+          once: true,
+          setsFlag: 'ashvault_partsCrateFound',
+          onEnter(ctx) {
+            // Defensive start, same pattern as the plot quests: works even
+            // if the player cracks this open before ever talking to Jael.
+            if (!ctx.state.quests['ashvault_partsCrate']) {
+              startQuest(ctx.state, 'ashvault_partsCrate', "Jael's Parts Crate", 'S4')
+            }
+            completeQuest(ctx.state, 'ashvault_partsCrate')
+            ctx.state.credits = (ctx.state.credits || 0) + 12
+            ctx.showDialogue(['This crate pops open - good parts, still sealed!', 'Jael pays you for half the haul. (+12 credits)'])
           },
         },
       ],

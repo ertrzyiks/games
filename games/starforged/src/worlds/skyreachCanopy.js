@@ -11,6 +11,7 @@ import {
   ARMORED_TEMPLATE,
   BOSS_ENFORCER_TEMPLATE,
   LAMP_TEMPLATE,
+  CACHE_TEMPLATE,
   buildSprite,
 } from '../assets/spriteTemplates.js'
 import { startQuest, setQuestStage, completeQuest } from '../data/gameState.js'
@@ -135,6 +136,14 @@ const wrenSprite = buildSprite(CHILD_TEMPLATE, {
   B: '#dfe3ea',
 })
 
+// Perrin, the canopy forager (canopyApproach's new nook side quest).
+const perrinSprite = buildSprite(CHILD_TEMPLATE, {
+  H: '#5ce3a8',
+  E: '#1a1d26',
+  R: '#2f8a63',
+  B: '#dff5ea',
+})
+
 // Winged - CREATURE_FLYER_TEMPLATE's wide wing-sweep instead of
 // CREATURE_TEMPLATE's four ground legs, so Skyreach's aerial beasts
 // actually read as flying, not stalking.
@@ -185,6 +194,12 @@ const currentWellBeaconSprite = buildSprite(LAMP_TEMPLATE, {
   P: '#17121f',
 })
 
+// Perrin's foraging satchel (canopyApproach's new nook, 21,14).
+const foragingSatchelSprite = buildSprite(CACHE_TEMPLATE, {
+  C: '#2f8a63',
+  B: '#1a4a34',
+})
+
 registerSprites({
   skyreach_senna: sennaSprite,
   skyreach_orin: orinSprite,
@@ -192,11 +207,13 @@ registerSprites({
   skyreach_hale: haleSprite,
   skyreach_fenn: fennSprite,
   skyreach_wren: wrenSprite,
+  skyreach_perrin: perrinSprite,
   skyreach_galeStalker: galeStalkerSprite,
   skyreach_windReaver: windReaverSprite,
   skyreach_rootLurker: rootLurkerSprite,
   skyreach_enforcerVane: enforcerVaneSprite,
   skyreach_currentWellBeacon: currentWellBeaconSprite,
+  skyreach_foragingSatchel: foragingSatchelSprite,
 })
 
 // --- Moves -----------------------------------------------------------------
@@ -222,37 +239,43 @@ registerMoves({
 // chapter's boss (see battle/battleScene.js) — Force Push is the one
 // attack type that's never resisted.
 registerEnemies({
+  // Regular Skyreach/Hollow/Driftfall enemies run ~25% hotter (HP/ATK/DEF)
+  // than the first three chapters' - the back half of the Drift is meant
+  // to feel like a real step up, not just a reskinned version of the same
+  // fights. (Skyreach is chapter 4, not chapter 3 - registration order in
+  // main.js is rustmoor -> mossfenReach -> ashvaultStation ->
+  // skyreachCanopy -> theHollow, see worlds/registry.js.)
   skyreach_galeStalker: {
     name: 'Gale Stalker',
     spriteId: 'skyreach_galeStalker',
-    maxHp: 48,
-    atk: 12,
-    def: 6,
+    maxHp: 60,
+    atk: 15,
+    def: 8,
     spd: 8,
     moves: ['skyreach_windSlash', 'strike'],
-    xpReward: 36,
+    xpReward: 44,
     weakTo: 'kinetic',
   },
   skyreach_windReaver: {
     name: 'Wind Reaver',
     spriteId: 'skyreach_windReaver',
-    maxHp: 52,
-    atk: 13,
-    def: 6,
+    maxHp: 65,
+    atk: 16,
+    def: 8,
     spd: 9,
     moves: ['skyreach_talonRake', 'skyreach_windSlash'],
-    xpReward: 40,
+    xpReward: 48,
     weakTo: 'force',
   },
   skyreach_rootLurker: {
     name: 'Root Lurker',
     spriteId: 'skyreach_rootLurker',
-    maxHp: 57,
-    atk: 11,
-    def: 9,
+    maxHp: 71,
+    atk: 14,
+    def: 11,
     spd: 5,
     moves: ['skyreach_rootCoil', 'strike'],
-    xpReward: 42,
+    xpReward: 52,
     weakTo: 'fire',
   },
   // Elite Syndicate enforcer — the chapter's boss. Aerial/wind-themed to
@@ -304,6 +327,10 @@ setTile(canopyApproachTiles, 7, 7, 'skyreach_mistPatch')
 setTile(canopyApproachTiles, 16, 7, 'skyreach_mistPatch')
 setTile(canopyApproachTiles, 2, 16, 'skyreach_brokenEdge')
 setTile(canopyApproachTiles, 23, 16, 'skyreach_brokenEdge')
+// A small foraging nook (20-22, 13-14) - Perrin's spot, marked by a ring
+// of glow fungus and drifting mist instead of walls.
+setTile(canopyApproachTiles, 20, 13, 'skyreach_glowFungus')
+setTile(canopyApproachTiles, 22, 14, 'skyreach_mistPatch')
 
 // Map 2 — Skykin Refuge (20x18 hub). A single clearing of root-plank floor;
 // a south door back to the Approach, a north door up into the High Reaches.
@@ -393,6 +420,30 @@ export const skyreachCanopyWorld = {
             'Hale: One of the giant trunks west of here has a false knothole.',
           ],
         },
+        {
+          id: 'perrin',
+          x: 21,
+          y: 13,
+          facing: 'down',
+          spriteId: 'skyreach_perrin',
+          watchesQuests: ['skyreach_foragingSatchel'],
+          // Small side quest, self-contained in this one nook: no plot
+          // stakes, just a few extra credits for poking around the mist.
+          dialogue: (state) => {
+            const q = state.quests['skyreach_foragingSatchel']
+            if (!q) {
+              startQuest(state, 'skyreach_foragingSatchel', "Perrin's Foraging Satchel", 'S3')
+              return [
+                'Perrin: Dropped my satchel chasing glow-spores through this mist.',
+                "Perrin: Can't see past my own hands in there. Would you look?",
+              ]
+            }
+            if (q.complete) {
+              return ["Perrin: Every spore in it's worth something. Thank you."]
+            }
+            return ['Perrin: Somewhere in the mist, right there.']
+          },
+        },
       ],
       enemySpawns: [
         { id: 'canopy_galeStalker1', x: 6, y: 6, enemyId: 'skyreach_galeStalker', spriteId: 'skyreach_galeStalker' },
@@ -409,6 +460,8 @@ export const skyreachCanopyWorld = {
           dialogue: ['The knothole is hollow — a windkin cache!', 'Found a tonic!'],
         },
       ],
+      // Visible marker for Perrin's satchel, same tile as its Trigger below.
+      items: [{ id: 'foragingSatchel', x: 21, y: 14, spriteId: 'skyreach_foragingSatchel', hideWhenFlag: 'skyreach_satchelFound' }],
       warps: [{ x: 13, y: 1, toMap: 'skykinRefuge', toX: 10, toY: 15 }],
       triggers: [
         {
@@ -431,6 +484,22 @@ export const skyreachCanopyWorld = {
           onEnter: (ctx) => {
             ctx.state.inventory.medkit = (ctx.state.inventory.medkit || 0) + 1
             ctx.showDialogue(['Found a spare medkit in a hollow root.'])
+          },
+        },
+        {
+          x: 21,
+          y: 14,
+          once: true,
+          setsFlag: 'skyreach_satchelFound',
+          onEnter: (ctx) => {
+            // Defensive start, same pattern as the plot quests: works even
+            // if the player finds this before ever talking to Perrin.
+            if (!ctx.state.quests['skyreach_foragingSatchel']) {
+              startQuest(ctx.state, 'skyreach_foragingSatchel', "Perrin's Foraging Satchel", 'S3')
+            }
+            completeQuest(ctx.state, 'skyreach_foragingSatchel')
+            ctx.state.credits = (ctx.state.credits || 0) + 12
+            ctx.showDialogue(['Snagged on a root, half-buried in the mist - the satchel!', "Perrin pays you for the spores inside. (+12 credits)"])
           },
         },
       ],

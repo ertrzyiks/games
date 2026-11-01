@@ -72,6 +72,15 @@ const pipSprite = buildSprite(CHILD_TEMPLATE, {
   B: '#dfe8f5',
 })
 
+// Finch, the watchtower scavenger (canyonApproach's new ruin alcove).
+const finchSprite = buildSprite(HUMANOID_TEMPLATE, {
+  H: '#5a6a3a',
+  V: '#2a2d36',
+  T: '#8a9a5a',
+  A: '#3f4a2a',
+  L: '#242a18',
+})
+
 const raiderSprite = buildSprite(ARMORED_TEMPLATE, {
   H: '#4a3828',
   F: '#1a1d26',
@@ -116,15 +125,25 @@ const yaraCacheSprite = buildSprite(CACHE_TEMPLATE, {
   B: '#3a3228',
 })
 
+// Finch's buried toolbox (canyonApproach, 20,15) - the watchtower side
+// quest's payoff. Rustier/greener bands than Yara's cache, to read as a
+// different find.
+const watchtowerCacheSprite = buildSprite(CACHE_TEMPLATE, {
+  C: '#5a6a3a',
+  B: '#2e3a22',
+})
+
 registerSprites({
   rustmoor_dessa: dessaSprite,
   rustmoor_yara: yaraSprite,
   rustmoor_tamsin: tamsinSprite,
   rustmoor_pip: pipSprite,
+  rustmoor_finch: finchSprite,
   rustmoor_raider: raiderSprite,
   rustmoor_raiderScout: raiderScoutSprite,
   rustmoor_scavengerCaptain: captainSprite,
   rustmoor_yaraCache: yaraCacheSprite,
+  rustmoor_watchtowerCache: watchtowerCacheSprite,
 })
 
 // --- Moves (namespaced) ----------------------------------------------------
@@ -222,6 +241,29 @@ canyonTiles[9][20] = 'rustmoor_fence'
 canyonTiles[13][9] = 'rustmoor_scrub'
 canyonTiles[12][16] = 'rustmoor_boulder'
 canyonTiles[15][23] = 'rustmoor_debris'
+// Jagged canyon-wall notches: a few inward bites out of the otherwise
+// dead-straight border, so the canyon reads as a natural ravine instead
+// of a rectangle. Purely cosmetic (border tiles were already unwalkable).
+for (const [x, y] of [[2, 2], [2, 3], [23, 2], [24, 2], [23, 17], [2, 17], [2, 18]]) {
+  canyonTiles[y][x] = 'rock'
+}
+// A small ruined watchtower off the beaten path (18-21, 14-17) - a
+// scavenger took shelter here. Perimeter walls with a gap on the south
+// side for an entrance (no special door graphic - this isn't a warp to
+// another map, just a walk-in room on this same one).
+for (let x = 18; x <= 21; x++) {
+  canyonTiles[14][x] = 'rustmoor_tunnelWall'
+  canyonTiles[17][x] = 'rustmoor_tunnelWall'
+}
+for (let y = 14; y <= 17; y++) {
+  canyonTiles[y][18] = 'rustmoor_tunnelWall'
+  canyonTiles[y][21] = 'rustmoor_tunnelWall'
+}
+canyonTiles[17][20] = 'grass' // entrance gap, south wall
+canyonTiles[15][19] = 'rustmoor_tunnelFloor'
+canyonTiles[15][20] = 'rustmoor_tunnelFloor'
+canyonTiles[16][19] = 'rustmoor_tunnelFloor'
+canyonTiles[16][20] = 'rustmoor_tunnelFloor'
 
 export const ENTRY = { x: 9, y: 1 }
 
@@ -358,6 +400,30 @@ export const rustmoorWorld = {
             ]
           },
         },
+        {
+          id: 'finch',
+          x: 19,
+          y: 15,
+          facing: 'right',
+          spriteId: 'rustmoor_finch',
+          watchesQuests: ['rustmoor_watchtowerCache'],
+          // Small side quest, self-contained in this one room: no plot
+          // stakes, just a few extra credits for poking around the ruin.
+          dialogue: (state) => {
+            const q = state.quests['rustmoor_watchtowerCache']
+            if (!q) {
+              startQuest(state, 'rustmoor_watchtowerCache', "Finch's Buried Toolkit", 'S1')
+              return [
+                "Finch: Rode out a sandstorm in this tower - found a sealed toolbox under the floor.",
+                "Finch: Can't crack it myself. Dig it out and split what's inside?",
+              ]
+            }
+            if (q.complete) {
+              return ["Finch: Toolbox paid off. I'll remember this place fondly."]
+            }
+            return ["Finch: It's under the floor, right there in the corner."]
+          },
+        },
       ],
       enemySpawns: [
         { id: 'canyonRaider1', x: 10, y: 5, enemyId: 'rustmoor_raider', spriteId: 'rustmoor_raider' },
@@ -376,8 +442,27 @@ export const rustmoorWorld = {
           dialogue: ['You shove the boulder aside...', 'A scavenger stash! (+1 medkit, +1 tonic)'],
         },
       ],
+      // Visible marker for Finch's toolbox, same tile as its Trigger below.
+      items: [{ id: 'watchtowerCache', x: 20, y: 15, spriteId: 'rustmoor_watchtowerCache', hideWhenFlag: 'rustmoor_watchtowerCacheFound' }],
       warps: [{ x: 13, y: CANYON_H - 1, toMap: 'settlement', toX: 10, toY: 1 }],
-      triggers: [],
+      triggers: [
+        {
+          x: 20,
+          y: 15,
+          once: true,
+          setsFlag: 'rustmoor_watchtowerCacheFound',
+          onEnter: (ctx) => {
+            // Defensive start, same pattern as Yara's cache: works even if
+            // the player digs here before ever talking to Finch.
+            if (!ctx.state.quests['rustmoor_watchtowerCache']) {
+              startQuest(ctx.state, 'rustmoor_watchtowerCache', "Finch's Buried Toolkit", 'S1')
+            }
+            completeQuest(ctx.state, 'rustmoor_watchtowerCache')
+            ctx.state.credits = (ctx.state.credits || 0) + 12
+            ctx.showDialogue(['The floorboards give way - a sealed toolbox!', 'Finch splits the take with you. (+12 credits)'])
+          },
+        },
+      ],
     },
     settlement: {
       name: 'Settlement',

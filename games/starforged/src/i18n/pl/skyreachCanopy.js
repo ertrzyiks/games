@@ -126,4 +126,15 @@ registerTranslations('pl', {
     `Schronienie jest bezpieczne — przynajmniej na razie.`,
   [`Head back to the Starskiff. The Hollow awaits. (+25 credits)`]:
     `Wróć na Starskiff. Pustka czeka. (+25 kredytów)`,
+
+  // --- canopyApproach: Perrin's foraging satchel side quest ---
+  "Perrin's Foraging Satchel": 'Sakwa Zbieracka Perrina',
+  'Perrin: Dropped my satchel chasing glow-spores through this mist.':
+    'Perrin: Zgubiłem sakwę, goniąc świetliste zarodniki w tej mgle.',
+  "Perrin: Can't see past my own hands in there. Would you look?":
+    'Perrin: Nic tam nie widać na własne ręce. Rozejrzysz się?',
+  "Perrin: Every spore in it's worth something. Thank you.": 'Perrin: Każdy zarodnik w środku jest coś wart. Dziękuję.',
+  'Perrin: Somewhere in the mist, right there.': 'Perrin: Gdzieś we mgle, tam właśnie.',
+  'Snagged on a root, half-buried in the mist - the satchel!': 'Zaczepiona o korzeń, na wpół zakopana we mgle — sakwa!',
+  'Perrin pays you for the spores inside. (+12 credits)': 'Perrin płaci ci za zarodniki w środku. (+12 kredytów)',
 })

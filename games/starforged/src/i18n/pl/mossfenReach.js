@@ -136,4 +136,15 @@ registerTranslations('pl', {
     `Wando znajduje osmolony medalion Syndykatu. "Tam dalej jest większa stacja — Ashvault."`,
   [`"Then that's where we go," Gogu says. Head back to the Starskiff. (+25 credits)`]:
     `"Więc tam wyruszamy," mówi Gogu. Wracaj na Starskiffa. (+25 kredytów)`,
+
+  // --- approach: Birk's tackle box side quest ---
+  "Birk's Tackle Box": 'Skrzynka Wędkarska Birka',
+  'Birk: Lost my tackle box in the mud right here last season.':
+    'Birk: Zgubiłem skrzynkę wędkarską tu w błocie, zeszłego sezonu.',
+  "Birk: Current's probably shifted it a few steps off. Dig around?":
+    'Birk: Nurt pewnie przesunął ją parę kroków dalej. Pokopiesz?',
+  'Birk: Best catch of the season, thanks to you.': 'Birk: Najlepszy połów sezonu, dzięki tobie.',
+  'Birk: Try right around here, in the mud.': 'Birk: Spróbuj gdzieś tutaj, w błocie.',
+  'You dig through the mud - the tackle box!': 'Przekopujesz błoto — skrzynka wędkarska!',
+  "Birk's grateful for the find. (+12 credits)": 'Birk jest wdzięczny za znalezisko. (+12 kredytów)',
 })

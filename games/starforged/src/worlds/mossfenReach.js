@@ -113,6 +113,14 @@ const hermitSprite = buildSprite(CHILD_TEMPLATE, {
   B: '#cfc6b0',
 })
 
+// Birk, the fishing-grove fenling (approach's new clearing side quest).
+const birkSprite = buildSprite(CHILD_TEMPLATE, {
+  H: '#5a9a7a',
+  E: '#1a1d26',
+  R: '#2f5a44',
+  B: '#c9e8d8',
+})
+
 const bogStalkerSprite = buildSprite(CREATURE_TEMPLATE, {
   H: '#3a5a3a',
   E: '#102018',
@@ -178,6 +186,13 @@ const hiddenCacheSprite = buildSprite(CACHE_TEMPLATE, {
   B: '#2f3a28',
 })
 
+// Birk's tackle box (approach's clearing, 20,10) - the fishing-grove side
+// quest's payoff. Teal bands to match Birk's own colors.
+const tackleBoxSprite = buildSprite(CACHE_TEMPLATE, {
+  C: '#3a6a5a',
+  B: '#1f3a30',
+})
+
 registerSprites({
   mossfen_fenling: fenlingSprite,
   mossfen_sentry: sentrySprite,
@@ -185,6 +200,7 @@ registerSprites({
   mossfen_elder: elderSprite,
   mossfen_netmender: netmenderSprite,
   mossfen_hermit: hermitSprite,
+  mossfen_birk: birkSprite,
   mossfen_bogStalker: bogStalkerSprite,
   mossfen_mireLurker: mireLurkerSprite,
   mossfen_reedViper: reedViperSprite,
@@ -192,6 +208,7 @@ registerSprites({
   mossfen_kinlightLamp: kinlightLampSprite,
   mossfen_siphonRig: siphonRigSprite,
   mossfen_hiddenCache: hiddenCacheSprite,
+  mossfen_tackleBox: tackleBoxSprite,
 })
 
 // --- World-specific moves ------------------------------------------------
@@ -301,6 +318,16 @@ setTile(approachTiles, 13, 1, 'door')
 // as a visibly walled-off room sitting inside the already-explorable map.
 setTile(approachTiles, 25, 8, 'mossfen_mossRock') // the fake wall / secret entrance
 
+// A small natural clearing (19-23, 9-11), ringed by dead trees/moss
+// rocks instead of walls - a quiet grove Birk uses as a fishing spot.
+// Unlike Finch's built watchtower in Rustmoor, this is a purely natural
+// pocket: the ground itself is untouched (still walkable mud), only the
+// decorative ring around it marks it as a distinct place to find.
+setTile(approachTiles, 19, 9, 'mossfen_deadTree')
+setTile(approachTiles, 23, 9, 'mossfen_mossRock')
+setTile(approachTiles, 19, 11, 'mossfen_mossRock')
+setTile(approachTiles, 23, 11, 'mossfen_deadTree')
+
 // === Map 2: Fenling Settlement (21x18) — hub. A glow-floor patch at its
 // heart marks where the old shrine light still lingers. ===
 const settlementTiles = buildGrid(21, 18, 'mossfen_hutWall')
@@ -380,6 +407,30 @@ export const mossfenReachWorld = {
             'That mossy rock east of here looks hollow. Worth a look.',
           ],
         },
+        {
+          id: 'birk',
+          x: 21,
+          y: 10,
+          facing: 'left',
+          spriteId: 'mossfen_birk',
+          watchesQuests: ['mossfen_tackleBox'],
+          // Small side quest, self-contained in this one clearing: no plot
+          // stakes, just a few extra credits for poking around the grove.
+          dialogue: (state) => {
+            const q = state.quests['mossfen_tackleBox']
+            if (!q) {
+              startQuest(state, 'mossfen_tackleBox', "Birk's Tackle Box", 'S2')
+              return [
+                'Birk: Lost my tackle box in the mud right here last season.',
+                "Birk: Current's probably shifted it a few steps off. Dig around?",
+              ]
+            }
+            if (q.complete) {
+              return ['Birk: Best catch of the season, thanks to you.']
+            }
+            return ["Birk: Try right around here, in the mud."]
+          },
+        },
       ],
       enemySpawns: [
         { id: 'approach_stalker1', x: 6, y: 5, enemyId: 'mossfen_bogStalker', spriteId: 'mossfen_bogStalker' },
@@ -437,9 +488,27 @@ export const mossfenReachWorld = {
           showWhenFlag: 'mossfen_hiddenPassageOpen',
           hideWhenFlag: 'mossfen_hiddenCacheFound',
         },
+        // Birk's tackle box, same tile as its Trigger below.
+        { id: 'tackleBox', x: 20, y: 10, spriteId: 'mossfen_tackleBox', hideWhenFlag: 'mossfen_tackleBoxFound' },
       ],
       warps: [{ x: 13, y: 1, toMap: 'settlement', toX: 10, toY: 13 }],
       triggers: [
+        {
+          x: 20,
+          y: 10,
+          once: true,
+          setsFlag: 'mossfen_tackleBoxFound',
+          onEnter: (ctx) => {
+            // Defensive start, same pattern as the plot quests: works even
+            // if the player digs here before ever talking to Birk.
+            if (!ctx.state.quests['mossfen_tackleBox']) {
+              startQuest(ctx.state, 'mossfen_tackleBox', "Birk's Tackle Box", 'S2')
+            }
+            completeQuest(ctx.state, 'mossfen_tackleBox')
+            ctx.state.credits = (ctx.state.credits || 0) + 12
+            ctx.showDialogue(['You dig through the mud - the tackle box!', "Birk's grateful for the find. (+12 credits)"])
+          },
+        },
         // The hidden-passage cache itself - reachable only once the secret
         // above has opened a path to it. Grants the reward the secret used
         // to hand out immediately on reveal.
