@@ -48,6 +48,7 @@ const WORLD_FILES = [
   { id: 'ashvaultStation', file: 'worlds/ashvaultStation.js', i18n: 'i18n/pl/ashvaultStation.js' },
   { id: 'skyreachCanopy', file: 'worlds/skyreachCanopy.js', i18n: 'i18n/pl/skyreachCanopy.js' },
   { id: 'theHollow', file: 'worlds/theHollow.js', i18n: 'i18n/pl/theHollow.js' },
+  { id: 'driftfall', file: 'worlds/driftfall.js', i18n: 'i18n/pl/driftfall.js' },
 ]
 
 for (const w of WORLD_FILES) {
@@ -120,7 +121,7 @@ const enemies = getAllEnemies().map((e) => ({
   isBoss: !!e.isBoss,
   moves: e.moves,
   // Regular enemies only ever carry weakTo (1.5x damage from a matching
-  // move damageType); bosses only ever carry resistantTo (0.6x damage,
+  // move damageType); bosses only ever carry resistantTo (0.8x damage,
   // see battleScene.js) - never both on the same enemy.
   weakTo: e.weakTo || null,
   resistantTo: e.resistantTo || null,
@@ -174,6 +175,7 @@ const worldMeta = [
   { id: 'ashvaultStation', order: 3 },
   { id: 'skyreachCanopy', order: 4 },
   { id: 'theHollow', order: 5 },
+  { id: 'driftfall', order: 6 },
 ]
 
 const worlds = worldMeta.map(({ id }) => {
@@ -379,19 +381,149 @@ const QUESTS = [
     nameEn: 'Break the Hollow',
     world: 'theHollow',
     giver: '—',
-    reward: { en: '+45 credits, completes the game', pl: '+45 kredytów, kończy grę' },
+    reward: { en: '+45 credits, unlocks Driftfall', pl: '+45 kredytów, odblokowuje Driftfall' },
     solution: {
       en: [
         'Walking away from your landing point in the Outer Hollow starts the quest automatically.',
         'Shut down the shield relay in the Outer Hollow (Vex and the lookout both point you toward it) to silence the alarms.',
         'Push into the Inner Sanctum and free Rell through the single doorway into her cell.',
-        "Advance through the Warden's Chamber corridor and defeat the Syndicate Warden at the chokepoint to finish the game.",
+        "Advance through the Warden's Chamber corridor and defeat the Syndicate Warden at the chokepoint — a signal starts broadcasting from beyond the Drift, pointing the way to Driftfall.",
       ],
       pl: [
         'Zadanie zaczyna się automatycznie, gdy odejdziesz od miejsca lądowania w Zewnętrznej Czeluści.',
         'Wyłącz przekaźnik osłony w Zewnętrznej Czeluści (Vex i wartownik obaj wskazują na niego), by uciszyć alarmy.',
         'Wejdź do Wewnętrznego Sanktuarium i uwolnij Rell przez jedyne wejście do jej celi.',
-        'Idź dalej przez korytarz Komnaty Strażnika i pokonaj Strażnika Syndykatu w wąskim przejściu, by zakończyć grę.',
+        'Idź dalej przez korytarz Komnaty Strażnika i pokonaj Strażnika Syndykatu w wąskim przejściu — zza granicy Driftu zaczyna nadawać sygnał, wskazujący drogę do Driftfall.',
+      ],
+    },
+  },
+  {
+    id: 'driftfall_signalBeyond',
+    key: 'T10',
+    nameEn: 'The Signal Beyond',
+    world: 'driftfall',
+    giver: 'Kessa',
+    reward: { en: '+10 credits mid-quest, +60 credits on completion, finishes the game', pl: '+10 kredytów w trakcie, +60 kredytów na koniec, kończy grę' },
+    solution: {
+      en: [
+        'Talk to Kessa in the Void Approach — she asks you to find the array still broadcasting the signal, deeper in the debris field.',
+        'Reach the signal array marker in the Void Approach to advance the quest and earn credits.',
+        'Head into the Citadel Halls and talk to Tomas (west wing) to confirm what woke up.',
+        'Push through the Command Sanctum corridor and defeat the Herald of the Null at the chokepoint to finish the game.',
+      ],
+      pl: [
+        'Porozmawiaj z Kessą na Podejściu Pustki — prosi cię o znalezienie instalacji wciąż nadającej sygnał, głębiej w polu gruzu.',
+        'Dotrzyj do oznaczonej instalacji sygnałowej na Podejściu Pustki, by posunąć zadanie i zdobyć kredyty.',
+        'Wejdź do Korytarzy Cytadeli i porozmawiaj z Tomasem (zachodnie skrzydło), by potwierdzić, co się obudziło.',
+        'Przejdź przez korytarz Sanktuarium Dowodzenia i pokonaj Herolda Nicości w wąskim przejściu, by zakończyć grę.',
+      ],
+    },
+  },
+  {
+    id: 'rustmoor_watchtowerCache',
+    key: 'S1',
+    nameEn: "Finch's Buried Toolkit",
+    world: 'rustmoor',
+    giver: 'Finch',
+    reward: { en: '+12 credits', pl: '+12 kredytów' },
+    solution: {
+      en: [
+        'Talk to Finch in the ruined watchtower south-east of the Canyon Approach entrance — he lost a toolbox under the floor.',
+        'Step onto the marked floor spot in the same room to dig it out and split the find.',
+      ],
+      pl: [
+        'Porozmawiaj z Finchem w zrujnowanej wieży strażniczej na południowy wschód od wejścia na Podejście do Kanionu — zgubił skrzynkę narzędziową pod podłogą.',
+        'Stań na oznaczonym miejscu w tym samym pokoju, by ją wykopać i podzielić się znaleziskiem.',
+      ],
+    },
+  },
+  {
+    id: 'mossfen_tackleBox',
+    key: 'S2',
+    nameEn: "Birk's Tackle Box",
+    world: 'mossfenReach',
+    giver: 'Birk',
+    reward: { en: '+12 credits', pl: '+12 kredytów' },
+    solution: {
+      en: [
+        "Talk to Birk in the small moss-rock-ringed clearing east of the Reach Approach's hidden passage — he lost his tackle box in the mud.",
+        'Step onto the marked mud spot in the same clearing to dig it out and split the catch.',
+      ],
+      pl: [
+        'Porozmawiaj z Birkiem na małej polanie otoczonej omszałymi głazami na wschód od ukrytego przejścia na Podejściu do Rozlewiska — zgubił w błocie skrzynkę wędkarską.',
+        'Stań na oznaczonym miejscu w błocie na tej samej polanie, by ją wykopać i podzielić się połowem.',
+      ],
+    },
+  },
+  {
+    id: 'skyreach_foragingSatchel',
+    key: 'S3',
+    nameEn: "Perrin's Foraging Satchel",
+    world: 'skyreachCanopy',
+    giver: 'Perrin',
+    reward: { en: '+12 credits', pl: '+12 kredytów' },
+    solution: {
+      en: [
+        'Talk to Perrin in the glow-fungus-and-mist nook south-east of the Canopy - they lost a satchel chasing glow-spores.',
+        'Step onto the marked mist spot in the same nook to find it and split the spores.',
+      ],
+      pl: [
+        'Porozmawiaj z Perrinem w zakątku ze świetlistymi grzybami i mgłą na południowy wschód od Korony Drzew — zgubili sakwę, goniąc świetliste zarodniki.',
+        'Stań na oznaczonym miejscu we mgle w tym samym zakątku, by ją znaleźć i podzielić się zarodnikami.',
+      ],
+    },
+  },
+  {
+    id: 'ashvault_partsCrate',
+    key: 'S4',
+    nameEn: "Jael's Parts Crate",
+    world: 'ashvaultStation',
+    giver: 'Jael',
+    reward: { en: '+12 credits', pl: '+12 kredytów' },
+    solution: {
+      en: [
+        'Talk to Jael at the crate-ringed lean-to south of the Docking Approach - they sealed a crate of parts before a patrol swept through.',
+        'Step onto the marked crate in the same corner to crack it open and split the parts.',
+      ],
+      pl: [
+        'Porozmawiaj z Jael przy szałasie otoczonym skrzyniami na południe od Podejścia Dokującego — zapieczętowali skrzynkę części, zanim przeszedł patrol.',
+        'Stań na oznaczonej skrzyni w tym samym kącie, by ją otworzyć i podzielić się częściami.',
+      ],
+    },
+  },
+  {
+    id: 'hollow_supplyCrate',
+    key: 'S5',
+    nameEn: "Mira's Supply Crate",
+    world: 'theHollow',
+    giver: 'Mira',
+    reward: { en: '+12 credits', pl: '+12 kredytów' },
+    solution: {
+      en: [
+        'Talk to Mira in the collapsed storage nook in the Outer Hollow - she stashed a crate under the rubble but is too shaken to dig.',
+        'Step onto the marked rubble spot in the same nook to dig it out and split the find.',
+      ],
+      pl: [
+        'Porozmawiaj z Mirą w zawalonym schowku w Zewnętrznej Czeluści — schowała skrzynkę pod gruzem, ale jest zbyt roztrzęsiona, by kopać.',
+        'Stań na oznaczonym miejscu w gruzie w tym samym schowku, by ją wykopać i podzielić się znaleziskiem.',
+      ],
+    },
+  },
+  {
+    id: 'driftfall_stuckCrate',
+    key: 'S6',
+    nameEn: "Soren's Stuck Crate",
+    world: 'driftfall',
+    giver: 'Soren',
+    reward: { en: '+12 credits', pl: '+12 kredytów' },
+    solution: {
+      en: [
+        'Talk to Soren in the Void Approach, east of Kessa - his own cargo crate is wedged under a strut since the crash.',
+        'Step onto the marked strut spot nearby to pry it loose and split the surviving stock.',
+      ],
+      pl: [
+        'Porozmawiaj z Sorenem na Podejściu Pustki, na wschód od Kessy — jego skrzynia ładunkowa utknęła pod dźwigarem od czasu rozbicia.',
+        'Stań na oznaczonym miejscu przy dźwigarze w pobliżu, by ją wyswobodzić i podzielić się ocalałym zapasem.',
       ],
     },
   },

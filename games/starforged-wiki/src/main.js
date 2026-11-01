@@ -5,7 +5,7 @@ const STORAGE_KEY = 'starforged-wiki-lang'
 const STRINGS = {
   en: {
     title: 'Starforged Wiki',
-    subtitle: 'Attacks, opponents, items, and the five worlds of the Drift — straight from the game data.',
+    subtitle: 'Attacks, opponents, items, and the six worlds of the Drift — straight from the game data.',
     langToggle: 'Polski',
     backToGame: '← Back to the game',
     tabs: { attacks: 'Attacks', opponents: 'Opponents', items: 'Items', worlds: 'Worlds & Quests' },
@@ -40,13 +40,13 @@ const STRINGS = {
     boss: 'Boss',
     opponentsIntro:
       'Every enemy in the game, grouped by the world they appear in. Regular enemies have one Weakness ' +
-      '(1.5x damage from a matching attack); bosses instead Resist one or more damage types (0.6x damage) ' +
+      '(1.5x damage from a matching attack); bosses instead Resist one or more damage types (0.8x damage) ' +
       'and are never weak to anything — Force Push and Grenade Toss are the two attack types no boss resists.',
     itemsIntro:
       'Consumables found and used throughout the Drift. Wando and Gogu share one wallet of Credits — they ' +
       'start a new game with {credits} and earn more from most quests — spent at the one merchant NPC on ' +
       'each world (marked ★ on the Worlds & Quests tab).',
-    worldsIntro: 'The five worlds of the Drift, in the order you visit them, with their maps and quests.',
+    worldsIntro: 'The six worlds of the Drift, in the order you visit them, with their maps and quests.',
     maps: 'Maps',
     npcs: 'NPCs',
     merchant: 'merchant',
@@ -63,13 +63,13 @@ const STRINGS = {
     weakHintTitle: 'Weak Point',
     weakHintBody: (type) => `This enemy takes 1.5x damage from ${type} attacks.`,
     resistHintTitle: 'Resistances',
-    resistHintBody: (types) => `This enemy only takes 0.6x damage from ${types} attacks — try something else.`,
+    resistHintBody: (types) => `This enemy only takes 0.8x damage from ${types} attacks — try something else.`,
     suggestedMoves: 'Suggested moves',
     noHints: 'No known weakness or resistance.',
   },
   pl: {
     title: 'Wiki Starforged',
-    subtitle: 'Ataki, przeciwnicy, przedmioty i pięć światów Dryfu — prosto z danych gry.',
+    subtitle: 'Ataki, przeciwnicy, przedmioty i sześć światów Dryfu — prosto z danych gry.',
     langToggle: 'English',
     backToGame: '← Wróć do gry',
     tabs: { attacks: 'Ataki', opponents: 'Przeciwnicy', items: 'Przedmioty', worlds: 'Światy i Zadania' },
@@ -105,13 +105,13 @@ const STRINGS = {
     opponentsIntro:
       'Każdy wróg w grze, pogrupowany według świata, w którym się pojawia. Zwykli wrogowie mają jedną Słabość ' +
       '(1.5x obrażeń od pasującego ataku); bossowie mają za to Odporność na jeden lub więcej typów obrażeń ' +
-      '(0.6x obrażeń) i nigdy nie są słabi na żaden atak — Pchnięcie Mocą i Rzut Granatem to dwa typy ataku, na ' +
+      '(0.8x obrażeń) i nigdy nie są słabi na żaden atak — Pchnięcie Mocą i Rzut Granatem to dwa typy ataku, na ' +
       'które żaden boss nie jest odporny.',
     itemsIntro:
       'Przedmioty jednorazowe spotykane i używane w całym Dryfie. Wando i Gogu dzielą jeden portfel kredytów — ' +
       'na początku nowej gry mają {credits} i zdobywają więcej za większość zadań — wydawanych u jedynego ' +
       'kupca na każdym świecie (oznaczonego ★ w zakładce Światy i Zadania).',
-    worldsIntro: 'Pięć światów Dryfu, w kolejności odwiedzania, z ich mapami i zadaniami.',
+    worldsIntro: 'Sześć światów Dryfu, w kolejności odwiedzania, z ich mapami i zadaniami.',
     maps: 'Mapy',
     npcs: 'NPC',
     merchant: 'kupiec',
@@ -128,7 +128,7 @@ const STRINGS = {
     weakHintTitle: 'Słaby Punkt',
     weakHintBody: (type) => `Ten wróg otrzymuje 1.5x obrażeń od ataków typu: ${type}.`,
     resistHintTitle: 'Odporności',
-    resistHintBody: (types) => `Ten wróg otrzymuje tylko 0.6x obrażeń od ataków typu: ${types} — spróbuj czegoś innego.`,
+    resistHintBody: (types) => `Ten wróg otrzymuje tylko 0.8x obrażeń od ataków typu: ${types} — spróbuj czegoś innego.`,
     suggestedMoves: 'Sugerowane ataki',
     noHints: 'Brak znanej słabości lub odporności.',
   },

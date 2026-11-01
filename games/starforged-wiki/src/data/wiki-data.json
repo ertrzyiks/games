@@ -735,6 +735,132 @@
       "healAll": false,
       "upgradesFrom": null,
       "world": "theHollow"
+    },
+    {
+      "id": "driftfall_voidLash",
+      "name": {
+        "en": "Void Lash",
+        "pl": "Smagnięcie Pustki"
+      },
+      "kind": "attack",
+      "power": 13,
+      "focusCost": 0,
+      "accuracy": 0.85,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "damageType": "kinetic",
+      "healAll": false,
+      "upgradesFrom": null,
+      "world": "driftfall"
+    },
+    {
+      "id": "driftfall_shardBurst",
+      "name": {
+        "en": "Shard Burst",
+        "pl": "Wybuch Odłamków"
+      },
+      "kind": "attack",
+      "power": 15,
+      "focusCost": 0,
+      "accuracy": 0.8,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "damageType": "kinetic",
+      "healAll": false,
+      "upgradesFrom": null,
+      "world": "driftfall"
+    },
+    {
+      "id": "driftfall_witherPulse",
+      "name": {
+        "en": "Wither Pulse",
+        "pl": "Impuls Więdnięcia"
+      },
+      "kind": "attack",
+      "power": 14,
+      "focusCost": 0,
+      "accuracy": 0.85,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "damageType": "force",
+      "healAll": false,
+      "upgradesFrom": null,
+      "world": "driftfall"
+    },
+    {
+      "id": "driftfall_staticArc",
+      "name": {
+        "en": "Static Arc",
+        "pl": "Łuk Zakłóceń"
+      },
+      "kind": "attack",
+      "power": 12,
+      "focusCost": 0,
+      "accuracy": 0.9,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "damageType": "force",
+      "healAll": false,
+      "upgradesFrom": null,
+      "world": "driftfall"
+    },
+    {
+      "id": "driftfall_nullBlast",
+      "name": {
+        "en": "Null Blast",
+        "pl": "Wybuch Nicości"
+      },
+      "kind": "attack",
+      "power": 20,
+      "focusCost": 0,
+      "accuracy": 0.78,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "damageType": "fire",
+      "healAll": false,
+      "upgradesFrom": null,
+      "world": "driftfall"
+    },
+    {
+      "id": "driftfall_voidCollapse",
+      "name": {
+        "en": "Void Collapse",
+        "pl": "Zapadnięcie Pustki"
+      },
+      "kind": "attack",
+      "power": 24,
+      "focusCost": 0,
+      "accuracy": 0.72,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "damageType": "kinetic",
+      "healAll": false,
+      "upgradesFrom": null,
+      "world": "driftfall"
+    },
+    {
+      "id": "driftfall_heraldReknit",
+      "name": {
+        "en": "Herald's Reknit",
+        "pl": "Odtworzenie Herolda"
+      },
+      "kind": "heal",
+      "power": 18,
+      "focusCost": 0,
+      "accuracy": 1,
+      "status": null,
+      "lifesteal": false,
+      "focusRestore": 0,
+      "damageType": null,
+      "healAll": false,
+      "upgradesFrom": null,
+      "world": "driftfall"
     }
   ],
   "enemies": [
@@ -994,11 +1120,11 @@
         "en": "Gale Stalker",
         "pl": "Tropiciel Wichru"
       },
-      "maxHp": 48,
-      "atk": 12,
-      "def": 6,
+      "maxHp": 60,
+      "atk": 15,
+      "def": 8,
       "spd": 8,
-      "xpReward": 36,
+      "xpReward": 44,
       "isBoss": false,
       "moves": [
         "skyreach_windSlash",
@@ -1014,11 +1140,11 @@
         "en": "Wind Reaver",
         "pl": "Grabieżca Wiatru"
       },
-      "maxHp": 52,
-      "atk": 13,
-      "def": 6,
+      "maxHp": 65,
+      "atk": 16,
+      "def": 8,
       "spd": 9,
-      "xpReward": 40,
+      "xpReward": 48,
       "isBoss": false,
       "moves": [
         "skyreach_talonRake",
@@ -1034,11 +1160,11 @@
         "en": "Root Lurker",
         "pl": "Czyhający w Korzeniach"
       },
-      "maxHp": 57,
-      "atk": 11,
-      "def": 9,
+      "maxHp": 71,
+      "atk": 14,
+      "def": 11,
       "spd": 5,
-      "xpReward": 42,
+      "xpReward": 52,
       "isBoss": false,
       "moves": [
         "skyreach_rootCoil",
@@ -1078,11 +1204,11 @@
         "en": "Hollow Elite Guard",
         "pl": "Elitarny Strażnik Czeluści"
       },
-      "maxHp": 64,
-      "atk": 14,
-      "def": 7,
+      "maxHp": 80,
+      "atk": 18,
+      "def": 9,
       "spd": 6,
-      "xpReward": 55,
+      "xpReward": 66,
       "isBoss": false,
       "moves": [
         "hollow_shockLance",
@@ -1098,11 +1224,11 @@
         "en": "Hollow Shadow Agent",
         "pl": "Cieniowy Agent Czeluści"
       },
-      "maxHp": 52,
-      "atk": 11,
-      "def": 5,
+      "maxHp": 66,
+      "atk": 14,
+      "def": 7,
       "spd": 9,
-      "xpReward": 50,
+      "xpReward": 60,
       "isBoss": false,
       "moves": [
         "hollow_syndicateVenom",
@@ -1136,6 +1262,91 @@
         "fire"
       ],
       "world": "theHollow"
+    },
+    {
+      "id": "driftfall_voidSentinel",
+      "name": {
+        "en": "Void Sentinel",
+        "pl": "Strażnik Pustki"
+      },
+      "maxHp": 92,
+      "atk": 21,
+      "def": 11,
+      "spd": 7,
+      "xpReward": 72,
+      "isBoss": false,
+      "moves": [
+        "driftfall_voidLash",
+        "driftfall_shardBurst"
+      ],
+      "weakTo": "kinetic",
+      "resistantTo": null,
+      "world": "driftfall"
+    },
+    {
+      "id": "driftfall_driftReaper",
+      "name": {
+        "en": "Drift Reaper",
+        "pl": "Żniwiarz Driftu"
+      },
+      "maxHp": 84,
+      "atk": 19,
+      "def": 9,
+      "spd": 11,
+      "xpReward": 68,
+      "isBoss": false,
+      "moves": [
+        "driftfall_witherPulse",
+        "driftfall_staticArc"
+      ],
+      "weakTo": "force",
+      "resistantTo": null,
+      "world": "driftfall"
+    },
+    {
+      "id": "driftfall_nullDrone",
+      "name": {
+        "en": "Null Drone",
+        "pl": "Dron Nicości"
+      },
+      "maxHp": 88,
+      "atk": 18,
+      "def": 13,
+      "spd": 6,
+      "xpReward": 70,
+      "isBoss": false,
+      "moves": [
+        "driftfall_staticArc",
+        "driftfall_shardBurst"
+      ],
+      "weakTo": "fire",
+      "resistantTo": null,
+      "world": "driftfall"
+    },
+    {
+      "id": "driftfall_nullHerald",
+      "name": {
+        "en": "Herald of the Null",
+        "pl": "Herold Nicości"
+      },
+      "maxHp": 260,
+      "atk": 27,
+      "def": 15,
+      "spd": 10,
+      "xpReward": 320,
+      "isBoss": true,
+      "moves": [
+        "driftfall_nullBlast",
+        "driftfall_voidCollapse",
+        "driftfall_witherPulse",
+        "driftfall_heraldReknit"
+      ],
+      "weakTo": null,
+      "resistantTo": [
+        "kinetic",
+        "fire"
+      ],
+      "world": "driftfall"
     }
   ],
   "items": [
@@ -1264,6 +1475,10 @@
             {
               "id": "dessa",
               "isMerchant": false
+            },
+            {
+              "id": "finch",
+              "isMerchant": false
             }
           ],
           "enemySpawns": [
@@ -1347,6 +1562,10 @@
           "npcs": [
             {
               "id": "juro",
+              "isMerchant": false
+            },
+            {
+              "id": "birk",
               "isMerchant": false
             }
           ],
@@ -1439,6 +1658,10 @@
           "npcs": [
             {
               "id": "scrapRunner",
+              "isMerchant": false
+            },
+            {
+              "id": "jael",
               "isMerchant": false
             }
           ],
@@ -1537,6 +1760,10 @@
             {
               "id": "hale",
               "isMerchant": false
+            },
+            {
+              "id": "perrin",
+              "isMerchant": false
             }
           ],
           "enemySpawns": [
@@ -1633,6 +1860,10 @@
             {
               "id": "lookout",
               "isMerchant": false
+            },
+            {
+              "id": "mira",
+              "isMerchant": false
             }
           ],
           "enemySpawns": [
@@ -1682,6 +1913,84 @@
             "hollow_eliteGuard",
             "hollow_shadowAgent",
             "hollow_syndicateWarden"
+          ],
+          "secrets": []
+        }
+      ]
+    },
+    {
+      "id": "driftfall",
+      "name": {
+        "en": "Driftfall",
+        "pl": "Driftfall"
+      },
+      "startMap": "voidApproach",
+      "maps": [
+        {
+          "id": "voidApproach",
+          "name": {
+            "en": "Void Approach",
+            "pl": "Podejście Pustki"
+          },
+          "npcs": [
+            {
+              "id": "kessa",
+              "isMerchant": false
+            },
+            {
+              "id": "soren",
+              "isMerchant": false
+            }
+          ],
+          "enemySpawns": [
+            "driftfall_voidSentinel",
+            "driftfall_driftReaper",
+            "driftfall_nullDrone"
+          ],
+          "secrets": [
+            {
+              "id": "voidDebrisStash",
+              "reward": {
+                "medkit": 1,
+                "resistTonic": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "citadelHalls",
+          "name": {
+            "en": "Citadel Halls",
+            "pl": "Korytarze Cytadeli"
+          },
+          "npcs": [
+            {
+              "id": "tomas",
+              "isMerchant": false
+            },
+            {
+              "id": "ren",
+              "isMerchant": true
+            }
+          ],
+          "enemySpawns": [
+            "driftfall_voidSentinel",
+            "driftfall_nullDrone",
+            "driftfall_driftReaper"
+          ],
+          "secrets": []
+        },
+        {
+          "id": "commandSanctum",
+          "name": {
+            "en": "Command Sanctum",
+            "pl": "Sanktuarium Dowodzenia"
+          },
+          "npcs": [],
+          "enemySpawns": [
+            "driftfall_voidSentinel",
+            "driftfall_nullDrone",
+            "driftfall_nullHerald"
           ],
           "secrets": []
         }
@@ -1911,21 +2220,193 @@
       "world": "theHollow",
       "giver": "—",
       "reward": {
-        "en": "+45 credits, completes the game",
-        "pl": "+45 kredytów, kończy grę"
+        "en": "+45 credits, unlocks Driftfall",
+        "pl": "+45 kredytów, odblokowuje Driftfall"
       },
       "solution": {
         "en": [
           "Walking away from your landing point in the Outer Hollow starts the quest automatically.",
           "Shut down the shield relay in the Outer Hollow (Vex and the lookout both point you toward it) to silence the alarms.",
           "Push into the Inner Sanctum and free Rell through the single doorway into her cell.",
-          "Advance through the Warden's Chamber corridor and defeat the Syndicate Warden at the chokepoint to finish the game."
+          "Advance through the Warden's Chamber corridor and defeat the Syndicate Warden at the chokepoint — a signal starts broadcasting from beyond the Drift, pointing the way to Driftfall."
         ],
         "pl": [
           "Zadanie zaczyna się automatycznie, gdy odejdziesz od miejsca lądowania w Zewnętrznej Czeluści.",
           "Wyłącz przekaźnik osłony w Zewnętrznej Czeluści (Vex i wartownik obaj wskazują na niego), by uciszyć alarmy.",
           "Wejdź do Wewnętrznego Sanktuarium i uwolnij Rell przez jedyne wejście do jej celi.",
-          "Idź dalej przez korytarz Komnaty Strażnika i pokonaj Strażnika Syndykatu w wąskim przejściu, by zakończyć grę."
+          "Idź dalej przez korytarz Komnaty Strażnika i pokonaj Strażnika Syndykatu w wąskim przejściu — zza granicy Driftu zaczyna nadawać sygnał, wskazujący drogę do Driftfall."
+        ]
+      }
+    },
+    {
+      "id": "driftfall_signalBeyond",
+      "key": "T10",
+      "name": {
+        "en": "The Signal Beyond",
+        "pl": "Sygnał Za Granicą"
+      },
+      "world": "driftfall",
+      "giver": "Kessa",
+      "reward": {
+        "en": "+10 credits mid-quest, +60 credits on completion, finishes the game",
+        "pl": "+10 kredytów w trakcie, +60 kredytów na koniec, kończy grę"
+      },
+      "solution": {
+        "en": [
+          "Talk to Kessa in the Void Approach — she asks you to find the array still broadcasting the signal, deeper in the debris field.",
+          "Reach the signal array marker in the Void Approach to advance the quest and earn credits.",
+          "Head into the Citadel Halls and talk to Tomas (west wing) to confirm what woke up.",
+          "Push through the Command Sanctum corridor and defeat the Herald of the Null at the chokepoint to finish the game."
+        ],
+        "pl": [
+          "Porozmawiaj z Kessą na Podejściu Pustki — prosi cię o znalezienie instalacji wciąż nadającej sygnał, głębiej w polu gruzu.",
+          "Dotrzyj do oznaczonej instalacji sygnałowej na Podejściu Pustki, by posunąć zadanie i zdobyć kredyty.",
+          "Wejdź do Korytarzy Cytadeli i porozmawiaj z Tomasem (zachodnie skrzydło), by potwierdzić, co się obudziło.",
+          "Przejdź przez korytarz Sanktuarium Dowodzenia i pokonaj Herolda Nicości w wąskim przejściu, by zakończyć grę."
+        ]
+      }
+    },
+    {
+      "id": "rustmoor_watchtowerCache",
+      "key": "S1",
+      "name": {
+        "en": "Finch's Buried Toolkit",
+        "pl": "Zakopana Skrzynka Narzędziowa Fincha"
+      },
+      "world": "rustmoor",
+      "giver": "Finch",
+      "reward": {
+        "en": "+12 credits",
+        "pl": "+12 kredytów"
+      },
+      "solution": {
+        "en": [
+          "Talk to Finch in the ruined watchtower south-east of the Canyon Approach entrance — he lost a toolbox under the floor.",
+          "Step onto the marked floor spot in the same room to dig it out and split the find."
+        ],
+        "pl": [
+          "Porozmawiaj z Finchem w zrujnowanej wieży strażniczej na południowy wschód od wejścia na Podejście do Kanionu — zgubił skrzynkę narzędziową pod podłogą.",
+          "Stań na oznaczonym miejscu w tym samym pokoju, by ją wykopać i podzielić się znaleziskiem."
+        ]
+      }
+    },
+    {
+      "id": "mossfen_tackleBox",
+      "key": "S2",
+      "name": {
+        "en": "Birk's Tackle Box",
+        "pl": "Skrzynka Wędkarska Birka"
+      },
+      "world": "mossfenReach",
+      "giver": "Birk",
+      "reward": {
+        "en": "+12 credits",
+        "pl": "+12 kredytów"
+      },
+      "solution": {
+        "en": [
+          "Talk to Birk in the small moss-rock-ringed clearing east of the Reach Approach's hidden passage — he lost his tackle box in the mud.",
+          "Step onto the marked mud spot in the same clearing to dig it out and split the catch."
+        ],
+        "pl": [
+          "Porozmawiaj z Birkiem na małej polanie otoczonej omszałymi głazami na wschód od ukrytego przejścia na Podejściu do Rozlewiska — zgubił w błocie skrzynkę wędkarską.",
+          "Stań na oznaczonym miejscu w błocie na tej samej polanie, by ją wykopać i podzielić się połowem."
+        ]
+      }
+    },
+    {
+      "id": "skyreach_foragingSatchel",
+      "key": "S3",
+      "name": {
+        "en": "Perrin's Foraging Satchel",
+        "pl": "Sakwa Zbieracka Perrina"
+      },
+      "world": "skyreachCanopy",
+      "giver": "Perrin",
+      "reward": {
+        "en": "+12 credits",
+        "pl": "+12 kredytów"
+      },
+      "solution": {
+        "en": [
+          "Talk to Perrin in the glow-fungus-and-mist nook south-east of the Canopy - they lost a satchel chasing glow-spores.",
+          "Step onto the marked mist spot in the same nook to find it and split the spores."
+        ],
+        "pl": [
+          "Porozmawiaj z Perrinem w zakątku ze świetlistymi grzybami i mgłą na południowy wschód od Korony Drzew — zgubili sakwę, goniąc świetliste zarodniki.",
+          "Stań na oznaczonym miejscu we mgle w tym samym zakątku, by ją znaleźć i podzielić się zarodnikami."
+        ]
+      }
+    },
+    {
+      "id": "ashvault_partsCrate",
+      "key": "S4",
+      "name": {
+        "en": "Jael's Parts Crate",
+        "pl": "Skrzynka z Częściami Jael"
+      },
+      "world": "ashvaultStation",
+      "giver": "Jael",
+      "reward": {
+        "en": "+12 credits",
+        "pl": "+12 kredytów"
+      },
+      "solution": {
+        "en": [
+          "Talk to Jael at the crate-ringed lean-to south of the Docking Approach - they sealed a crate of parts before a patrol swept through.",
+          "Step onto the marked crate in the same corner to crack it open and split the parts."
+        ],
+        "pl": [
+          "Porozmawiaj z Jael przy szałasie otoczonym skrzyniami na południe od Podejścia Dokującego — zapieczętowali skrzynkę części, zanim przeszedł patrol.",
+          "Stań na oznaczonej skrzyni w tym samym kącie, by ją otworzyć i podzielić się częściami."
+        ]
+      }
+    },
+    {
+      "id": "hollow_supplyCrate",
+      "key": "S5",
+      "name": {
+        "en": "Mira's Supply Crate",
+        "pl": "Skrzynka Zaopatrzeniowa Miry"
+      },
+      "world": "theHollow",
+      "giver": "Mira",
+      "reward": {
+        "en": "+12 credits",
+        "pl": "+12 kredytów"
+      },
+      "solution": {
+        "en": [
+          "Talk to Mira in the collapsed storage nook in the Outer Hollow - she stashed a crate under the rubble but is too shaken to dig.",
+          "Step onto the marked rubble spot in the same nook to dig it out and split the find."
+        ],
+        "pl": [
+          "Porozmawiaj z Mirą w zawalonym schowku w Zewnętrznej Czeluści — schowała skrzynkę pod gruzem, ale jest zbyt roztrzęsiona, by kopać.",
+          "Stań na oznaczonym miejscu w gruzie w tym samym schowku, by ją wykopać i podzielić się znaleziskiem."
+        ]
+      }
+    },
+    {
+      "id": "driftfall_stuckCrate",
+      "key": "S6",
+      "name": {
+        "en": "Soren's Stuck Crate",
+        "pl": "Zaklinowana Skrzynka Sorena"
+      },
+      "world": "driftfall",
+      "giver": "Soren",
+      "reward": {
+        "en": "+12 credits",
+        "pl": "+12 kredytów"
+      },
+      "solution": {
+        "en": [
+          "Talk to Soren in the Void Approach, east of Kessa - his own cargo crate is wedged under a strut since the crash.",
+          "Step onto the marked strut spot nearby to pry it loose and split the surviving stock."
+        ],
+        "pl": [
+          "Porozmawiaj z Sorenem na Podejściu Pustki, na wschód od Kessy — jego skrzynia ładunkowa utknęła pod dźwigarem od czasu rozbicia.",
+          "Stań na oznaczonym miejscu przy dźwigarze w pobliżu, by ją wyswobodzić i podzielić się ocalałym zapasem."
         ]
       }
     }
