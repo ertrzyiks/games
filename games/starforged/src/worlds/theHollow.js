@@ -1,4 +1,4 @@
-import { registerWorld } from './registry.js'
+import { registerWorld, unlockNextWorld } from './registry.js'
 import { registerTileTypes } from '../assets/tiles.js'
 import { registerSprites } from '../assets/sprites/registry.js'
 import { registerEnemies } from '../battle/enemies.js'
@@ -9,14 +9,16 @@ import {
   ARMORED_SCOUT_TEMPLATE,
   BOSS_WARDEN_TEMPLATE,
   CONSOLE_TEMPLATE,
+  CACHE_TEMPLATE,
   buildSprite,
 } from '../assets/spriteTemplates.js'
 import { startQuest, setQuestStage, completeQuest } from '../data/gameState.js'
 
 /**
- * World 5 — The Hollow: the Hollow Syndicate's buried stronghold, and the end
- * of the Drift. This is the FINALE — there is no chapter after it, so this
- * file never calls unlockNextWorld. Structure, infiltration-style:
+ * World 5 — The Hollow: the Hollow Syndicate's buried stronghold. Beating
+ * the Warden here unlocks Driftfall (world 6, see driftfall.js) via
+ * unlockNextWorld - this used to be the finale, but no longer is.
+ * Structure, infiltration-style:
  *   outerHollow (entry, patrols, shield relay)
  *     -> innerSanctum (regrouped forces, a captive to free)
  *       -> wardenChamber (corridor build-up into the one-tile-chokepoint
@@ -26,9 +28,13 @@ import { startQuest, setQuestStage, completeQuest } from '../data/gameState.js'
  * Random encounters are disabled engine-wide: encounterZones are inert, so
  * every map below uses visible, map-placed enemySpawns instead (walking
  * into one's tile starts the fight; once beaten it's remembered as
- * defeated and stops blocking the tile). The only forced fight is the
- * final boss, which stays a Trigger on the chamber's one-tile chokepoint —
- * that cannot be an enemySpawn, since it must be unavoidable.
+ * defeated and stops blocking the tile). The final boss is also an
+ * enemySpawn, same as everywhere else - see wardenChamberMap below.
+ *
+ * Every map here is bidirectional, same as every other world: each warp
+ * has a matching return warp on the far side, so nothing is a one-way
+ * trip (including the boss chamber itself, now that the boss can be
+ * re-engaged on a retry instead of being a one-shot Trigger).
  */
 
 function makeRoom(width, height, floorId, wallId = 'hollow_wall') {
@@ -139,15 +145,32 @@ const shieldRelaySprite = buildSprite(CONSOLE_TEMPLATE, {
   L: '#e0564b',
 })
 
+// Mira, holed up in the collapsed storage nook (outerHollow's new alcove).
+const miraSprite = buildSprite(HUMANOID_TEMPLATE, {
+  H: '#4a3a3a',
+  V: '#0b0d12',
+  T: '#9a7a6a',
+  A: '#2e2222',
+  L: '#120a0e',
+})
+
+// Mira's medical supplies (outerHollow's new alcove, 17,8).
+const supplyCrateSprite = buildSprite(CACHE_TEMPLATE, {
+  C: '#6e1620',
+  B: '#2e0f16',
+})
+
 registerSprites({
   hollow_rell: rellSprite,
   hollow_vex: vexSprite,
   hollow_lookout: lookoutSprite,
   hollow_jun: junSprite,
+  hollow_mira: miraSprite,
   hollow_eliteGuard: eliteGuardSprite,
   hollow_shadowAgent: shadowAgentSprite,
   hollow_syndicateWarden: wardenSprite,
   hollow_shieldRelay: shieldRelaySprite,
+  hollow_supplyCrate: supplyCrateSprite,
 })
 
 // --- Moves -------------------------------------------------------------
@@ -188,26 +211,30 @@ registerMoves({
 // its usual payoff against the boss below, which — like every other
 // chapter's boss — never resists force.
 registerEnemies({
+  // Regular Hollow/Skyreach/Driftfall enemies run ~25% hotter (HP/ATK/DEF)
+  // than the first three chapters' - the back half of the Drift is meant
+  // to feel like a real step up, not just a reskinned version of the same
+  // fights.
   hollow_eliteGuard: {
     name: 'Hollow Elite Guard',
     spriteId: 'hollow_eliteGuard',
-    maxHp: 64,
-    atk: 14,
-    def: 7,
+    maxHp: 80,
+    atk: 18,
+    def: 9,
     spd: 6,
     moves: ['hollow_shockLance', 'push'],
-    xpReward: 55,
+    xpReward: 66,
     weakTo: 'fire',
   },
   hollow_shadowAgent: {
     name: 'Hollow Shadow Agent',
     spriteId: 'hollow_shadowAgent',
-    maxHp: 52,
-    atk: 11,
-    def: 5,
+    maxHp: 66,
+    atk: 14,
+    def: 7,
     spd: 9,
     moves: ['hollow_syndicateVenom', 'strike'],
-    xpReward: 50,
+    xpReward: 60,
     weakTo: 'force',
   },
   // Final boss — buffed from v1's 155 HP to the ch.5 balance target
@@ -260,6 +287,10 @@ for (const [x, y] of [[12, 4], [13, 4]]) {
 }
 // Shield-relay console, marked with rune tiling.
 setTile(outerHollowTiles, 9, 3, 'hollow_rune')
+// A collapsed storage nook (16-17, 7-8) where Mira's holed up - marked
+// with broken pillars instead of walls.
+setTile(outerHollowTiles, 15, 7, 'hollow_brokenPillar')
+setTile(outerHollowTiles, 18, 8, 'hollow_brokenPillar')
 
 export const ENTRY = { x: 9, y: 14 }
 
@@ -305,6 +336,30 @@ const outerHollowMap = {
       watchesFlags: ['hollow_relayDisabled'],
       dialogue: lookoutDialogue,
     },
+    {
+      id: 'mira',
+      x: 16,
+      y: 7,
+      facing: 'down',
+      spriteId: 'hollow_mira',
+      watchesQuests: ['hollow_supplyCrate'],
+      // Small side quest, self-contained in this one alcove: no plot
+      // stakes, just a few extra credits for poking around the rubble.
+      dialogue: (state) => {
+        const q = state.quests['hollow_supplyCrate']
+        if (!q) {
+          startQuest(state, 'hollow_supplyCrate', "Mira's Supply Crate", 'S5')
+          return [
+            "Mira: Been hiding here since the patrols thinned. Stashed my crate under the rubble.",
+            "Mira: Hands are too shaky to dig. Help me get it out?",
+          ]
+        }
+        if (q.complete) {
+          return ["Mira: That crate's the only reason I'm still standing. Thank you."]
+        }
+        return ["Mira: Under the broken stone, right there."]
+      },
+    },
   ],
   enemySpawns: [
     { id: 'outer_guard1', x: 5, y: 5, enemyId: 'hollow_eliteGuard', spriteId: 'hollow_eliteGuard' },
@@ -322,7 +377,14 @@ const outerHollowMap = {
   ],
   // Visible marker for the shield relay, same tile as its (unchanged)
   // Trigger below.
-  items: [{ id: 'shieldRelay', x: 9, y: 3, spriteId: 'hollow_shieldRelay', hideWhenFlag: 'hollow_relayDisabled' }],
+  items: [
+    { id: 'shieldRelay', x: 9, y: 3, spriteId: 'hollow_shieldRelay', hideWhenFlag: 'hollow_relayDisabled' },
+    { id: 'supplyCrate', x: 17, y: 8, spriteId: 'hollow_supplyCrate', hideWhenFlag: 'hollow_supplyCrateFound' },
+  ],
+  // (9, 2) is where innerSanctum's own return warp below lands the player
+  // - one tile south of this map's own forward door, same "land just
+  // inside, not on the door tile itself" convention every other world's
+  // warp pairs already use.
   warps: [{ x: 9, y: 1, toMap: 'innerSanctum', toX: 8, toY: 13 }],
   triggers: [
     // Fires on the first step away from the entry — kicks off the finale
@@ -353,6 +415,22 @@ const outerHollowMap = {
         // happened.
         ctx.state.credits = (ctx.state.credits || 0) + 10
         ctx.showDialogue(['The shield relay hums before you.', 'Wando shuts it down — the alarms go silent. (+10 credits)'])
+      },
+    },
+    {
+      x: 17,
+      y: 8,
+      once: true,
+      setsFlag: 'hollow_supplyCrateFound',
+      onEnter(ctx) {
+        // Defensive start, same pattern as the plot quests: works even if
+        // the player digs here before ever talking to Mira.
+        if (!ctx.state.quests['hollow_supplyCrate']) {
+          startQuest(ctx.state, 'hollow_supplyCrate', "Mira's Supply Crate", 'S5')
+        }
+        completeQuest(ctx.state, 'hollow_supplyCrate')
+        ctx.state.credits = (ctx.state.credits || 0) + 12
+        ctx.showDialogue(['The rubble shifts - a sealed supply crate!', 'Mira splits what little she has left with you. (+12 credits)'])
       },
     },
   ],
@@ -437,7 +515,15 @@ const innerSanctumMap = {
     { id: 'inner_guard2', x: 6, y: 10, enemyId: 'hollow_shadowAgent', spriteId: 'hollow_shadowAgent' },
     { id: 'inner_guard3', x: 13, y: 11, enemyId: 'hollow_eliteGuard', spriteId: 'hollow_eliteGuard' },
   ],
-  warps: [{ x: 8, y: 1, toMap: 'wardenChamber', toX: 4, toY: 17 }],
+  warps: [
+    { x: 8, y: 1, toMap: 'wardenChamber', toX: 4, toY: 17 },
+    // Return trip from outerHollow: lands exactly on this map's own entry
+    // tile (8, 13) - safe to warp from, since arriving on a tile never
+    // re-triggers it, only a later move onto it does (same reasoning as
+    // every enemy/secret/trigger "re-engage by stepping away and back"
+    // pattern elsewhere in the engine).
+    { x: 8, y: 13, toMap: 'outerHollow', toX: 9, toY: 2 },
+  ],
   triggers: [
     {
       x: 8,
@@ -537,12 +623,12 @@ const wardenChamberMap = {
       ],
       onVictory: (state, ctx) => {
         completeQuest(state, FINALE_QUEST_ID)
-        // Final chapter's climactic completion — a bigger reward than
-        // every other world's +25, since there's no next chapter to
-        // bankroll the trip into; it's spent on whatever's left to buy
-        // back at the Starskiff instead.
+        // Bigger reward than the first four chapters' +25 - the Hollow was
+        // the Syndicate's main stronghold, even though (see
+        // worlds/registry.js) it's no longer the last chapter: Driftfall
+        // picks up right after this.
         state.credits = (state.credits || 0) + 45
-        state.flags.add('gameCompleted')
+        const nextWorldId = unlockNextWorld(state, 'theHollow')
         ctx.showDialogue(
           [
             'The Warden sinks down, beaten. The rune-light flickers, dims, and finally goes dark — the Hollow has nothing left to throw at you.',
@@ -550,16 +636,22 @@ const wardenChamberMap = {
             'Gogu steps out from behind Wando, small fingers finding his armored hand. "...It\'s quiet. I\'ve never felt it this quiet before."',
             'Wando kneels to his level. "That\'s the Current settling. Nobody\'s hunting it anymore — not here, not in the Reach, not anywhere we\'ve been."',
             "Rell, and everyone else the Syndicate dragged down here, will walk out into daylight they didn't expect to see again.",
-            "Wando thinks of the forge-clan that exiled him, a raider's canyon, a drowned bog shrine, a station full of smoke, a refuge in the clouds — every place this road ran through to get here.",
-            '"Come on, Gogu," he says, straightening up. "Let\'s go see what the Drift looks like without the Hollow watching it."',
-            'THE END — head back to the Starskiff to revisit any world of the Drift.',
+            'A console nearby crackles awake on its own — a signal, still broadcasting, from somewhere past the edge of the Drift.',
+            'Gogu goes very still. "That\'s not Syndicate. That\'s... older."',
+            'Wando checks his shield. "Then we go see what\'s calling it home. Driftfall waits — head back to the Starskiff."',
           ],
-          () => ctx.openShip()
+          () => ctx.openShip({ preselectWorldId: nextWorldId })
         )
       },
     },
   ],
-  warps: [],
+  // Return trip back to innerSanctum: lands on the entry 'door' tile
+  // itself (4, 17), same "safe to warp from, since arriving never
+  // re-triggers it" reasoning as innerSanctum's own return warp above.
+  // Previously missing entirely - this chamber had no way out except
+  // winning the boss fight, unlike every other world's maps, which are
+  // all bidirectional.
+  warps: [{ x: 4, y: 17, toMap: 'innerSanctum', toX: 8, toY: 2 }],
   triggers: [],
 }
 

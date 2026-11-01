@@ -87,16 +87,27 @@ const pl = {
   [`"The little psychic comes to us after all," it rasps. "Every world you crossed to get here, and it ends the same. Kneel, armorer, and hand him over."`]: `"Mały psychik sam trafia w nasze ręce," chrypi. "Każdy świat, który przemierzyliście, by dotrzeć tutaj — a kończy się zawsze tak samo. Ukorz się, zbrojmistrzu, i oddaj go nam."`,
   [`Wando plants his feet, shield raised. "Gogu — stay behind me. This ends now. Not with him."`]: `Wando staje w rozkroku, unosi tarczę. "Gogu — zostań za mną. To się kończy teraz. Nie z nim."`,
 
-  // --- onVictory ending (8 lines, including THE END; a new salvage/credits
-  // line was inserted second, the rest carried over unchanged) -----------
+  // --- onVictory ending (no longer THE END - Driftfall picks up right
+  // after this, see the last 3 lines below) ------------------------------
   [`The Warden sinks down, beaten. The rune-light flickers, dims, and finally goes dark — the Hollow has nothing left to throw at you.`]: `Strażnik osuwa się, pokonany. Światło run miga, przygasa i wreszcie gaśnie całkiem — Czeluść nie ma już niczego, czym mogłaby w was rzucić.`,
   [`Among the wreckage, salvaged Syndicate tech is worth a small fortune back at the Starskiff. (+45 credits)`]: `Wśród gruzów, odzyskana technologia Syndykatu jest warta małej fortuny po powrocie na Starskiffa. (+45 kredytów)`,
   [`Gogu steps out from behind Wando, small fingers finding his armored hand. "...It's quiet. I've never felt it this quiet before."`]: `Gogu wychodzi spod osłony Wando'a, małe palce odnajdują jego opancerzoną rękę. "...Jest cicho. Nigdy wcześniej nie czułem takiej ciszy."`,
   [`Wando kneels to his level. "That's the Current settling. Nobody's hunting it anymore — not here, not in the Reach, not anywhere we've been."`]: `Wando przyklęka, żeby spojrzeć mu w oczy. "To Prąd się wycisza. Nikt już go nie poluje — ani tu, ani w Reach, ani gdziekolwiek byliśmy."`,
   [`Rell, and everyone else the Syndicate dragged down here, will walk out into daylight they didn't expect to see again.`]: `Rell i wszyscy inni, których Syndykat zaciągnął tutaj, wyjdą na światło dnia, którego nie liczyli już ujrzeć.`,
-  [`Wando thinks of the forge-clan that exiled him, a raider's canyon, a drowned bog shrine, a station full of smoke, a refuge in the clouds — every place this road ran through to get here.`]: `Wando myśli o klanie kowali, który go wygnał, o kanionie rozbójników, o zatopionej bagiennej świątyni, o stacji pełnej dymu, o schronieniu w obłokach — o każdym miejscu, przez które przeszła ta droga, by zaprowadzić go tutaj.`,
-  [`"Come on, Gogu," he says, straightening up. "Let's go see what the Drift looks like without the Hollow watching it."`]: `"Chodź, Gogu," mówi, wyprostowując się. "Zobaczymy, jak wygląda Drift, kiedy nie patrzy na niego Czeluść."`,
-  [`THE END — head back to the Starskiff to revisit any world of the Drift.`]: `KONIEC — wróć na Starskiff, by ponownie odwiedzić każdy świat Driftu.`,
+  [`A console nearby crackles awake on its own — a signal, still broadcasting, from somewhere past the edge of the Drift.`]: `Pobliska konsola budzi się sama — sygnał, wciąż nadawany, skądś zza granicy Driftu.`,
+  [`Gogu goes very still. "That's not Syndicate. That's... older."`]: `Gogu zastyga w bezruchu. "To nie Syndykat. To... coś starszego."`,
+  [`Wando checks his shield. "Then we go see what's calling it home. Driftfall waits — head back to the Starskiff."`]: `Wando sprawdza tarczę. "Więc idziemy zobaczyć, co woła stamtąd. Driftfall czeka — wróć na Starskiff."`,
+
+  // --- outerHollow: Mira's supply crate side quest ---
+  "Mira's Supply Crate": 'Skrzynka Zaopatrzeniowa Miry',
+  "Mira: Been hiding here since the patrols thinned. Stashed my crate under the rubble.":
+    'Mira: Ukrywam się tu, odkąd patrole zrzedły. Schowałam skrzynkę pod gruzem.',
+  "Mira: Hands are too shaky to dig. Help me get it out?": 'Mira: Ręce mi się za bardzo trzęsą, żeby kopać. Pomożesz mi ją wydobyć?',
+  "Mira: That crate's the only reason I'm still standing. Thank you.":
+    'Mira: Ta skrzynka to jedyny powód, dla którego wciąż tu stoję. Dziękuję.',
+  'Mira: Under the broken stone, right there.': 'Mira: Pod połamanym kamieniem, tam właśnie.',
+  'The rubble shifts - a sealed supply crate!': 'Gruz się przesuwa — zapieczętowana skrzynka zaopatrzeniowa!',
+  "Mira splits what little she has left with you. (+12 credits)": 'Mira dzieli się z tobą tym, co jej zostało. (+12 kredytów)',
 }
 
 registerTranslations('pl', pl)
