@@ -69,4 +69,19 @@ registerTranslations('pl', {
   'Shroud the Current-Well': 'Osłoń Studnię Nurtu',
   'Find Wren in the High Reaches': 'Znajdź Wren w Wysokich Ostępach',
   'Break the Hollow': 'Złam Pustkę',
+  'The Signal Beyond': 'Sygnał Za Granicą',
+
+  // Driftfall
+  'Void Sentinel': 'Strażnik Pustki',
+  'Drift Reaper': 'Żniwiarz Driftu',
+  'Null Drone': 'Dron Nicości',
+  'Herald of the Null': 'Herold Nicości',
+  'Void Lash': 'Smagnięcie Pustki',
+  'Shard Burst': 'Wybuch Odłamków',
+  'Wither Pulse': 'Impuls Więdnięcia',
+  'Static Arc': 'Łuk Zakłóceń',
+  'Null Blast': 'Wybuch Nicości',
+  'Void Collapse': 'Zapadnięcie Pustki',
+  "Herald's Reknit": 'Odtworzenie Herolda',
+  "Soren's Stuck Crate": 'Zaklinowana Skrzynka Sorena',
 })

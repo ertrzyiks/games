@@ -14,6 +14,7 @@ import './worlds/mossfenReach.js'
 import './worlds/ashvaultStation.js'
 import './worlds/skyreachCanopy.js'
 import './worlds/theHollow.js'
+import './worlds/driftfall.js'
 import './i18n/pl/common.js'
 import './i18n/pl/combatNames.js'
 import './i18n/pl/rustmoor.js'
@@ -21,6 +22,7 @@ import './i18n/pl/mossfenReach.js'
 import './i18n/pl/ashvaultStation.js'
 import './i18n/pl/skyreachCanopy.js'
 import './i18n/pl/theHollow.js'
+import './i18n/pl/driftfall.js'
 
 const canvasEl = document.getElementById('game-canvas')
 if (!canvasEl) throw new Error('Missing #game-canvas element')

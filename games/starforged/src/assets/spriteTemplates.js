@@ -391,6 +391,32 @@ export const BOSS_WARDEN_TEMPLATE = [
   '....LLLL.LLLL...',
 ]
 
+// Herald of the Null (Driftfall, final boss): an amorphous being of pure
+// corrupted Current energy - no humanoid silhouette at all, unlike every
+// other boss. A dark void-core (B) wrapped in a crackling energy halo
+// (G), jagged asymmetric spikes (K) radiating off at odd angles instead
+// of a symmetric head/shoulders, twin glowing eye-points (E) floating
+// inside the core, and trailing energy wisps (W) instead of legs - it
+// floats, it doesn't stand.
+export const BOSS_HERALD_TEMPLATE = [
+  '..K.......K.....',
+  '...K.....K......',
+  '....GGGGGG......',
+  '..K.GGGGGGGG.K..',
+  '...GGBBBBBBGG...',
+  '..GGBBEBBEBBGG..',
+  '..GGBBBBBBBBGG.K',
+  '.K.GGBBBBBBGG...',
+  '...GGGBBBBGG....',
+  '....GGGGGGGG....',
+  '.....GGGGGG.....',
+  '......WWWW......',
+  '.....W....W.....',
+  '....W......W....',
+  '................',
+  '................',
+]
+
 // --- Compact object templates ---------------------------------------------
 // Unlike the 16x16 character silhouettes above, important story/quest
 // OBJECTS (a lamp, a console, a buried cache, ...) are drawn much smaller —
