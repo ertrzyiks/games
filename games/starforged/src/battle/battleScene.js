@@ -22,7 +22,10 @@ const MENU_FONT_SMALL = 5
 // carry weakTo, bosses only ever carry resistantTo, so a single target
 // never triggers both.
 const WEAKNESS_MULTIPLIER = 1.5
-const RESISTANCE_MULTIPLIER = 0.6
+// Was 0.6 (40% reduction) - softened to a 20% reduction so a boss's
+// resistance is a real but not crippling penalty for using the "wrong"
+// move against it.
+const RESISTANCE_MULTIPLIER = 0.8
 // Caps how many times a single enemy can heal itself in one battle (see
 // _chooseEnemyMove). Without this, a boss sitting below the low-HP
 // threshold with a 0-focus-cost, always-accurate heal move (Bog Warden's

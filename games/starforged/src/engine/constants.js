@@ -1,6 +1,11 @@
 export const TILE_SIZE = 16
-export const VIEW_COLS = 10
-export const VIEW_ROWS = 9
+// One more tile visible in every direction than the original 10x9 view
+// (so +2 on each axis, not +1 - "one more" on both the left/right or
+// top/bottom edges of a symmetric camera). Keep index.html's #game-stage
+// `aspect-ratio` (CANVAS_WIDTH / CANVAS_HEIGHT) in sync with these if they
+// ever change again - that's hardcoded CSS, not derived from here.
+export const VIEW_COLS = 12
+export const VIEW_ROWS = 11
 export const CANVAS_WIDTH = TILE_SIZE * VIEW_COLS
 export const CANVAS_HEIGHT = TILE_SIZE * VIEW_ROWS
 

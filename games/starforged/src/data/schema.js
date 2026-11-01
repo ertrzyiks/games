@@ -138,7 +138,7 @@
  * @property {boolean} [isBoss]
  * @property {'kinetic'|'fire'|'force'} [weakTo] - regular (non-boss) enemies only: takes 1.5x damage
  *   from an attack move with this damageType
- * @property {Array<'kinetic'|'fire'|'force'>} [resistantTo] - bosses only: takes 0.6x damage from an
+ * @property {Array<'kinetic'|'fire'|'force'>} [resistantTo] - bosses only: takes 0.8x damage from an
  *   attack move whose damageType is in this list
  *
  * @typedef {Object} Quest

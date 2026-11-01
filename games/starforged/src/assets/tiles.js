@@ -34,7 +34,7 @@ registerTileTypes({
   water: { color: '#2b5f82', walkable: false, shape: 'water' },
   // Every world's warp-to-another-segment tile uses this one shared id
   // (see worlds/*.js's `setTile(..., 'door')`) - tagging it here marks
-  // every such warp the same way in all five worlds for free, with no
+  // every such warp the same way in every world for free, with no
   // per-world changes.
   door: { color: PALETTE.heroDark, walkable: true, shape: 'door' },
   rock: { color: '#6b6258', walkable: false, shape: 'rock' },
