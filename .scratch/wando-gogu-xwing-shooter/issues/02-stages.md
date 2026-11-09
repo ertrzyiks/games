@@ -1,6 +1,7 @@
 # Pick the 3 stage themes & settings
 
 Type: grilling
+Status: resolved
 
 ## Question
 
@@ -13,3 +14,11 @@ The user gave full creative freedom on world/enemy design, with one hard constra
 - Fit a 1942-style vertical/horizontal scroller — i.e. a setting that reads clearly while scrolling past at speed.
 
 Work it live with the user, one question at a time. Record the 3 themes (with a one-line visual/flavor description each) as the answer.
+
+## Answer
+
+1. **Dustrim Canyons** (Stage 1) — sunlit desert canyon, sandstone cliffs, floating rock arches. Gentlest stage, bright and open.
+2. **Frostholt Reaches** (Stage 2) — icy mountain range, glaciers, aurora-lit sky. Tighter, faster-paced midgame.
+3. **Scrapfleet Graveyard** (Stage 3) — an asteroid-belt junkyard of retired droid-fighters repurposed into a scavenger fortress; leads directly into the final boss, the fortress's reassembled flagship core. Darkest/densest stage, final climax.
+
+Escalation is visual (bright open canyon → tighter icy peaks → cluttered asteroid junk) and read clearly at scroll speed since each stage has one dominant silhouette motif (arches / glaciers / wreckage).

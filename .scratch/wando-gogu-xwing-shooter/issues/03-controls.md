@@ -1,7 +1,7 @@
 # Define the touch & keyboard control scheme
 
 Type: grilling
-Blocked by: 01
+Status: resolved
 
 ## Question
 
@@ -16,3 +16,10 @@ Resolve:
 - Any constraints Phaser's input system imposes that change the above (e.g. its `setInteractive({draggable:true})` API, pointer events, Scale Manager).
 
 Work it live with the user, one question at a time.
+
+## Answer
+
+- **Movement:** direct finger-follow drag — the ship's position eases toward the pointer/touch position (clamped within the play-area bounds), using a `pointermove` listener on the whole game canvas rather than a draggable game object. The entire screen is the control surface — no tiny joystick nub to hunt for on a small screen.
+- **Desktop equivalent:** arrow keys / WASD move the ship at a fixed speed in the corresponding direction, for local dev/testing.
+- **Gogu skill input:** a fixed circular button, bottom-right corner, out of the way of the movement drag surface. Tap = Force Nudge, long-press (~400ms hold) = Force Wave (only fires if its meter is full). The button shows two stacked fill-rings for the two skills' charge state (see [04-gogu-skills.md](04-gogu-skills.md)).
+- **Autofire:** continuous, no input — driven by a repeating Phaser timer event on the player ship, consistent with the map's decision to keep touch input movement-only.

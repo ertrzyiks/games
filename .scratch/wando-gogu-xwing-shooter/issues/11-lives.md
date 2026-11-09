@@ -1,6 +1,7 @@
 # Define lives, game-over, and continue-from-last-stage flow
 
 Type: grilling
+Status: resolved
 
 ## Question
 
@@ -15,3 +16,11 @@ Resolve:
 - Interaction between mid-stage death and the saved progress — does dying mid-stage ever overwrite the saved "last completed stage," or only a clean stage clear does?
 
 Work it live with the user, one question at a time.
+
+## Answer
+
+- **Lives:** 3 per attempt, classic arcade count, kid-friendly.
+- **On hit:** ship does a harmless "poof" (puff of smoke/stars, no gore), loses a life, respawns at the bottom of the screen after a ~1.5s invulnerability window. Weapon level (Twin Blaster) and Shield Orb both reset to base on respawn — power-ups don't survive a death.
+- **On losing all 3 lives:** Game Over screen; retry restarts the *current* stage from its beginning (never bounces back further than that), to keep frustration low.
+- **Continue flow:** completing a stage (beating its boss) immediately saves "last completed stage" to localStorage. On launch, a simple stage-select screen offers: play Stage 1, or jump to the next uncompleted stage if progress exists, plus the option to replay any already-completed stage (no hard progression lock, since there's no meta-progression to protect).
+- **Mid-stage death never overwrites saved progress** — only a clean stage-clear updates "last completed stage."

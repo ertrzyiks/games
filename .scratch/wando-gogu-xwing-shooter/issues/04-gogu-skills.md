@@ -1,6 +1,7 @@
 # Design Gogu's special skill(s)
 
 Type: grilling
+Status: resolved
 
 ## Question
 
@@ -15,3 +16,12 @@ Resolve:
 - Any visual/feedback requirement for when a skill is active.
 
 Work it live with the user, one question at a time.
+
+## Answer
+
+Two skills, both kid-friendly ("Force" nudges, not weapons):
+
+1. **Force Nudge** (small skill) — Gogu deflects incoming enemy shots within a small radius around the X-wing for ~2 seconds; projectiles harmlessly veer away instead of hitting. Charges on a flat cooldown (ready every ~8 seconds, no play required) — a safety net the player can lean on reactively. Triggered by a tap on the dedicated Gogu button.
+2. **Force Wave** (big skill) — a radial push that instantly clears small/weak enemies and deflects all projectiles (including boss shots) in a wide radius around the ship. Charges via a separate meter filled only by destroying enemies (not passive) — rewards active play. Triggered by a long-press (~400ms hold) of the same Gogu button, only usable once that meter is full. This is the skill bosses can gate behind (see boss tickets).
+
+Visual feedback: a soft blue glow/ring expands from the ship when either skill fires (bigger/brighter for Force Wave); the Gogu button shows two stacked fill-rings (cooldown ring for Force Nudge, charge-meter ring for Force Wave) so the player always sees both states at a glance.

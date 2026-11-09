@@ -1,7 +1,7 @@
 # Design the Stage 2 boss fight
 
 Type: grilling
-Blocked by: 02, 04
+Status: resolved
 
 ## Question
 
@@ -16,3 +16,9 @@ Resolve:
 - As the middle boss, it should be clearly harder than stage 1's but leave room for stage 3 to top it.
 
 Work it live with the user, one question at a time. Pair with `/prototype` if a quick rough mockup of the attack pattern would sharpen the discussion.
+
+## Answer
+
+**Frostclaw Walker** — a big quadruped mech striding across the ice field.
+
+**Win-mechanic: massive-HP attrition.** No gimmick — a large health bar, constant movement/dodging required while chipping away damage. Two phases: phase 2 kicks in at 50% HP, where it moves faster and adds a stomp-shockwave attack (a telegraphed radial burst to dodge). Clearly harder than the Canyon Turret (active movement + two phases vs. a stationary single-phase fight), but leaves room for the final boss to top it via the Gogu-skill mechanic.

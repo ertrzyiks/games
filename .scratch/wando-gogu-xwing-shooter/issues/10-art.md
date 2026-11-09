@@ -1,7 +1,7 @@
 # Define the art/asset pipeline & visual style
 
 Type: grilling
-Blocked by: 01
+Status: resolved
 
 ## Question
 
@@ -15,3 +15,9 @@ Resolve:
 - How this choice affects iteration speed on the enemy/boss tickets (if those are still open, flag anything that should change in how they're specified).
 
 Work it live with the user, one question at a time.
+
+## Answer
+
+- **Pipeline:** procedural/code-drawn sprites via Phaser's `Graphics` API, rendered once to a texture at startup (`generateTexture`) per shape — mirrors `starforged`'s `spriteTemplates.js` approach. No external image assets, no texture-atlas tooling, no new dependency beyond Phaser itself; keeps the repo's existing "no art pipeline" precedent intact.
+- **Visual style:** simple flat shapes, bold outlines, bright saturated colors — clean, high-contrast silhouettes readable at scroll speed. Rounded, friendly forms throughout (rounded X-wing nose, round-eyed droids) — cartoon-ish and kid-friendly, nothing sharp/aggressive.
+- **Implication for enemy/boss tickets:** describe enemies and bosses by shape/silhouette and color (e.g. "round-bodied droid with two stubby arms"), not by pixel-level detail — the procedural-shapes approach means a "design" is really just a Graphics-drawing recipe.

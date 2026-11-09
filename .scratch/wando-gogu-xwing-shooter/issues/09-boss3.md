@@ -1,7 +1,7 @@
 # Design the Stage 3 (final) boss fight
 
 Type: grilling
-Blocked by: 02, 04
+Status: resolved
 
 ## Question
 
@@ -16,3 +16,9 @@ Resolve:
 - This should be the hardest of the three fights.
 
 Work it live with the user, one question at a time. Pair with `/prototype` if a quick rough mockup of the attack pattern would sharpen the discussion.
+
+## Answer
+
+**The Reassembler** — the Scrapfleet Graveyard's core salvage-boss, built from scrap and able to shield itself. Final climax fight.
+
+**Win-mechanic: Gogu-skill-dependent.** It maintains a protective scrap-shield that regular shots can't break. Periodically it telegraphs (glows) before the shield can be shattered — the player must land a **Force Wave** (see [04-gogu-skills.md](04-gogu-skills.md)) during that window to break it, then land damage on the exposed core before it rebuilds the shield. Multi-phase: each shield-break cycle gets shorter and the boss's attack patterns intensify, building to the hardest fight of the three — a satisfying capstone that uses every system the player has learned (dodge, weak-spot timing from boss 1, attrition from boss 2, and now Gogu's ultimate).

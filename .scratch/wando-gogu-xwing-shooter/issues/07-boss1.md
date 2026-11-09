@@ -1,7 +1,7 @@
 # Design the Stage 1 boss fight
 
 Type: grilling
-Blocked by: 02, 04
+Status: resolved
 
 ## Question
 
@@ -16,3 +16,9 @@ Resolve:
 - As stage 1's boss, this should likely be the gentlest of the three — establish that relative difficulty.
 
 Work it live with the user, one question at a time. Pair with `/prototype` if a quick rough mockup of the attack pattern would sharpen the discussion.
+
+## Answer
+
+**Old Canyon Turret** — a giant stationary fortress-turret built into the canyon wall.
+
+**Win-mechanic: weak spot.** Its shell stays closed (invulnerable) most of the time; every few seconds it opens to fire a big charged shot, briefly exposing a glowing core — only hits during that window count. Single-phase, slow pattern, generous weak-spot windows — deliberately the gentlest of the three fights, teaching the "wait for the opening" skill the other bosses build on.
