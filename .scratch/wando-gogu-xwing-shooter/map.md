@@ -39,7 +39,9 @@ A written game design spec for a brand-new game — a 2D scrolling shooter (1942
 - [Define the art/asset pipeline & visual style](issues/10-art.md) — procedural Phaser `Graphics`-drawn shapes (like `starforged`'s `spriteTemplates.js`), flat bold-outlined cartoon style.
 - [Define lives, game-over, and continue-from-last-stage flow](issues/11-lives.md) — 3 lives, restart current stage on game-over, power-ups reset on death, stage-select/continue screen driven by saved "last completed stage."
 
-All design tickets are now resolved. The map's destination (a written spec) is reached — remaining work is implementation, which per the user's direction is being carried out directly (see below) rather than staying purely planning.
+All design tickets are now resolved. The map's destination (a written spec) is reached — remaining work is implementation, which per the user's direction was carried out directly rather than staying purely planning.
+
+**2026-11-09 — implementation complete, merged to `main`.** The full game is built at `games/games/wando-gogu/` (Phaser 4 + Vite): shared systems (movement/autofire/Gogu skills/power-ups/lives/stage-select, scaffolded directly) plus all three stages and bosses (Stage 1 built directly; Stages 2 and 3 built by parallel background agents in isolated worktrees, against the Stage 1 contract, then merged with no conflicts). Registered in `portal`. Verified via `pnpm run build` (clean) and a Vite-dev-server module-transform smoke test for every file (no runtime/browser testing was available in this environment — gameplay feel and the specific numeric tuning chosen by the implementing agents are unverified by actual play).
 
 ## Not yet specified
 
