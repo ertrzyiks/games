@@ -31,7 +31,7 @@ export function spawnPowerUp(scene, group, x, y, type) {
 }
 
 export function despawnOffscreen(group) {
-  group.children.each((child) => {
+  group.children.forEach((child) => {
     if (child.y > HEIGHT + 40) child.destroy()
   })
 }

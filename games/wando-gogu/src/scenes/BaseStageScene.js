@@ -128,12 +128,12 @@ export class BaseStageScene extends Phaser.Scene {
   }
 
   _forceWave(x, y) {
-    this.enemies.children.each((enemy) => {
+    this.enemies.children.forEach((enemy) => {
       if (Phaser.Math.Distance.Between(x, y, enemy.x, enemy.y) <= WAVE_RADIUS) {
         enemy.damage(999)
       }
     })
-    this.enemyBullets.children.each((bullet) => {
+    this.enemyBullets.children.forEach((bullet) => {
       if (Phaser.Math.Distance.Between(x, y, bullet.x, bullet.y) <= WAVE_RADIUS) {
         bullet.destroy()
       }
@@ -230,7 +230,7 @@ export class BaseStageScene extends Phaser.Scene {
     despawnOffscreen(this.powerups)
 
     if (this._nudgeActiveAt && this.player.isNudgeActive()) {
-      this.enemyBullets.children.each((bullet) => {
+      this.enemyBullets.children.forEach((bullet) => {
         if (
           Phaser.Math.Distance.Between(this.player.x, this.player.y, bullet.x, bullet.y) <=
           NUDGE_RADIUS
@@ -242,13 +242,13 @@ export class BaseStageScene extends Phaser.Scene {
       this._nudgeActiveAt = null
     }
 
-    this.playerBullets.children.each((b) => {
+    this.playerBullets.children.forEach((b) => {
       if (b.y < -20) b.destroy()
     })
-    this.enemyBullets.children.each((b) => {
+    this.enemyBullets.children.forEach((b) => {
       if (b.y > HEIGHT + 20) b.destroy()
     })
-    this.enemies.children.each((e) => {
+    this.enemies.children.forEach((e) => {
       if (e.y > HEIGHT + 40) e.destroy()
     })
 
