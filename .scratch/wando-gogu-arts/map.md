@@ -62,7 +62,12 @@ Chromium pre-cached at `~/.cache/ms-playwright/chromium-1248`), not just a build
 - [Define the 3D visual style](issues/07-visual-style.md) — procedural primitive meshes, flat
   team colors, no textures/models.
 
-Only the engine pick ([01-engine.md](issues/01-engine.md)) remains open.
+- [Pick the 3D rendering engine](issues/01-engine.md) — **Three.js** r187 (MIT). Verified with a
+  real headless-browser example (not just docs) against Babylon.js and PlayCanvas engine; the
+  PlayCanvas candidate actually had a silent raycast bug in its first pass, caught only by running
+  it — the exact failure mode this ticket was written to guard against.
+
+All design tickets are resolved. Moving to implementation directly, per this effort's Notes.
 
 ## Not yet specified
 
