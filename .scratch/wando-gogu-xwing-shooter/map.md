@@ -50,6 +50,8 @@ All design tickets are now resolved. The map's destination (a written spec) is r
 - Exact numeric tuning (speeds, HP values, spawn rates, meter fill rates) — left to implementation judgment within the shapes described in the tickets.
 - Registering the new game as an entry in `portal` — mechanical integration work, not a design decision.
 
+**2026-11-24 — superseded.** The user asked to pivot this package entirely into a different genre: a simplified 3D ARTS/MOBA-lite (5v5 heroes, one player-controlled, computer-controlled creeps/teammates/opponents, a single lane, towers, a base). This is a different destination, not a refinement of this one — tracked separately at [`.scratch/wando-gogu-arts/map.md`](../wando-gogu-arts/map.md). This map and its tickets stay as the historical record of the shooter that was built and is now being replaced in the same package.
+
 ## Out of scope
 
 - Two-player co-op / separately controlled Wando and Gogu — ruled out during destination-fixing; single ship, single player, Gogu as a skill-granting copilot instead.
