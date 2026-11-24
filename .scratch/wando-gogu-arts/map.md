@@ -69,6 +69,14 @@ Chromium pre-cached at `~/.cache/ms-playwright/chromium-1248`), not just a build
 
 All design tickets are resolved. Moving to implementation directly, per this effort's Notes.
 
+**2026-11-24 — implementation complete, merged to `main`.** The vertical slice is built at
+`games/games/wando-gogu/` (Three.js + Vite): single lane, 2 towers + 1 base per side, the 5-role
+mirror-match hero roster, computer-controlled creep waves, and the shared chase-nearest-and-attack
+AI loop for creeps and bot heroes. Wando (player) uses drag-to-move + automatic nearest-enemy
+attack + a Guard Up button; a DOM HUD shows HP bars and the win/lose overlay. Verified with a real
+headless-browser (Playwright) run — 20+ seconds of simulated play, no runtime errors, hero deaths/
+respawns and creep waves actually observed in game state and a screenshot, not just a build check.
+
 ## Not yet specified
 
 - Audio/music & SFX — not discussed, building without audio for v1.
