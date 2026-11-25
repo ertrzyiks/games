@@ -144,6 +144,14 @@ let lastGold = 0
 // Wando so the whole ship is visible, replacing the earlier cockpit view.
 const CHASE_DISTANCE = 7
 const CHASE_HEIGHT = 3
+// The camera sits CHASE_HEIGHT above Wando, so aiming it exactly parallel to
+// her forward vector only ever converges toward the crosshair at infinite
+// range — at any real distance the shot reads as landing below center.
+// Aiming instead at a point lying ON her actual firing line, this far out,
+// makes the crosshair exactly correct at a typical engagement distance
+// (same fix every third-person shooter with an over-the-shoulder camera
+// uses) — see .scratch/wando-gogu-arts/issues/06-controls-camera.md.
+const AIM_CONVERGENCE_DISTANCE = 18
 
 // Wando's death sequence (2026-11-25): fall to the ground, camera cuts to
 // an external crash-site view on impact, count down, respawn. Driven here
@@ -214,16 +222,16 @@ function animate() {
 
   if (wando.alive || crash?.phase === 'falling') {
     // Third-person chase camera, positioned behind and above Wando so the
-    // whole ship stays in view. Looks exactly along her forward vector
-    // (not *at* her) — that's the same direction the gun/rocket actually
-    // fire, so the screen-center crosshair is accurate, and looking past
-    // her rather than at her is what puts the ship low in frame instead of
+    // whole ship stays in view. Looks at a point on her actual firing line
+    // (AIM_CONVERGENCE_DISTANCE out), not just parallel to it — see the
+    // comment on AIM_CONVERGENCE_DISTANCE above for why. Looking past her
+    // rather than at her is also what puts the ship low in frame instead of
     // dead center — see .scratch/wando-gogu-arts/issues/06-controls-camera.md.
     const forward = wando.getForwardVector()
     const camPos = wando.position.clone().addScaledVector(forward, -CHASE_DISTANCE)
     camPos.y += CHASE_HEIGHT
     camera.position.copy(camPos)
-    camera.lookAt(camPos.clone().add(forward))
+    camera.lookAt(wando.position.clone().addScaledVector(forward, AIM_CONVERGENCE_DISTANCE))
   } else if (crash?.phase === 'grounded') {
     const viewPos = crash.crashPoint.clone().add(new THREE.Vector3(6, 9, 9))
     camera.position.copy(viewPos)
