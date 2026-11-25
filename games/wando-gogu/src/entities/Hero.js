@@ -10,7 +10,7 @@ import {
   RESPAWN_MS,
   STEER_TURN_RATE,
   PITCH_LIMIT,
-  PITCH_LEVEL_RATE,
+  WANDO_ATTACK_RANGE,
   ALTITUDE_MIN,
   ALTITUDE_MAX,
   LANE_HALF,
@@ -44,6 +44,7 @@ export class Hero extends Unit {
     })
     this.role = role
     this.isPlayer = isPlayer
+    if (isPlayer) this.attackRange = WANDO_ATTACK_RANGE
     this.spawnPoint = new THREE.Vector3(spawnX, mesh.position.y, spawnZ)
     this.ability = HERO_ABILITY[role]
     this.lastAbilityAt = -Infinity
@@ -67,17 +68,12 @@ export class Hero extends Unit {
   }
 
   // Constant forward flight — steering only changes heading, never stops or
-  // reverses. Pitch auto-levels when not actively climbing/diving (releasing
-  // the stick levels out) so the ship can't get pinned against the altitude
-  // ceiling forever — see .scratch/wando-gogu-arts/issues/06-controls-camera.md.
+  // reverses. Pitch/yaw hold wherever you leave them (pure trim — releasing
+  // the stick does not level the ship out), per the 2026-11-25 correction in
+  // .scratch/wando-gogu-arts/issues/06-controls-camera.md.
   flyForward(dt) {
     this.yaw += this.steer.x * STEER_TURN_RATE * dt
-    if (Math.abs(this.steer.y) > 0.01) {
-      this.pitch = clamp(this.pitch + this.steer.y * STEER_TURN_RATE * dt, -PITCH_LIMIT, PITCH_LIMIT)
-    } else {
-      const step = Math.min(Math.abs(this.pitch), PITCH_LEVEL_RATE * dt)
-      this.pitch -= Math.sign(this.pitch) * step
-    }
+    this.pitch = clamp(this.pitch + this.steer.y * STEER_TURN_RATE * dt, -PITCH_LIMIT, PITCH_LIMIT)
 
     const forward = this.getForwardVector()
     this.mesh.position.addScaledVector(forward, this.speed * dt)

@@ -80,7 +80,7 @@ for (const team of [TEAM.ALLY, TEAM.ENEMY]) {
 wando.mesh.visible = false
 
 // Exposed for debugging/automated smoke tests only.
-window.__debug = { world, wando, camera, ground }
+window.__debug = { world, wando, camera, ground, scene }
 
 const hud = createHud(container)
 

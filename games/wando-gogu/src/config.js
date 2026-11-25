@@ -72,7 +72,12 @@ export const RESPAWN_MS = 5000
 export const STEER_MAX_RADIUS_PX = 110
 export const STEER_TURN_RATE = 0.9 // rad/sec at full steer deflection
 export const PITCH_LIMIT = 0.6 // radians, ~34 degrees either way
-export const PITCH_LEVEL_RATE = 1.2 // rad/sec the nose eases back to level when not steering vertically
+
+// Wando is flying a starfighter, not melee-ing on foot — override the
+// Vanguard role's melee range with laser-cannon range so manual fire is both
+// usable while constantly moving forward and visibly a projectile (see
+// effects.js: ranged vs. melee attack visuals key off attackRange).
+export const WANDO_ATTACK_RANGE = 20
 export const ALTITUDE_MIN = 1
 export const ALTITUDE_MAX = 28
 
