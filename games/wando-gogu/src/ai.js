@@ -59,19 +59,26 @@ export function attackOnlyStep(unit, world, now) {
 
 // Manual fire for the player's hero — called from main.js's fire button, a
 // fixed forward-firing gun like a WWII fighter's: no auto-aim, no bending
-// toward a target. It fires dead straight along the exact forward line on
-// every trigger pull (subject to the fire-rate cooldown), hit or miss.
-// Whether something was in the line of fire is a separate hit-detection
-// check (findForwardTarget) that only ever affects damage, never the shot's
-// direction. Returns the target it hit, or null on a miss/cooldown.
-export function manualAttack(unit, world, now) {
+// toward a *target*. But it IS cheated to match the crosshair exactly:
+// `aimRay` (origin/direction straight from the camera, computed in main.js)
+// is what's actually raycast, not Wando's own nose/forward vector. A
+// third-person camera sits above her, so a shot along her true forward
+// vector only ever reads as "landing below the crosshair" at any finite
+// range (parallel lines offset by the camera's height never truly
+// converge) — see .scratch/wando-gogu-arts/issues/06-controls-camera.md for
+// the two correction attempts before this one. Firing from the camera's own
+// ray makes the two identical by construction. Falls back to her own
+// forward vector if no aimRay is given. Returns the target it hit, or null
+// on a miss/cooldown.
+export function manualAttack(unit, world, now, aimRay) {
   if (!unit.alive || !unit.canAttack(now)) return null
   unit.lastAttackAt = now
 
-  const forward = unit.getForwardVector()
-  const hit = findForwardTarget(unit, world)
+  const origin = aimRay ? aimRay.origin : unit.position
+  const forward = aimRay ? aimRay.direction : unit.getForwardVector()
+  const hit = findForwardTarget(unit, world, 0, aimRay)
   const shotDistance = hit ? hit.forwardDist : unit.attackRange
-  const endpoint = unit.position.clone().addScaledVector(forward, shotDistance)
+  const endpoint = origin.clone().addScaledVector(forward, shotDistance)
   world.effects.triggerStraightShot(unit, endpoint)
 
   if (!hit) return null
@@ -85,15 +92,18 @@ export function manualAttack(unit, world, now) {
 // per unit of range) — a flat tolerance made long-range hits require
 // near-pixel-perfect alignment, which read as "shots do nothing far away."
 // `extraTolerance` lets a bigger projectile (the rocket) be more forgiving
-// than the gun without duplicating this whole scan.
+// than the gun without duplicating this whole scan. `aimRay` (see
+// manualAttack) overrides the ray's origin/direction — bots never pass one,
+// only the player's cheated-to-the-crosshair shots do.
 // Returns { target, forwardDist } or null.
-function findForwardTarget(unit, world, extraTolerance = 0) {
-  const forward = unit.getForwardVector()
+function findForwardTarget(unit, world, extraTolerance = 0, aimRay) {
+  const origin = aimRay ? aimRay.origin : unit.position
+  const forward = aimRay ? aimRay.direction : unit.getForwardVector()
   let best = null
   let bestForwardDist = unit.attackRange
   for (const other of world.allAlive()) {
     if (other.team === unit.team || other === unit) continue
-    const toOther = other.position.clone().sub(unit.position)
+    const toOther = other.position.clone().sub(origin)
     const forwardDist = toOther.dot(forward) // how far along the ray
     if (forwardDist <= 0 || forwardDist > bestForwardDist) continue
     const lateralDist = toOther.addScaledVector(forward, -forwardDist).length() // perpendicular offset
@@ -106,21 +116,20 @@ function findForwardTarget(unit, world, extraTolerance = 0) {
 }
 
 // Wando's rocket — a special action, distinct from manual fire and Guard
-// Up. Fires straight ahead along the same forward line as the gun (so it
-// stays visible in view, unlike the original straight-down bomb drop,
-// which fell behind her as she kept flying forward and was never actually
-// seen) as one bigger, slower, more forgiving-to-aim projectile. Explodes
-// in a radius wherever it lands — on a direct hit's position, or at max
-// range if nothing was hit. Returns true if it actually fired (false if on
-// cooldown).
-export function fireRocket(unit, world, now) {
+// Up. Fires along the camera's aim ray (see manualAttack's comment on
+// `aimRay`) as one bigger, slower, more forgiving-to-aim projectile.
+// Explodes in a radius wherever it lands — on a direct hit's position, or
+// at max range if nothing was hit. Returns true if it actually fired (false
+// if on cooldown).
+export function fireRocket(unit, world, now, aimRay) {
   if (!unit.alive || now - unit.lastRocketAt < ROCKET_COOLDOWN_MS) return false
   unit.lastRocketAt = now
 
-  const forward = unit.getForwardVector()
-  const hit = findForwardTarget(unit, world, ROCKET_EXTRA_TOLERANCE)
+  const origin = aimRay ? aimRay.origin : unit.position
+  const forward = aimRay ? aimRay.direction : unit.getForwardVector()
+  const hit = findForwardTarget(unit, world, ROCKET_EXTRA_TOLERANCE, aimRay)
   const travelDistance = hit ? hit.forwardDist : unit.attackRange
-  const impactPoint = unit.position.clone().addScaledVector(forward, travelDistance)
+  const impactPoint = origin.clone().addScaledVector(forward, travelDistance)
   const enemyTeam = otherTeam(unit.team)
 
   world.effects.fireRocket(unit, impactPoint, () => {

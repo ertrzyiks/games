@@ -118,3 +118,27 @@ already behind the camera's view and she never actually saw it land. Several rel
   negative-offset key-shortcut badges were being clipped by `overflow:hidden` on the button, which
   had been added (unnecessarily) to keep the cooldown mask circular — the mask's own border-radius
   already clips its own background with no overflow needed on the parent at all.
+
+## 2026-11-25 — crosshair accuracy, two attempts then the real fix
+
+The third-person camera made the crosshair (and therefore the gun/rocket) read as inaccurate —
+three corrections, in order:
+
+1. First attempt: aim the camera exactly parallel to Wando's own forward vector instead of at her.
+   Wrong fix — the camera sits `CHASE_HEIGHT` above her, so a line parallel to but offset from the
+   gun's actual path only converges toward the crosshair at infinite range; at any real distance
+   the shot read as landing below center.
+2. Second attempt: aim the camera at a point lying ON the gun's actual firing line, a fixed
+   "convergence distance" out (18 units) — the standard trick for an over-the-shoulder camera.
+   Exactly correct at that one distance, with a small, expected, opposite-signed error closer or
+   farther than it. Still not good enough on reflection.
+3. **The actual fix, per explicit instruction to just cheat**: `manualAttack`/`fireRocket` (ai.js)
+   now raycast from the camera's own position/view direction (`main.js`'s `getAimRay()`, using
+   `camera.getWorldDirection`) instead of Wando's own position/forward vector. This makes the hit
+   detection and the crosshair identical *by construction*, at every distance — not an
+   approximation. The visual projectile still launches from Wando's own mesh (for a sane-looking
+   origin point) but travels toward the impact point computed from the camera's ray, so very
+   occasionally a shot's visual path and the ship's nose won't quite line up — an accepted
+   trade-off for the crosshair always being exactly right, which is what was asked for. The
+   convergence-distance tuning from attempt 2 was removed as dead weight; the camera can now look
+   anywhere without affecting accuracy at all.
