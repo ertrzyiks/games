@@ -111,6 +111,17 @@ hud.fireButton.addEventListener('pointerleave', () => {
   firing = false
 })
 
+// Space/Enter mirror the fire button for desktop dev/testing.
+window.addEventListener('keydown', (e) => {
+  if (e.key === ' ' || e.key === 'Enter') {
+    e.preventDefault() // space otherwise scrolls the page
+    firing = true
+  }
+})
+window.addEventListener('keyup', (e) => {
+  if (e.key === ' ' || e.key === 'Enter') firing = false
+})
+
 const clock = new THREE.Clock()
 let matchOverShown = false
 
