@@ -1,5 +1,6 @@
 import { aiStep, attackOnlyStep } from './ai.js'
 import { Creep, randomLaneX } from './entities/Creep.js'
+import { createEffectsSystem } from './effects.js'
 import {
   TEAM,
   BASE_Z,
@@ -25,6 +26,7 @@ export class World {
       [TEAM.ENEMY]: CREEP_WAVE_INTERVAL_MS,
     }
     this._pendingSpawns = []
+    this.effects = createEffectsSystem(scene)
   }
 
   addHero(hero) {
@@ -90,6 +92,7 @@ export class World {
     this._cleanupDeadCreeps()
     this._spawnWaves(dt)
     this._checkWinCondition()
+    this.effects.update(now)
   }
 
   _cleanupDeadCreeps() {

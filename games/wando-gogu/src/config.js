@@ -66,6 +66,16 @@ export const HERO_ABILITY = {
 
 export const RESPAWN_MS = 5000
 
+// Piloting feel for the player's hero (2026-11-25 — see
+// .scratch/wando-gogu-arts/issues/06-controls-camera.md): constant forward
+// flight, steering only adjusts heading, no stop/reverse.
+export const STEER_MAX_RADIUS_PX = 110
+export const STEER_TURN_RATE = 0.9 // rad/sec at full steer deflection
+export const PITCH_LIMIT = 0.6 // radians, ~34 degrees either way
+export const PITCH_LEVEL_RATE = 1.2 // rad/sec the nose eases back to level when not steering vertically
+export const ALTITUDE_MIN = 1
+export const ALTITUDE_MAX = 28
+
 export const CREEP_STATS = { hp: 55, damage: 9, attackRange: 2, attackIntervalMs: 1000, speed: 4.5 }
 export const CREEP_WAVE_SIZE = 3
 export const CREEP_WAVE_INTERVAL_MS = 15000

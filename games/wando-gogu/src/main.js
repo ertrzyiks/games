@@ -4,7 +4,8 @@ import { Hero } from './entities/Hero.js'
 import { Tower } from './entities/Tower.js'
 import { Stronghold } from './entities/Stronghold.js'
 import { createGround } from './visuals.js'
-import { setupMovementInput, setupKeyboardInput } from './input.js'
+import { createSteeringController } from './input.js'
+import { manualAttack } from './ai.js'
 import { createHud } from './hud.js'
 import {
   TEAM,
@@ -73,31 +74,28 @@ for (const team of [TEAM.ALLY, TEAM.ENEMY]) {
   })
 }
 
-wando.moveTarget = wando.position.clone()
+// First-person cockpit view (2026-11-25): the player's own ship is never
+// rendered, since the camera sits inside it — see
+// .scratch/wando-gogu-arts/issues/06-controls-camera.md.
+wando.mesh.visible = false
 
 // Exposed for debugging/automated smoke tests only.
-window.__debug = { world, wando }
+window.__debug = { world, wando, camera, ground }
 
 const hud = createHud(container)
 
-setupMovementInput(renderer, camera, ground, (point) => {
-  wando.moveTarget = point
-})
-
-const readKeyboard = setupKeyboardInput((dx, dz) => {
-  const len = Math.hypot(dx, dz)
-  wando.moveTarget = new THREE.Vector3(
-    wando.position.x + (dx / len) * 20,
-    0,
-    wando.position.z + (dz / len) * 20
-  )
-})
+const steering = createSteeringController(renderer)
 
 hud.abilityButton.addEventListener('pointerdown', () => {
   const now = performance.now()
   if (wando.alive && wando.canUseAbility(now)) {
     wando.useAbility(null, world, now)
   }
+})
+
+hud.fireButton.addEventListener('pointerdown', () => {
+  const now = performance.now()
+  if (wando.alive) manualAttack(wando, world, now)
 })
 
 const clock = new THREE.Clock()
@@ -108,7 +106,7 @@ function animate() {
   const dt = Math.min(clock.getDelta(), 0.1)
   const now = performance.now()
 
-  readKeyboard()
+  wando.steer = steering.getSteer()
 
   if (!world.matchOver) {
     world.update(dt, now)
@@ -117,10 +115,14 @@ function animate() {
     hud.showMatchOver(world.winner === TEAM.ALLY)
   }
 
+  wando.mesh.visible = false // stays hidden through death/respawn too
+
   if (wando.alive) {
-    const behind = new THREE.Vector3(0, 30, 20)
-    camera.position.copy(wando.position).add(behind)
-    camera.lookAt(wando.position)
+    const forward = wando.getForwardVector()
+    const eye = wando.position.clone().addScaledVector(forward, 0.6)
+    eye.y += 0.4
+    camera.position.copy(eye)
+    camera.lookAt(eye.clone().addScaledVector(forward, 10))
   }
 
   hud.setWandoHp(wando.hp / wando.maxHp)
@@ -128,6 +130,8 @@ function animate() {
   hud.setEnemyBaseHp(world.strongholds[TEAM.ENEMY].hp / world.strongholds[TEAM.ENEMY].maxHp)
   const abilityElapsed = now - wando.lastAbilityAt
   hud.setAbilityCooldown(Math.max(0, 1 - abilityElapsed / wando.ability.cooldownMs))
+  const fireElapsed = now - wando.lastAttackAt
+  hud.setFireCooldown(Math.max(0, 1 - fireElapsed / wando.attackIntervalMs))
 
   renderer.render(scene, camera)
 }

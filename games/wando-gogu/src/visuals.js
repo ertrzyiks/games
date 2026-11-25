@@ -58,7 +58,10 @@ export function createBaseMesh(team) {
 }
 
 export function createGround(laneLength, laneWidth) {
-  const geometry = new THREE.PlaneGeometry(laneWidth * 6, laneLength * 1.2)
+  // Generous margin beyond Hero.flyForward's movement clamp (±laneWidth*3,
+  // ±laneHalf*1.1) so the camera — offset slightly ahead of the player's
+  // hero — never pokes past the ground's edge into empty background.
+  const geometry = new THREE.PlaneGeometry(laneWidth * 10, laneLength * 1.8)
   const material = new THREE.MeshStandardMaterial({ color: 0x3f6b3a })
   const mesh = new THREE.Mesh(geometry, material)
   mesh.rotation.x = -Math.PI / 2

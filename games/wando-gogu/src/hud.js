@@ -40,6 +40,16 @@ export function createHud(container) {
     'background:#1a2230;border:3px solid #5ad1ff;pointer-events:auto;cursor:pointer'
   root.appendChild(abilityBtn)
 
+  // Manual fire button — attacking is player-triggered, not automatic, per
+  // the 2026-11-25 change in .scratch/wando-gogu-arts/issues/06-controls-camera.md.
+  const fireBtn = document.createElement('button')
+  fireBtn.textContent = '⚔'
+  fireBtn.style.cssText =
+    'position:absolute;right:104px;bottom:20px;width:70px;height:70px;border-radius:50%;' +
+    'background:#1a2230;border:3px solid #ff5a5a;color:#fff;font-size:28px;' +
+    'pointer-events:auto;cursor:pointer'
+  root.appendChild(fireBtn)
+
   const overlay = document.createElement('div')
   overlay.style.cssText =
     'position:absolute;inset:0;display:none;align-items:center;justify-content:center;' +
@@ -56,6 +66,7 @@ export function createHud(container) {
 
   return {
     abilityButton: abilityBtn,
+    fireButton: fireBtn,
     restartButton: restartBtn,
     setWandoHp(frac) {
       wandoFill.style.width = `${Math.max(0, frac) * 100}%`
@@ -70,6 +81,10 @@ export function createHud(container) {
       // frac: 1 = just used (fully on cooldown), 0 = ready.
       const pct = Math.round(frac * 100)
       abilityBtn.style.background = `conic-gradient(rgba(0,0,0,0.75) ${pct}%, #1a2230 ${pct}%)`
+    },
+    setFireCooldown(frac) {
+      const pct = Math.round(frac * 100)
+      fireBtn.style.background = `conic-gradient(rgba(0,0,0,0.75) ${pct}%, #1a2230 ${pct}%)`
     },
     showMatchOver(won) {
       overlay.style.display = 'flex'

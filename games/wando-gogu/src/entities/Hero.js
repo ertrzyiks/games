@@ -1,7 +1,26 @@
 import * as THREE from 'three'
 import { Unit } from './Unit.js'
-import { HERO_ROLES, HERO_STATS, HERO_ABILITY, BASE_Z, otherTeam, RESPAWN_MS } from '../config.js'
+import {
+  HERO_ROLES,
+  HERO_STATS,
+  HERO_ABILITY,
+  BASE_Z,
+  TEAM,
+  otherTeam,
+  RESPAWN_MS,
+  STEER_TURN_RATE,
+  PITCH_LIMIT,
+  PITCH_LEVEL_RATE,
+  ALTITUDE_MIN,
+  ALTITUDE_MAX,
+  LANE_HALF,
+  LANE_WIDTH,
+} from '../config.js'
 import { createHeroMesh } from '../visuals.js'
+
+function clamp(v, lo, hi) {
+  return Math.min(hi, Math.max(lo, v))
+}
 
 // A hero — player-controlled (Wando) or bot-controlled. Heroes move freely in
 // X/Z, unlike lane-locked creeps (see .scratch/wando-gogu-arts/issues/02-heroes.md
@@ -29,7 +48,45 @@ export class Hero extends Unit {
     this.ability = HERO_ABILITY[role]
     this.lastAbilityAt = -Infinity
     this.deadUntil = 0
-    this.moveTarget = null // player input sets this; bots recompute every tick
+
+    // Piloting state — only meaningful for the player's hero (Wando), but
+    // harmless to carry on every hero. yaw=0 faces -Z (an ally's "forward");
+    // an enemy hero never pilots, so it's never actually flown this way.
+    this.yaw = team === TEAM.ALLY ? 0 : Math.PI
+    this.pitch = 0
+    this.steer = { x: 0, y: 0 } // set every frame by input.js's steering controller
+  }
+
+  getForwardVector() {
+    const cosPitch = Math.cos(this.pitch)
+    return new THREE.Vector3(
+      Math.sin(this.yaw) * cosPitch,
+      Math.sin(this.pitch),
+      -Math.cos(this.yaw) * cosPitch
+    )
+  }
+
+  // Constant forward flight — steering only changes heading, never stops or
+  // reverses. Pitch auto-levels when not actively climbing/diving (releasing
+  // the stick levels out) so the ship can't get pinned against the altitude
+  // ceiling forever — see .scratch/wando-gogu-arts/issues/06-controls-camera.md.
+  flyForward(dt) {
+    this.yaw += this.steer.x * STEER_TURN_RATE * dt
+    if (Math.abs(this.steer.y) > 0.01) {
+      this.pitch = clamp(this.pitch + this.steer.y * STEER_TURN_RATE * dt, -PITCH_LIMIT, PITCH_LIMIT)
+    } else {
+      const step = Math.min(Math.abs(this.pitch), PITCH_LEVEL_RATE * dt)
+      this.pitch -= Math.sign(this.pitch) * step
+    }
+
+    const forward = this.getForwardVector()
+    this.mesh.position.addScaledVector(forward, this.speed * dt)
+
+    const clampX = LANE_WIDTH * 3
+    const clampZ = LANE_HALF * 1.1
+    this.mesh.position.x = clamp(this.mesh.position.x, -clampX, clampX)
+    this.mesh.position.y = clamp(this.mesh.position.y, ALTITUDE_MIN, ALTITUDE_MAX)
+    this.mesh.position.z = clamp(this.mesh.position.z, -clampZ, clampZ)
   }
 
   canUseAbility(now) {
@@ -65,10 +122,9 @@ export class Hero extends Unit {
     }
   }
 
+  // Bot heroes only — the player's hero flies via flyForward() instead,
+  // called directly from ai.js.
   getAdvanceTarget() {
-    if (this.isPlayer) {
-      return this.moveTarget
-    }
     return new THREE.Vector3(0, 0, BASE_Z[otherTeam(this.team)])
   }
 
@@ -83,8 +139,9 @@ export class Hero extends Unit {
     this.shield = 0
     this.alive = true
     this.mesh.visible = true
-    this.mesh.position.x = this.spawnPoint.x
-    this.mesh.position.z = this.spawnPoint.z
+    this.mesh.position.set(this.spawnPoint.x, this.spawnPoint.y, this.spawnPoint.z)
+    this.yaw = this.team === TEAM.ALLY ? 0 : Math.PI
+    this.pitch = 0
     this.lastAttackAt = now
     this.lastAbilityAt = now
   }

@@ -1,46 +1,59 @@
-import * as THREE from 'three'
+import { STEER_MAX_RADIUS_PX } from './config.js'
 
-// Whole-screen drag-to-move via a ground-plane raycast, same philosophy as
-// the shooter's drag-to-move control — see
-// .scratch/wando-gogu-arts/issues/06-controls-camera.md.
-export function setupMovementInput(renderer, camera, groundMesh, onTarget) {
-  const raycaster = new THREE.Raycaster()
-  const pointerNdc = new THREE.Vector2()
+function clamp(v, lo, hi) {
+  return Math.min(hi, Math.max(lo, v))
+}
+
+// Piloting controls (2026-11-25 — see
+// .scratch/wando-gogu-arts/issues/06-controls-camera.md): a whole-screen
+// drag steers like a flight stick (horizontal = yaw/turn, vertical =
+// pitch/climb-dive), released = fly straight. Keyboard/WASD mirrors it for
+// desktop dev/testing. Movement is otherwise always forward (see
+// Hero.flyForward) — this module only ever reports a steer vector.
+export function createSteeringController(renderer) {
   const dom = renderer.domElement
-
-  function pointerToWorld(event) {
-    const rect = dom.getBoundingClientRect()
-    pointerNdc.x = ((event.clientX - rect.left) / rect.width) * 2 - 1
-    pointerNdc.y = -((event.clientY - rect.top) / rect.height) * 2 + 1
-    raycaster.setFromCamera(pointerNdc, camera)
-    const hits = raycaster.intersectObject(groundMesh)
-    if (hits.length > 0) onTarget(hits[0].point)
-  }
-
   let dragging = false
+  let originX = 0
+  let originY = 0
+  let touchSteer = { x: 0, y: 0 }
+  const heldKeys = new Set()
+
   dom.addEventListener('pointerdown', (e) => {
     dragging = true
-    pointerToWorld(e)
+    originX = e.clientX
+    originY = e.clientY
+    touchSteer = { x: 0, y: 0 }
   })
   dom.addEventListener('pointermove', (e) => {
-    if (dragging) pointerToWorld(e)
+    if (!dragging) return
+    const dx = e.clientX - originX
+    const dy = e.clientY - originY
+    touchSteer = {
+      x: clamp(dx / STEER_MAX_RADIUS_PX, -1, 1),
+      y: clamp(-dy / STEER_MAX_RADIUS_PX, -1, 1),
+    }
   })
   window.addEventListener('pointerup', () => {
     dragging = false
+    touchSteer = { x: 0, y: 0 }
   })
-}
 
-export function setupKeyboardInput(onDirection) {
-  const held = new Set()
-  window.addEventListener('keydown', (e) => held.add(e.key.toLowerCase()))
-  window.addEventListener('keyup', (e) => held.delete(e.key.toLowerCase()))
-  return () => {
-    let dx = 0
-    let dz = 0
-    if (held.has('arrowleft') || held.has('a')) dx -= 1
-    if (held.has('arrowright') || held.has('d')) dx += 1
-    if (held.has('arrowup') || held.has('w')) dz -= 1
-    if (held.has('arrowdown') || held.has('s')) dz += 1
-    if (dx !== 0 || dz !== 0) onDirection(dx, dz)
+  window.addEventListener('keydown', (e) => heldKeys.add(e.key.toLowerCase()))
+  window.addEventListener('keyup', (e) => heldKeys.delete(e.key.toLowerCase()))
+
+  function keyboardSteer() {
+    let x = 0
+    let y = 0
+    if (heldKeys.has('arrowleft') || heldKeys.has('a')) x -= 1
+    if (heldKeys.has('arrowright') || heldKeys.has('d')) x += 1
+    if (heldKeys.has('arrowup') || heldKeys.has('w')) y += 1
+    if (heldKeys.has('arrowdown') || heldKeys.has('s')) y -= 1
+    return { x, y }
+  }
+
+  return {
+    getSteer() {
+      return dragging ? touchSteer : keyboardSteer()
+    },
   }
 }
