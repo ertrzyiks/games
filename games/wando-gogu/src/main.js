@@ -214,12 +214,16 @@ function animate() {
 
   if (wando.alive || crash?.phase === 'falling') {
     // Third-person chase camera, positioned behind and above Wando so the
-    // whole ship stays in view.
+    // whole ship stays in view. Looks exactly along her forward vector
+    // (not *at* her) — that's the same direction the gun/rocket actually
+    // fire, so the screen-center crosshair is accurate, and looking past
+    // her rather than at her is what puts the ship low in frame instead of
+    // dead center — see .scratch/wando-gogu-arts/issues/06-controls-camera.md.
     const forward = wando.getForwardVector()
     const camPos = wando.position.clone().addScaledVector(forward, -CHASE_DISTANCE)
     camPos.y += CHASE_HEIGHT
     camera.position.copy(camPos)
-    camera.lookAt(wando.position)
+    camera.lookAt(camPos.clone().add(forward))
   } else if (crash?.phase === 'grounded') {
     const viewPos = crash.crashPoint.clone().add(new THREE.Vector3(6, 9, 9))
     camera.position.copy(viewPos)
