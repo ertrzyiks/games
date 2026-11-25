@@ -57,6 +57,7 @@ export class Hero extends Unit {
     this.spawnPoint = new THREE.Vector3(spawnX, mesh.position.y, spawnZ)
     this.ability = HERO_ABILITY[role]
     this.lastAbilityAt = -Infinity
+    this.lastBombAt = -Infinity // only meaningful for the player's hero, see ai.js's dropBomb
     this.deadUntil = 0
 
     // Piloting state — only meaningful for the player's hero (Wando), but
@@ -108,18 +109,18 @@ export class Hero extends Unit {
         this.shield += this.ability.shieldAmount
         break
       case HERO_ROLES.MARKSMAN:
-        target?.takeDamage(this.ability.damage)
+        target?.takeDamage(this.ability.damage, this)
         break
       case HERO_ROLES.MYSTIC: {
         const nearby = world.unitsInRadius(this.position, this.ability.radius, otherTeam(this.team))
-        nearby.forEach((u) => u.takeDamage(this.ability.damage))
+        nearby.forEach((u) => u.takeDamage(this.ability.damage, this))
         break
       }
       case HERO_ROLES.SKIRMISHER:
         if (target) {
           this.mesh.position.x = target.position.x
           this.mesh.position.z = target.position.z
-          target.takeDamage(this.ability.bonusDamage)
+          target.takeDamage(this.ability.bonusDamage, this)
         }
         break
       default:

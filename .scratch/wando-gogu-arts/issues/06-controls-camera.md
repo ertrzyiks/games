@@ -81,3 +81,15 @@ positioned above and back from the crash site, looking at it, and a 5-second cou
 is deliberately excluded from `World`'s generic hero-auto-respawn timer — this sequence is driven
 entirely from `main.js`, since it needs the camera and HUD that only main.js has access to. Bot
 heroes are unaffected, still an instant blink.
+
+## 2026-11-25 — added: longer/more forgiving range, a bomb, keyboard fire
+
+- **Fire range increased (20 → 36) and the hit tolerance now widens with distance** instead of
+  staying a flat lateral distance — a flat tolerance meant hits at long range needed near-perfect
+  alignment, which read as "shots do nothing far away" even though up-close hits worked fine.
+- **A second special action: a bomb.** Distinct from Guard Up and manual fire, its own button and
+  cooldown (`BOMB_COOLDOWN_MS`, 8s) and the 'B' key. Drops straight down from wherever Wando is
+  when triggered, falls for `BOMB_FALL_MS` (700ms), then explodes for heavy AoE damage
+  (`BOMB_DAMAGE`/`BOMB_RADIUS`) to any enemy unit in range on impact — including towers/bases, so
+  it's also a legitimate siege tool.
+- **Space/Enter now also fire**, mirroring the on-screen button, for desktop dev/testing.

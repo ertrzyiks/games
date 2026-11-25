@@ -1,4 +1,14 @@
-import { AGGRO_RADIUS, FIRE_RAY_TOLERANCE } from './config.js'
+import * as THREE from 'three'
+import {
+  AGGRO_RADIUS,
+  FIRE_RAY_TOLERANCE,
+  FIRE_RAY_SPREAD,
+  TOWER_AIM_MS,
+  BOMB_COOLDOWN_MS,
+  BOMB_DAMAGE,
+  BOMB_RADIUS,
+  otherTeam,
+} from './config.js'
 
 // One shared behavior loop for creeps and bot heroes: chase the nearest
 // enemy, attack automatically once in range, else advance — see
@@ -63,13 +73,16 @@ export function manualAttack(unit, world, now) {
   world.effects.triggerStraightShot(unit, endpoint)
 
   if (!hit) return null
-  hit.target.takeDamage(unit.damage)
+  hit.target.takeDamage(unit.damage, unit)
   return hit.target
 }
 
 // Hit detection only (never changes the shot's direction): the nearest
-// enemy within FIRE_RAY_TOLERANCE of the exact forward line, out to
-// attackRange. Returns { target, forwardDist } or null.
+// enemy within tolerance of the exact forward line, out to attackRange.
+// Tolerance widens with distance (FIRE_RAY_TOLERANCE near, +FIRE_RAY_SPREAD
+// per unit of range) — a flat tolerance made long-range hits require
+// near-pixel-perfect alignment, which read as "shots do nothing far away."
+// Returns { target, forwardDist } or null.
 function findForwardTarget(unit, world) {
   const forward = unit.getForwardVector()
   let best = null
@@ -80,11 +93,63 @@ function findForwardTarget(unit, world) {
     const forwardDist = toOther.dot(forward) // how far along the ray
     if (forwardDist <= 0 || forwardDist > bestForwardDist) continue
     const lateralDist = toOther.addScaledVector(forward, -forwardDist).length() // perpendicular offset
-    if (lateralDist > FIRE_RAY_TOLERANCE) continue
+    const tolerance = FIRE_RAY_TOLERANCE + forwardDist * FIRE_RAY_SPREAD
+    if (lateralDist > tolerance) continue
     best = { target: other, forwardDist }
     bestForwardDist = forwardDist
   }
   return best
+}
+
+// Wando's bomb — a second special action, distinct from manual fire and
+// Guard Up. Drops straight down from wherever she is when triggered;
+// effects.js animates the fall and calls back here on impact to apply AoE
+// damage. Returns true if it actually dropped (false if on cooldown).
+export function dropBomb(unit, world, now) {
+  if (!unit.alive || now - unit.lastBombAt < BOMB_COOLDOWN_MS) return false
+  unit.lastBombAt = now
+  const dropPoint = unit.position.clone()
+  const enemyTeam = otherTeam(unit.team)
+  world.effects.dropBomb(dropPoint, unit.team, () => {
+    const impactPoint = new THREE.Vector3(dropPoint.x, 0, dropPoint.z)
+    world.unitsInRadius(impactPoint, BOMB_RADIUS, enemyTeam).forEach((target) => {
+      target.takeDamage(BOMB_DAMAGE, unit)
+    })
+  })
+  return true
+}
+
+// Tower-only: telegraphs for TOWER_AIM_MS (a visible aim line to the locked
+// target) before firing, instead of attacking instantly — see
+// .scratch/wando-gogu-arts/issues/04-towers-base.md. attackIntervalMs gates
+// how soon a *completed* shot can be followed by a new aim phase; a
+// cancelled aim (target died/left range) can retry immediately.
+export function towerStep(tower, world, now) {
+  if (!tower.alive) return
+
+  if (tower.aimTarget && (!tower.aimTarget.alive || tower.distanceTo(tower.aimTarget) > tower.attackRange)) {
+    world.effects.cancelAimLine(tower)
+    tower.aimTarget = null
+  }
+
+  if (tower.aimTarget) {
+    world.effects.updateAimLine(tower, tower.aimTarget)
+    if (now - tower.aimStart >= TOWER_AIM_MS) {
+      const target = tower.aimTarget
+      world.effects.cancelAimLine(tower)
+      tower.aimTarget = null
+      tower.attack(target, now)
+      world.effects.triggerAttackEffect(tower, target)
+    }
+    return
+  }
+
+  if (!tower.canAttack(now)) return
+  const candidate = world.nearestEnemyInRadius(tower, tower.attackRange)
+  if (!candidate) return
+  tower.aimTarget = candidate
+  tower.aimStart = now
+  world.effects.startAimLine(tower, candidate)
 }
 
 function moveToward(unit, dest, dt) {

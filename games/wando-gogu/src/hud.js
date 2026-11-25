@@ -53,6 +53,13 @@ export function createHud(container) {
     'text-shadow:0 0 3px #000'
   root.appendChild(goldText)
 
+  // Tower progress — how many of each side's towers still stand.
+  const towerText = document.createElement('div')
+  towerText.style.cssText =
+    'position:absolute;top:30px;right:10px;font-size:12px;color:#fff;text-shadow:0 0 3px #000;' +
+    'text-align:right'
+  root.appendChild(towerText)
+
   // Respawn countdown — shown only while Wando's crash sequence is grounded.
   const countdown = document.createElement('div')
   countdown.style.cssText =
@@ -76,6 +83,15 @@ export function createHud(container) {
     'background:#1a2230;border:3px solid #ff5a5a;color:#fff;font-size:28px;' +
     'pointer-events:auto;cursor:pointer'
   root.appendChild(fireBtn)
+
+  // Bomb — a second special action distinct from Guard Up and manual fire.
+  const bombBtn = document.createElement('button')
+  bombBtn.textContent = '\u{1F4A3}'
+  bombBtn.style.cssText =
+    'position:absolute;right:188px;bottom:20px;width:70px;height:70px;border-radius:50%;' +
+    'background:#1a2230;border:3px solid #ffa03c;color:#fff;font-size:28px;' +
+    'pointer-events:auto;cursor:pointer'
+  root.appendChild(bombBtn)
 
   // Gyroscope instrument — a cockpit artificial-horizon ball (pitch, as a
   // vertical sky/ground split) plus a rotating heading marker (yaw). Added
@@ -127,6 +143,7 @@ export function createHud(container) {
   return {
     abilityButton: abilityBtn,
     fireButton: fireBtn,
+    bombButton: bombBtn,
     restartButton: restartBtn,
     setWandoHp(frac) {
       wandoFill.style.width = `${Math.max(0, frac) * 100}%`
@@ -145,6 +162,13 @@ export function createHud(container) {
     setFireCooldown(frac) {
       const pct = Math.round(frac * 100)
       fireBtn.style.background = `conic-gradient(rgba(0,0,0,0.75) ${pct}%, #1a2230 ${pct}%)`
+    },
+    setBombCooldown(frac) {
+      const pct = Math.round(frac * 100)
+      bombBtn.style.background = `conic-gradient(rgba(0,0,0,0.75) ${pct}%, #1a2230 ${pct}%)`
+    },
+    setTowerCounts(allyAlive, allyTotal, enemyAlive, enemyTotal) {
+      towerText.textContent = `\u{1F5FC} Ally ${allyAlive}/${allyTotal}  Enemy ${enemyAlive}/${enemyTotal}`
     },
     setGyro(yawRad, pitchFrac) {
       // pitchFrac: -1..1 (nose down..nose up). Nose up moves the horizon

@@ -5,7 +5,7 @@ import { Tower } from './entities/Tower.js'
 import { Stronghold } from './entities/Stronghold.js'
 import { createGround } from './visuals.js'
 import { createSteeringController } from './input.js'
-import { manualAttack } from './ai.js'
+import { manualAttack, dropBomb } from './ai.js'
 import { updateHealthBars } from './healthbar.js'
 import { createHud } from './hud.js'
 import {
@@ -18,6 +18,7 @@ import {
   PITCH_LIMIT,
   CRASH_FALL_MS,
   RESPAWN_MS,
+  BOMB_COOLDOWN_MS,
 } from './config.js'
 
 const container = document.getElementById('game-container')
@@ -122,6 +123,14 @@ window.addEventListener('keyup', (e) => {
   if (e.key === ' ' || e.key === 'Enter') firing = false
 })
 
+function tryDropBomb() {
+  if (wando.alive) dropBomb(wando, world, performance.now())
+}
+hud.bombButton.addEventListener('pointerdown', tryDropBomb)
+window.addEventListener('keydown', (e) => {
+  if (e.key.toLowerCase() === 'b') tryDropBomb()
+})
+
 const clock = new THREE.Clock()
 let matchOverShown = false
 
@@ -202,8 +211,16 @@ function animate() {
   hud.setAbilityCooldown(Math.max(0, 1 - abilityElapsed / wando.ability.cooldownMs))
   const fireElapsed = now - wando.lastAttackAt
   hud.setFireCooldown(Math.max(0, 1 - fireElapsed / wando.attackIntervalMs))
+  const bombElapsed = now - wando.lastBombAt
+  hud.setBombCooldown(Math.max(0, 1 - bombElapsed / BOMB_COOLDOWN_MS))
   hud.setGyro(wando.yaw, wando.pitch / PITCH_LIMIT)
   hud.setGold(world.gold)
+  hud.setTowerCounts(
+    world.towers.filter((t) => t.team === TEAM.ALLY && t.alive).length,
+    world.towers.filter((t) => t.team === TEAM.ALLY).length,
+    world.towers.filter((t) => t.team === TEAM.ENEMY && t.alive).length,
+    world.towers.filter((t) => t.team === TEAM.ENEMY).length
+  )
   hud.setCrosshairVisible(!crash)
   hud.setRespawnCountdown(
     crash?.phase === 'grounded' ? Math.ceil((RESPAWN_MS - (now - crash.countdownStart)) / 1000) : null

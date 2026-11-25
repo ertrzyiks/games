@@ -74,16 +74,21 @@ export const STEER_TURN_RATE = 0.9 // rad/sec at full steer deflection
 export const PITCH_LIMIT = 0.6 // radians, ~34 degrees either way
 
 // Manual fire is a straight-ahead raycast, not an angular cone: it hits
-// whatever's within this lateral distance of the exact forward line (a
+// whatever's within a lateral distance of the exact forward line (a
 // forgiving "reticle width", not pixel-perfect), never something off to the
-// side — see .scratch/wando-gogu-arts/issues/06-controls-camera.md.
+// side. The tolerance widens with distance (FIRE_RAY_TOLERANCE at point-blank
+// up to +FIRE_RAY_SPREAD per unit of range) — a fixed tolerance made hits at
+// long range require near-pixel-perfect alignment, which read as "shots do
+// nothing far away" even though they were landing fine up close — see
+// .scratch/wando-gogu-arts/issues/06-controls-camera.md.
 export const FIRE_RAY_TOLERANCE = 1.8
+export const FIRE_RAY_SPREAD = 0.12
 
 // Wando is flying a starfighter, not melee-ing on foot — override the
 // Vanguard role's melee range with laser-cannon range so manual fire is both
 // usable while constantly moving forward and visibly a projectile (see
 // effects.js: ranged vs. melee attack visuals key off attackRange).
-export const WANDO_ATTACK_RANGE = 20
+export const WANDO_ATTACK_RANGE = 36
 // Machine-gun fire rate — overrides the Vanguard role's slow melee cadence.
 export const WANDO_ATTACK_INTERVAL_MS = 150
 export const ALTITUDE_MIN = 1
@@ -94,7 +99,13 @@ export const CREEP_WAVE_SIZE = 3
 export const CREEP_WAVE_INTERVAL_MS = 15000
 export const CREEP_SPAWN_STAGGER_MS = 600
 
-export const TOWER_STATS = { hp: 700, damage: 24, attackRange: 14, attackIntervalMs: 700 }
+// Towers telegraph before firing (TOWER_AIM_MS) so a shot is dodgeable, not
+// instant — see .scratch/wando-gogu-arts/issues/04-towers-base.md. Slower,
+// harder-hitting than before: attackIntervalMs is the minimum time between
+// the *start* of one aim phase and the next, so the real cadence is roughly
+// TOWER_AIM_MS plus an idle gap, not back-to-back shots.
+export const TOWER_AIM_MS = 2000
+export const TOWER_STATS = { hp: 700, damage: 70, attackRange: 14, attackIntervalMs: 3800 }
 export const BASE_STATS = { hp: 1400, damage: 18, attackRange: 10, attackIntervalMs: 700 }
 
 // Economy — gold for destroying enemy structures/units. A placeholder for a
@@ -107,3 +118,12 @@ export const GOLD_FOR_TOWER_KILL = 100
 // RESPAWN_MS (5000ms) as the post-impact countdown so it's literally a
 // 5-second count, matching the ask.
 export const CRASH_FALL_MS = 900
+
+// Wando's bomb: a second special action (distinct from Guard Up and manual
+// fire) — drops straight down from wherever she is when triggered and
+// explodes in a radius on impact, see
+// .scratch/wando-gogu-arts/issues/06-controls-camera.md.
+export const BOMB_COOLDOWN_MS = 8000
+export const BOMB_DAMAGE = 90
+export const BOMB_RADIUS = 8
+export const BOMB_FALL_MS = 700

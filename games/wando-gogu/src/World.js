@@ -1,4 +1,4 @@
-import { aiStep, attackOnlyStep } from './ai.js'
+import { aiStep, attackOnlyStep, towerStep } from './ai.js'
 import { Creep, randomLaneX } from './entities/Creep.js'
 import { createEffectsSystem } from './effects.js'
 import { createRubbleMesh } from './visuals.js'
@@ -44,19 +44,25 @@ export class World {
     tower.onDeath = () => this._onTowerDestroyed(tower)
   }
 
-  // Stops shooting happens for free (attackOnlyStep already skips !alive
-  // units) — this just adds the visual: swap the tower out for a rubble
-  // pile instead of leaving a dead-but-still-standing tower, plus gold.
+  // Stops shooting happens for free (towerStep already skips !alive units)
+  // — this just adds the visual: swap the tower out for a rubble pile
+  // instead of leaving a dead-but-still-standing tower, plus gold.
   _onTowerDestroyed(tower) {
-    this.awardGold(tower.team, GOLD_FOR_TOWER_KILL)
+    this.awardGold(tower, GOLD_FOR_TOWER_KILL)
+    this.effects.cancelAimLine(tower) // in case it died mid-telegraph
     tower.mesh.visible = false // also hides its health-bar child
     const rubble = createRubbleMesh()
     rubble.position.copy(tower.mesh.position)
     this.scene.add(rubble)
   }
 
-  awardGold(team, amount) {
-    if (team === TEAM.ENEMY) this.gold += amount
+  // Gold only counts if the player's own hero landed the killing blow — not
+  // kills by bot allies or towers — per
+  // .scratch/wando-gogu-arts/issues/04-towers-base.md.
+  awardGold(unit, amount) {
+    if (unit.team === TEAM.ENEMY && unit.lastDamagedBy?.isPlayer) {
+      this.gold += amount
+    }
   }
 
   addStronghold(team, stronghold) {
@@ -106,7 +112,7 @@ export class World {
     }
 
     for (const tower of this.towers) {
-      attackOnlyStep(tower, this, now)
+      towerStep(tower, this, now)
     }
     for (const stronghold of Object.values(this.strongholds)) {
       attackOnlyStep(stronghold, this, now)
@@ -150,7 +156,7 @@ export class World {
   _spawnCreep(team) {
     const laneX = randomLaneX()
     const creep = new Creep(team, laneX, BASE_Z[team])
-    creep.onDeath = () => this.awardGold(creep.team, GOLD_FOR_CREEP_KILL)
+    creep.onDeath = () => this.awardGold(creep, GOLD_FOR_CREEP_KILL)
     this.creeps.push(creep)
     this.scene.add(creep.mesh)
   }

@@ -16,6 +16,7 @@ export class Unit {
     this.alive = true
     this.lastAttackAt = -Infinity
     this.target = null
+    this.lastDamagedBy = null // who most recently hit this unit — see World.awardGold
   }
 
   get position() {
@@ -32,11 +33,16 @@ export class Unit {
 
   attack(target, now) {
     this.lastAttackAt = now
-    target.takeDamage(this.damage)
+    target.takeDamage(this.damage, this)
   }
 
-  takeDamage(amount) {
+  // `attacker` is optional (e.g. nothing currently damages without one, but
+  // this stays permissive) and is recorded on every hit, not just the killing
+  // one, so by the time HP reaches 0 it already reflects whoever landed it —
+  // World.js uses this to credit gold only for the player's own kills.
+  takeDamage(amount, attacker) {
     if (!this.alive) return
+    this.lastDamagedBy = attacker
     if (this.shield > 0) {
       const absorbed = Math.min(this.shield, amount)
       this.shield -= absorbed

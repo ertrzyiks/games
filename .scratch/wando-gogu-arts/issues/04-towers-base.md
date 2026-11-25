@@ -42,7 +42,19 @@ Two additions from playing this pass:
   units — this was purely a missing visual). The original tower mesh (and its health bar) is
   hidden; a scattered 5-chunk debris group spawns at its position.
 - **A gold economy**: destroying an enemy tower or enemy creep grants the player gold (100 / 10
-  respectively) — `World.gold`, shown in the HUD. Shared/simplified, not per-kill-credit: gold
-  accrues whenever an enemy tower/creep dies, regardless of who landed the killing blow (not
-  strict last-hit MOBA economy) — this is explicitly a placeholder for a later shop, which doesn't
-  exist yet; nothing spends gold currently.
+  respectively) — `World.gold`, shown in the HUD. A placeholder for a later shop; nothing spends
+  gold currently.
+
+## 2026-11-25 — revised: last-hit only, tower telegraph + rebalance, progress HUD
+
+- **Gold now requires the player's own kill** — reversing the earlier "shared" design. A bot ally
+  finishing off an enemy creep/tower grants nothing; only a kill where `unit.lastDamagedBy` (set
+  on every hit, see `Unit.takeDamage`) is Wando counts. Classic MOBA last-hitting, not a shared
+  team economy.
+- **Towers now telegraph before firing**: on acquiring a target, a visible aim line locks onto it
+  for `TOWER_AIM_MS` (2s) before the shot actually lands — dodgeable, not instant. Rebalanced to
+  match: much higher damage per hit (24 → 70) but a far slower cycle (`attackIntervalMs` 700ms →
+  3800ms, counted from the start of one aim phase to the next). A cancelled aim (target died or
+  left range) can retry immediately, no penalty.
+- **Tower progress is now shown in the HUD** — a small "🗼 Ally x/y  Enemy x/y" readout of towers
+  still standing per side.
