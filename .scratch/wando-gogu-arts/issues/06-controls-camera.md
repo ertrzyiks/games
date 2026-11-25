@@ -88,8 +88,33 @@ heroes are unaffected, still an instant blink.
   staying a flat lateral distance — a flat tolerance meant hits at long range needed near-perfect
   alignment, which read as "shots do nothing far away" even though up-close hits worked fine.
 - **A second special action: a bomb.** Distinct from Guard Up and manual fire, its own button and
-  cooldown (`BOMB_COOLDOWN_MS`, 8s) and the 'B' key. Drops straight down from wherever Wando is
-  when triggered, falls for `BOMB_FALL_MS` (700ms), then explodes for heavy AoE damage
-  (`BOMB_DAMAGE`/`BOMB_RADIUS`) to any enemy unit in range on impact — including towers/bases, so
+  cooldown (8s) and the 'B' key. Drops straight down from wherever Wando is when triggered, then
+  explodes for heavy AoE damage to any enemy unit in range on impact — including towers/bases, so
   it's also a legitimate siege tool.
 - **Space/Enter now also fire**, mirroring the on-screen button, for desktop dev/testing.
+
+## 2026-11-25 — revised: bomb became a rocket, third-person camera, a turbo action
+
+More feedback after playing: the straight-down bomb drop was invisible in practice — it fell
+straight down from Wando's position while she kept flying forward, so by the time it landed it was
+already behind the camera's view and she never actually saw it land. Several related changes:
+
+- **The bomb is now a rocket**: same special action and cooldown (key '1'), but it fires straight
+  ahead along the exact same forward line as the gun (`ai.js`'s `fireRocket`, reusing the gun's
+  forward-ray hit detection with a wider, more forgiving tolerance for a bigger projectile), as one
+  slower, larger projectile (a cone oriented along its flight path, not a small bullet) that
+  explodes in a radius wherever it lands — on a direct hit, or at max range if nothing was hit. It
+  stays in view the whole time since it travels the same direction the player is looking.
+- **Camera is now third-person**, not cockpit: positioned behind and above Wando so the whole ship
+  is visible, replacing the first-person view from two revisions ago. Her mesh — previously always
+  hidden — is now always visible during normal flight, and oriented to face her actual travel
+  direction each frame so she reads as flying rather than sliding. The crosshair stays (still a
+  reasonable approximation of the firing line from a trailing chase camera) but is necessarily less
+  exact than it was in true first-person.
+- **A second special action: turbo.** Its own button (key '2', next to the gyro) and a 10-second
+  cooldown — a flat 1.8x speed multiplier for 3 seconds on activation
+  (`TURBO_DURATION_MS`/`TURBO_SPEED_MULTIPLIER`/`TURBO_COOLDOWN_MS`).
+- **Fixed a bug introduced alongside the rocket's cooldown-wipe visual**: the action buttons'
+  negative-offset key-shortcut badges were being clipped by `overflow:hidden` on the button, which
+  had been added (unnecessarily) to keep the cooldown mask circular — the mask's own border-radius
+  already clips its own background with no overflow needed on the parent at all.

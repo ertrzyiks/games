@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { TEAM, BOMB_FALL_MS } from './config.js'
+import { TEAM, ROCKET_SPEED } from './config.js'
 
 // Shared, module-level geometry/materials — with a machine-gun fire rate
 // and potentially dozens of units attacking at once, allocating a fresh
@@ -13,11 +13,12 @@ const PROJECTILE_MATERIAL = {
   [TEAM.ENEMY]: new THREE.MeshBasicMaterial({ color: 0xffcdbf }),
 }
 
-const BOMB_GEOMETRY = new THREE.SphereGeometry(0.4, 8, 6)
-const BOMB_MATERIAL = {
-  [TEAM.ALLY]: new THREE.MeshStandardMaterial({ color: 0x2a2a2a }),
-  [TEAM.ENEMY]: new THREE.MeshStandardMaterial({ color: 0x2a2a2a }),
-}
+// A cone, not a sphere — oriented to point along its travel direction so it
+// visibly reads as a fired projectile, not a dropped object. Bigger and
+// slower than the gun's bullets (ROCKET_SPEED vs. the bullets' fixed
+// 120ms-regardless-of-distance), so it's clearly a heavier single shot.
+const ROCKET_GEOMETRY = new THREE.ConeGeometry(0.22, 0.9, 8)
+const ROCKET_MATERIAL = new THREE.MeshStandardMaterial({ color: 0xff6a00 })
 
 const AIM_LINE_MATERIAL = new THREE.LineBasicMaterial({ color: 0xff3b1f })
 
@@ -28,7 +29,7 @@ const AIM_LINE_MATERIAL = new THREE.LineBasicMaterial({ color: 0xff3b1f })
 export function createEffectsSystem(scene) {
   const projectiles = []
   const flashes = []
-  const bombs = []
+  const rockets = []
   const explosions = []
 
   function triggerAttackEffect(attacker, target) {
@@ -65,15 +66,20 @@ export function createEffectsSystem(scene) {
     flashes.push({ unit: target, until: performance.now() + 120 })
   }
 
-  // Wando's bomb (see ai.js's dropBomb): falls straight down from the drop
-  // point to the ground, then calls onImpact (AoE damage) and shows a brief
-  // expanding/fading burst.
-  function dropBomb(dropPoint, team, onImpact) {
-    const mesh = new THREE.Mesh(BOMB_GEOMETRY, BOMB_MATERIAL[team])
-    mesh.position.copy(dropPoint)
+  // Wando's rocket (see ai.js's fireRocket): travels forward from her
+  // position to the impact point at ROCKET_SPEED (so, unlike a bullet, it's
+  // slow enough to actually see in flight), then calls onImpact (AoE
+  // damage) and shows a brief expanding/fading burst.
+  function fireRocket(attacker, impactPoint, onImpact) {
+    const from = new THREE.Vector3(attacker.position.x, attacker.mesh.position.y, attacker.position.z)
+    const mesh = new THREE.Mesh(ROCKET_GEOMETRY, ROCKET_MATERIAL)
+    mesh.position.copy(from)
+    const direction = impactPoint.clone().sub(from).normalize()
+    mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction)
     scene.add(mesh)
-    const to = new THREE.Vector3(dropPoint.x, 0.3, dropPoint.z)
-    bombs.push({ mesh, from: dropPoint.clone(), to, start: performance.now(), duration: BOMB_FALL_MS, onImpact })
+    const distance = from.distanceTo(impactPoint)
+    const duration = Math.max(120, (distance / ROCKET_SPEED) * 1000)
+    rockets.push({ mesh, from, to: impactPoint.clone(), start: performance.now(), duration, onImpact })
   }
 
   function spawnExplosion(point) {
@@ -132,17 +138,17 @@ export function createEffectsSystem(scene) {
       }
     }
 
-    for (let i = bombs.length - 1; i >= 0; i--) {
-      const b = bombs[i]
-      const t = Math.min(1, (now - b.start) / b.duration)
-      b.mesh.position.lerpVectors(b.from, b.to, t)
+    for (let i = rockets.length - 1; i >= 0; i--) {
+      const r = rockets[i]
+      const t = Math.min(1, (now - r.start) / r.duration)
+      r.mesh.position.lerpVectors(r.from, r.to, t)
       if (t >= 1) {
-        scene.remove(b.mesh)
-        // BOMB_GEOMETRY/BOMB_MATERIAL are shared singletons, like the
+        scene.remove(r.mesh)
+        // ROCKET_GEOMETRY/ROCKET_MATERIAL are shared singletons, like the
         // projectile ones — never dispose them here.
-        spawnExplosion(b.to)
-        b.onImpact()
-        bombs.splice(i, 1)
+        spawnExplosion(r.to)
+        r.onImpact()
+        rockets.splice(i, 1)
       }
     }
 
@@ -164,7 +170,7 @@ export function createEffectsSystem(scene) {
   return {
     triggerAttackEffect,
     triggerStraightShot,
-    dropBomb,
+    fireRocket,
     startAimLine,
     updateAimLine,
     cancelAimLine,

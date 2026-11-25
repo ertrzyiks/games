@@ -90,39 +90,72 @@ export function createHud(container) {
     'pointer-events:auto;cursor:pointer'
   root.appendChild(fireBtn)
 
-  // Bomb — a second special action distinct from Guard Up and manual fire.
-  // Centered (not clustered with ability/fire) since it's the headline
-  // special action; labeled with its '1' key shortcut. The cooldown is a
-  // dedicated overlay layer (not the button's own background) so the icon
-  // stays put and legible underneath a clock-wipe mask, dimmed while on
-  // cooldown — see .scratch/wando-gogu-arts/issues/06-controls-camera.md.
-  const bombBtn = document.createElement('button')
-  bombBtn.style.cssText =
-    'position:absolute;left:50%;bottom:20px;transform:translateX(-50%);width:70px;height:70px;' +
-    'border-radius:50%;background:#1a2230;border:3px solid #ffa03c;color:#fff;' +
-    'pointer-events:auto;cursor:pointer;overflow:hidden'
+  // Special-action buttons (rocket, turbo): icon + a dedicated cooldown
+  // overlay layer (not the button's own background, so the icon stays put
+  // and legible underneath a clock-wipe mask) + a key-shortcut badge. The
+  // badge sits partially outside the button's own box (negative offset), so
+  // the button must NOT have overflow:hidden — the mask already clips
+  // itself to a circle via its own border-radius, no clipping container
+  // needed, and one very nearly clipped the badge off entirely before.
+  function makeActionButton({ xCss, icon, borderColor, keyLabel }) {
+    const btn = document.createElement('button')
+    btn.style.cssText =
+      `position:absolute;${xCss};bottom:20px;width:70px;height:70px;border-radius:50%;` +
+      `background:#1a2230;border:3px solid ${borderColor};color:#fff;pointer-events:auto;cursor:pointer`
 
-  const bombIcon = document.createElement('span')
-  bombIcon.textContent = '\u{1F4A3}'
-  bombIcon.style.cssText =
-    'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;' +
-    'font-size:28px;transition:filter 150ms,opacity 150ms'
-  bombBtn.appendChild(bombIcon)
+    const iconEl = document.createElement('span')
+    iconEl.textContent = icon
+    iconEl.style.cssText =
+      'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;' +
+      'font-size:28px;transition:filter 150ms,opacity 150ms'
+    btn.appendChild(iconEl)
 
-  // The clock-wipe: a dark pie slice whose angle shrinks from a full circle
-  // (just used) back to nothing (ready) as the cooldown elapses.
-  const bombCooldownMask = document.createElement('div')
-  bombCooldownMask.style.cssText = 'position:absolute;inset:0;border-radius:50%'
-  bombBtn.appendChild(bombCooldownMask)
+    // The clock-wipe: a dark pie slice whose angle shrinks from a full
+    // circle (just used) back to nothing (ready) as cooldown elapses.
+    const mask = document.createElement('div')
+    mask.style.cssText = 'position:absolute;inset:0;border-radius:50%'
+    btn.appendChild(mask)
 
-  const bombKeyLabel = document.createElement('span')
-  bombKeyLabel.textContent = '1'
-  bombKeyLabel.style.cssText =
-    'position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;' +
-    'background:#ffa03c;color:#1a2230;font-size:12px;font-weight:bold;line-height:20px;' +
-    'text-align:center;box-shadow:0 0 2px #000'
-  bombBtn.appendChild(bombKeyLabel)
-  root.appendChild(bombBtn)
+    const label = document.createElement('span')
+    label.textContent = keyLabel
+    label.style.cssText =
+      `position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;` +
+      `background:${borderColor};color:#1a2230;font-size:12px;font-weight:bold;line-height:20px;` +
+      'text-align:center;box-shadow:0 0 2px #000'
+    btn.appendChild(label)
+
+    root.appendChild(btn)
+
+    return {
+      button: btn,
+      setCooldown(frac) {
+        const pct = Math.round(frac * 100)
+        mask.style.background = `conic-gradient(rgba(0,0,0,0.78) ${pct}%, transparent ${pct}%)`
+        iconEl.style.filter = frac > 0 ? 'grayscale(1) brightness(0.65)' : 'none'
+        iconEl.style.opacity = frac > 0 ? '0.6' : '1'
+      },
+    }
+  }
+
+  // Rocket — centered (not clustered with ability/fire) since it's the
+  // headline special action. Fires forward like the gun (see
+  // ai.js's fireRocket) rather than the original straight-down bomb, which
+  // fell behind Wando as she kept flying and was never actually seen.
+  const rocket = makeActionButton({
+    xCss: 'left:50%;transform:translateX(-50%)',
+    icon: '\u{1F680}',
+    borderColor: '#ffa03c',
+    keyLabel: '1',
+  })
+
+  // Turbo — a temporary speed boost, the other special action. Placed
+  // symmetrically to fire/ability but on the left, next to the gyro.
+  const turbo = makeActionButton({
+    xCss: 'left:104px',
+    icon: '⚡',
+    borderColor: '#7cffb2',
+    keyLabel: '2',
+  })
 
   // Hit marker — a brief flash next to the crosshair confirming a shot
   // actually landed, since the crosshair alone gives no feedback on a hit.
@@ -189,7 +222,8 @@ export function createHud(container) {
   return {
     abilityButton: abilityBtn,
     fireButton: fireBtn,
-    bombButton: bombBtn,
+    rocketButton: rocket.button,
+    turboButton: turbo.button,
     restartButton: restartBtn,
     setWandoHp(frac) {
       wandoFill.style.width = `${Math.max(0, frac) * 100}%`
@@ -209,13 +243,12 @@ export function createHud(container) {
       const pct = Math.round(frac * 100)
       fireBtn.style.background = `conic-gradient(rgba(0,0,0,0.75) ${pct}%, #1a2230 ${pct}%)`
     },
-    setBombCooldown(frac) {
-      // frac: 1 = just used (fully masked/dimmed), 0 = ready. The mask is a
-      // dark pie slice that shrinks away clockwise from a full circle.
-      const pct = Math.round(frac * 100)
-      bombCooldownMask.style.background = `conic-gradient(rgba(0,0,0,0.78) ${pct}%, transparent ${pct}%)`
-      bombIcon.style.filter = frac > 0 ? 'grayscale(1) brightness(0.65)' : 'none'
-      bombIcon.style.opacity = frac > 0 ? '0.6' : '1'
+    // frac: 1 = just used (fully masked/dimmed), 0 = ready.
+    setRocketCooldown(frac) {
+      rocket.setCooldown(frac)
+    },
+    setTurboCooldown(frac) {
+      turbo.setCooldown(frac)
     },
     setTowerCounts(allyAlive, allyTotal, enemyAlive, enemyTotal) {
       towerText.textContent = `\u{1F5FC} Ally ${allyAlive}/${allyTotal}  Enemy ${enemyAlive}/${enemyTotal}`

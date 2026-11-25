@@ -1,12 +1,14 @@
-import * as THREE from 'three'
 import {
   AGGRO_RADIUS,
   FIRE_RAY_TOLERANCE,
   FIRE_RAY_SPREAD,
   TOWER_AIM_MS,
-  BOMB_COOLDOWN_MS,
-  BOMB_DAMAGE,
-  BOMB_RADIUS,
+  ROCKET_COOLDOWN_MS,
+  ROCKET_DAMAGE,
+  ROCKET_RADIUS,
+  ROCKET_EXTRA_TOLERANCE,
+  TURBO_DURATION_MS,
+  TURBO_COOLDOWN_MS,
   otherTeam,
 } from './config.js'
 
@@ -20,7 +22,7 @@ export function aiStep(unit, world, now, dt) {
   if (!unit.alive) return
 
   if (unit.kind === 'hero' && unit.isPlayer) {
-    unit.flyForward(dt)
+    unit.flyForward(dt, now)
     return
   }
 
@@ -82,8 +84,10 @@ export function manualAttack(unit, world, now) {
 // Tolerance widens with distance (FIRE_RAY_TOLERANCE near, +FIRE_RAY_SPREAD
 // per unit of range) — a flat tolerance made long-range hits require
 // near-pixel-perfect alignment, which read as "shots do nothing far away."
+// `extraTolerance` lets a bigger projectile (the rocket) be more forgiving
+// than the gun without duplicating this whole scan.
 // Returns { target, forwardDist } or null.
-function findForwardTarget(unit, world) {
+function findForwardTarget(unit, world, extraTolerance = 0) {
   const forward = unit.getForwardVector()
   let best = null
   let bestForwardDist = unit.attackRange
@@ -93,7 +97,7 @@ function findForwardTarget(unit, world) {
     const forwardDist = toOther.dot(forward) // how far along the ray
     if (forwardDist <= 0 || forwardDist > bestForwardDist) continue
     const lateralDist = toOther.addScaledVector(forward, -forwardDist).length() // perpendicular offset
-    const tolerance = FIRE_RAY_TOLERANCE + forwardDist * FIRE_RAY_SPREAD
+    const tolerance = FIRE_RAY_TOLERANCE + forwardDist * FIRE_RAY_SPREAD + extraTolerance
     if (lateralDist > tolerance) continue
     best = { target: other, forwardDist }
     bestForwardDist = forwardDist
@@ -101,21 +105,38 @@ function findForwardTarget(unit, world) {
   return best
 }
 
-// Wando's bomb — a second special action, distinct from manual fire and
-// Guard Up. Drops straight down from wherever she is when triggered;
-// effects.js animates the fall and calls back here on impact to apply AoE
-// damage. Returns true if it actually dropped (false if on cooldown).
-export function dropBomb(unit, world, now) {
-  if (!unit.alive || now - unit.lastBombAt < BOMB_COOLDOWN_MS) return false
-  unit.lastBombAt = now
-  const dropPoint = unit.position.clone()
+// Wando's rocket — a special action, distinct from manual fire and Guard
+// Up. Fires straight ahead along the same forward line as the gun (so it
+// stays visible in view, unlike the original straight-down bomb drop,
+// which fell behind her as she kept flying forward and was never actually
+// seen) as one bigger, slower, more forgiving-to-aim projectile. Explodes
+// in a radius wherever it lands — on a direct hit's position, or at max
+// range if nothing was hit. Returns true if it actually fired (false if on
+// cooldown).
+export function fireRocket(unit, world, now) {
+  if (!unit.alive || now - unit.lastRocketAt < ROCKET_COOLDOWN_MS) return false
+  unit.lastRocketAt = now
+
+  const forward = unit.getForwardVector()
+  const hit = findForwardTarget(unit, world, ROCKET_EXTRA_TOLERANCE)
+  const travelDistance = hit ? hit.forwardDist : unit.attackRange
+  const impactPoint = unit.position.clone().addScaledVector(forward, travelDistance)
   const enemyTeam = otherTeam(unit.team)
-  world.effects.dropBomb(dropPoint, unit.team, () => {
-    const impactPoint = new THREE.Vector3(dropPoint.x, 0, dropPoint.z)
-    world.unitsInRadius(impactPoint, BOMB_RADIUS, enemyTeam).forEach((target) => {
-      target.takeDamage(BOMB_DAMAGE, unit)
+
+  world.effects.fireRocket(unit, impactPoint, () => {
+    world.unitsInRadius(impactPoint, ROCKET_RADIUS, enemyTeam).forEach((target) => {
+      target.takeDamage(ROCKET_DAMAGE, unit)
     })
   })
+  return true
+}
+
+// Wando's other special action: a temporary speed boost. Returns true if it
+// actually activated (false if on cooldown).
+export function activateTurbo(unit, now) {
+  if (!unit.alive || now - unit.lastTurboAt < TURBO_COOLDOWN_MS) return false
+  unit.lastTurboAt = now
+  unit.turboUntil = now + TURBO_DURATION_MS
   return true
 }
 

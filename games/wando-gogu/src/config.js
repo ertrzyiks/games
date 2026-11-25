@@ -119,11 +119,22 @@ export const GOLD_FOR_TOWER_KILL = 100
 // 5-second count, matching the ask.
 export const CRASH_FALL_MS = 900
 
-// Wando's bomb: a second special action (distinct from Guard Up and manual
-// fire) — drops straight down from wherever she is when triggered and
-// explodes in a radius on impact, see
-// .scratch/wando-gogu-arts/issues/06-controls-camera.md.
-export const BOMB_COOLDOWN_MS = 8000
-export const BOMB_DAMAGE = 90
-export const BOMB_RADIUS = 8
-export const BOMB_FALL_MS = 700
+// Wando's rocket: a special action distinct from Guard Up and manual fire —
+// fires straight ahead along the same forward line as the gun (so it's
+// always visible in view, unlike the original straight-down bomb, which
+// fell behind her as she kept flying forward and was never actually seen),
+// but as a single bigger/slower projectile that explodes in a radius
+// wherever it lands — see .scratch/wando-gogu-arts/issues/06-controls-camera.md.
+export const ROCKET_COOLDOWN_MS = 8000
+export const ROCKET_DAMAGE = 90
+export const ROCKET_RADIUS = 8
+export const ROCKET_SPEED = 26 // units/sec — slower than bullets, so it's visibly a projectile in flight
+// Rocket hit detection reuses the gun's forward-ray check but more
+// forgiving (a bigger projectile should be easier to land), hence the
+// larger added tolerance on top of the gun's own FIRE_RAY_TOLERANCE/SPREAD.
+export const ROCKET_EXTRA_TOLERANCE = 2.5
+
+// Wando's second special action: a temporary speed boost.
+export const TURBO_DURATION_MS = 3000
+export const TURBO_SPEED_MULTIPLIER = 1.8
+export const TURBO_COOLDOWN_MS = 10000

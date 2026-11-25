@@ -16,6 +16,7 @@ import {
   ALTITUDE_MAX,
   LANE_HALF,
   LANE_WIDTH,
+  TURBO_SPEED_MULTIPLIER,
 } from '../config.js'
 import { createHeroMesh } from '../visuals.js'
 import { attachHealthBar } from '../healthbar.js'
@@ -50,14 +51,16 @@ export class Hero extends Unit {
       this.attackRange = WANDO_ATTACK_RANGE
       this.attackIntervalMs = WANDO_ATTACK_INTERVAL_MS
     } else {
-      // Wando's own mesh is invisible (first-person cockpit view) — a
-      // floating bar over nothing would look like it belongs to no one.
+      // Wando already has a dedicated HP bar in the HUD.
       attachHealthBar(this, 1.6)
     }
     this.spawnPoint = new THREE.Vector3(spawnX, mesh.position.y, spawnZ)
     this.ability = HERO_ABILITY[role]
     this.lastAbilityAt = -Infinity
-    this.lastBombAt = -Infinity // only meaningful for the player's hero, see ai.js's dropBomb
+    // Only meaningful for the player's hero (see ai.js's fireRocket/activateTurbo).
+    this.lastRocketAt = -Infinity
+    this.lastTurboAt = -Infinity
+    this.turboUntil = 0
     this.deadUntil = 0
 
     // Piloting state — only meaningful for the player's hero (Wando), but
@@ -81,12 +84,13 @@ export class Hero extends Unit {
   // reverses. Pitch/yaw hold wherever you leave them (pure trim — releasing
   // the stick does not level the ship out), per the 2026-11-25 correction in
   // .scratch/wando-gogu-arts/issues/06-controls-camera.md.
-  flyForward(dt) {
+  flyForward(dt, now) {
     this.yaw += this.steer.x * STEER_TURN_RATE * dt
     this.pitch = clamp(this.pitch + this.steer.y * STEER_TURN_RATE * dt, -PITCH_LIMIT, PITCH_LIMIT)
 
+    const speed = now < this.turboUntil ? this.speed * TURBO_SPEED_MULTIPLIER : this.speed
     const forward = this.getForwardVector()
-    this.mesh.position.addScaledVector(forward, this.speed * dt)
+    this.mesh.position.addScaledVector(forward, speed * dt)
 
     const clampX = LANE_WIDTH * 3
     const clampZ = LANE_HALF * 1.1
@@ -148,6 +152,7 @@ export class Hero extends Unit {
     this.mesh.position.set(this.spawnPoint.x, this.spawnPoint.y, this.spawnPoint.z)
     this.yaw = this.team === TEAM.ALLY ? 0 : Math.PI
     this.pitch = 0
+    this.turboUntil = 0
     this.lastAttackAt = now
     this.lastAbilityAt = now
   }
