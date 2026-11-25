@@ -45,6 +45,10 @@ jobs:
           for game_dir in games/*/; do
             game=$(basename "$game_dir")
             case "$game" in
+              _*)
+                # Non-game folders (e.g. _wayfinder-research: notes only, no build)
+                continue
+                ;;
               starforged-wiki)
                 dest="_site/starforged/wiki"
                 ;;
