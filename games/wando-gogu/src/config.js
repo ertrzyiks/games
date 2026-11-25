@@ -91,6 +91,16 @@ export const FIRE_RAY_SPREAD = 0.12
 export const WANDO_ATTACK_RANGE = 36
 // Machine-gun fire rate — overrides the Vanguard role's slow melee cadence.
 export const WANDO_ATTACK_INTERVAL_MS = 150
+// More per-shot damage than the generic Vanguard stat, and a dedicated twin
+// parallel stream instead of a single shot — see ai.js's manualAttack.
+export const WANDO_DAMAGE = 24
+// Wide enough to clearly read as left/right wingtip cannons (an X-wing
+// silhouette), not just barely-split center fire — Wando's own hull is
+// ~1.4 units wide, so this noticeably clears it on each side.
+export const WANDO_STREAM_OFFSET = 1.1
+// Faster than the generic Vanguard bot speed — she's the player's ship, not
+// a ground-based mirror-match hero.
+export const WANDO_SPEED = 10
 export const ALTITUDE_MIN = 1
 export const ALTITUDE_MAX = 28
 

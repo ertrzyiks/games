@@ -142,3 +142,16 @@ three corrections, in order:
    trade-off for the crosshair always being exactly right, which is what was asked for. The
    convergence-distance tuning from attempt 2 was removed as dead weight; the camera can now look
    anywhere without affecting accuracy at all.
+
+## 2026-11-25 — Wando buffed: faster, harder-hitting, twin wingtip cannons
+
+- **Speed increased** (`WANDO_SPEED`, 7 → 10) — a dedicated override, distinct from the generic
+  Vanguard bot speed other Vanguards still use.
+- **Damage increased** (`WANDO_DAMAGE`, 16 → 24 per stream) — also a dedicated override.
+- **Manual fire is now a twin parallel stream**, not a single shot: `ai.js`'s `manualAttack` runs
+  two independent hit-checks offset left/right of the aim ray by `WANDO_STREAM_OFFSET` (1.1 units),
+  each able to land its own hit — a target within tolerance of both streams takes double damage in
+  one trigger pull. Visually the two bullets originate from Wando's own left/right wingtips (an
+  X-wing silhouette), not dead-center, while hit-detection still rides the camera-ray cheat
+  (offset the same way, just from the camera's ray instead of the ship's position) so each stream
+  independently stays exactly where its half of the crosshair-area points.

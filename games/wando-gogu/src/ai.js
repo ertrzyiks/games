@@ -1,3 +1,4 @@
+import * as THREE from 'three'
 import {
   AGGRO_RADIUS,
   FIRE_RAY_TOLERANCE,
@@ -9,8 +10,11 @@ import {
   ROCKET_EXTRA_TOLERANCE,
   TURBO_DURATION_MS,
   TURBO_COOLDOWN_MS,
+  WANDO_STREAM_OFFSET,
   otherTeam,
 } from './config.js'
+
+const WORLD_UP = new THREE.Vector3(0, 1, 0)
 
 // One shared behavior loop for creeps and bot heroes: chase the nearest
 // enemy, attack automatically once in range, else advance — see
@@ -68,22 +72,39 @@ export function attackOnlyStep(unit, world, now) {
 // converge) — see .scratch/wando-gogu-arts/issues/06-controls-camera.md for
 // the two correction attempts before this one. Firing from the camera's own
 // ray makes the two identical by construction. Falls back to her own
-// forward vector if no aimRay is given. Returns the target it hit, or null
-// on a miss/cooldown.
+// forward vector if no aimRay is given.
+//
+// Fires as a twin parallel stream (two independent hit-checks, offset left
+// and right of the aim ray by WANDO_STREAM_OFFSET), not a single shot — each
+// stream can land its own hit, so a target that's hit by both takes double
+// damage. Returns whichever target was hit (if any), or null on a total
+// miss/cooldown.
 export function manualAttack(unit, world, now, aimRay) {
   if (!unit.alive || !unit.canAttack(now)) return null
   unit.lastAttackAt = now
 
-  const origin = aimRay ? aimRay.origin : unit.position
+  const baseOrigin = aimRay ? aimRay.origin : unit.position
   const forward = aimRay ? aimRay.direction : unit.getForwardVector()
-  const hit = findForwardTarget(unit, world, 0, aimRay)
-  const shotDistance = hit ? hit.forwardDist : unit.attackRange
-  const endpoint = origin.clone().addScaledVector(forward, shotDistance)
-  world.effects.triggerStraightShot(unit, endpoint)
+  const right = new THREE.Vector3().crossVectors(forward, WORLD_UP).normalize()
 
-  if (!hit) return null
-  hit.target.takeDamage(unit.damage, unit)
-  return hit.target
+  let hitTarget = null
+  for (const side of [-1, 1]) {
+    const streamOrigin = baseOrigin.clone().addScaledVector(right, side * WANDO_STREAM_OFFSET)
+    const streamRay = { origin: streamOrigin, direction: forward }
+    const hit = findForwardTarget(unit, world, 0, streamRay)
+    const shotDistance = hit ? hit.forwardDist : unit.attackRange
+    const endpoint = streamOrigin.clone().addScaledVector(forward, shotDistance)
+    // Visual origin stays anchored to Wando's own ship (offset the same way,
+    // just relative to her position instead of the camera's) so the twin
+    // streams visibly come from her, not from the camera overhead.
+    const visualOrigin = unit.position.clone().addScaledVector(right, side * WANDO_STREAM_OFFSET)
+    world.effects.triggerStraightShot(unit, endpoint, visualOrigin)
+    if (hit) {
+      hit.target.takeDamage(unit.damage, unit)
+      hitTarget = hit.target
+    }
+  }
+  return hitTarget
 }
 
 // Hit detection only (never changes the shot's direction): the nearest

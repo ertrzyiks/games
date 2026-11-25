@@ -43,18 +43,21 @@ export function createEffectsSystem(scene) {
   // Wando's manual fire (see ai.js's manualAttack): always a straight shot
   // along her exact forward line to the given endpoint — never bent toward
   // a target, so there's no auto-aim, matching a fixed forward-firing gun.
-  function triggerStraightShot(attacker, endpoint) {
-    spawnProjectileTo(attacker, endpoint)
+  // `fromOverride` lets the twin wingtip streams visually originate left/
+  // right of her center instead of dead-center.
+  function triggerStraightShot(attacker, endpoint, fromOverride) {
+    spawnProjectileTo(attacker, endpoint, fromOverride)
   }
 
-  function spawnProjectileTo(attacker, targetPoint) {
+  function spawnProjectileTo(attacker, targetPoint, fromOverride) {
     const mesh = new THREE.Mesh(PROJECTILE_GEOMETRY, PROJECTILE_MATERIAL[attacker.team])
     // Use each end's own height — forcing both ends flat (a leftover from
     // when every shot was ground-to-ground) is exactly what made Wando's
     // shots fire level regardless of her pitch: her endpoint's Y (computed
     // correctly in ai.js's manualAttack from her actual forward vector) was
     // being discarded here.
-    const from = new THREE.Vector3(attacker.position.x, attacker.mesh.position.y + 0.5, attacker.position.z)
+    const fromSource = fromOverride || attacker.position
+    const from = new THREE.Vector3(fromSource.x, attacker.mesh.position.y + 0.5, fromSource.z)
     const to = new THREE.Vector3(targetPoint.x, targetPoint.y, targetPoint.z)
     mesh.position.copy(from)
     scene.add(mesh)

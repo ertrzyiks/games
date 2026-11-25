@@ -12,6 +12,8 @@ import {
   PITCH_LIMIT,
   WANDO_ATTACK_RANGE,
   WANDO_ATTACK_INTERVAL_MS,
+  WANDO_DAMAGE,
+  WANDO_SPEED,
   ALTITUDE_MIN,
   ALTITUDE_MAX,
   LANE_HALF,
@@ -50,6 +52,8 @@ export class Hero extends Unit {
     if (isPlayer) {
       this.attackRange = WANDO_ATTACK_RANGE
       this.attackIntervalMs = WANDO_ATTACK_INTERVAL_MS
+      this.damage = WANDO_DAMAGE
+      this.speed = WANDO_SPEED
     } else {
       // Wando already has a dedicated HP bar in the HUD.
       attachHealthBar(this, 1.6)
