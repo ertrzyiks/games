@@ -53,6 +53,12 @@ export function createHud(container) {
     'text-shadow:0 0 3px #000'
   root.appendChild(goldText)
 
+  // Floating "+N" gold-gain popups spawn here and animate themselves away —
+  // see spawnGoldGain below.
+  const goldPopupLayer = document.createElement('div')
+  goldPopupLayer.style.cssText = 'position:absolute;top:10px;right:10px'
+  root.appendChild(goldPopupLayer)
+
   // Tower progress — how many of each side's towers still stand.
   const towerText = document.createElement('div')
   towerText.style.cssText =
@@ -86,13 +92,29 @@ export function createHud(container) {
 
   // Bomb — a second special action distinct from Guard Up and manual fire.
   // Centered (not clustered with ability/fire) since it's the headline
-  // special action; labeled with its '1' key shortcut.
+  // special action; labeled with its '1' key shortcut. The cooldown is a
+  // dedicated overlay layer (not the button's own background) so the icon
+  // stays put and legible underneath a clock-wipe mask, dimmed while on
+  // cooldown — see .scratch/wando-gogu-arts/issues/06-controls-camera.md.
   const bombBtn = document.createElement('button')
-  bombBtn.textContent = '\u{1F4A3}'
   bombBtn.style.cssText =
     'position:absolute;left:50%;bottom:20px;transform:translateX(-50%);width:70px;height:70px;' +
-    'border-radius:50%;background:#1a2230;border:3px solid #ffa03c;color:#fff;font-size:28px;' +
-    'pointer-events:auto;cursor:pointer'
+    'border-radius:50%;background:#1a2230;border:3px solid #ffa03c;color:#fff;' +
+    'pointer-events:auto;cursor:pointer;overflow:hidden'
+
+  const bombIcon = document.createElement('span')
+  bombIcon.textContent = '\u{1F4A3}'
+  bombIcon.style.cssText =
+    'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;' +
+    'font-size:28px;transition:filter 150ms,opacity 150ms'
+  bombBtn.appendChild(bombIcon)
+
+  // The clock-wipe: a dark pie slice whose angle shrinks from a full circle
+  // (just used) back to nothing (ready) as the cooldown elapses.
+  const bombCooldownMask = document.createElement('div')
+  bombCooldownMask.style.cssText = 'position:absolute;inset:0;border-radius:50%'
+  bombBtn.appendChild(bombCooldownMask)
+
   const bombKeyLabel = document.createElement('span')
   bombKeyLabel.textContent = '1'
   bombKeyLabel.style.cssText =
@@ -101,6 +123,21 @@ export function createHud(container) {
     'text-align:center;box-shadow:0 0 2px #000'
   bombBtn.appendChild(bombKeyLabel)
   root.appendChild(bombBtn)
+
+  // Hit marker — a brief flash next to the crosshair confirming a shot
+  // actually landed, since the crosshair alone gives no feedback on a hit.
+  const hitMarker = document.createElement('div')
+  hitMarker.style.cssText =
+    'position:absolute;left:50%;top:50%;width:30px;height:30px;' +
+    'transform:translate(-50%,-50%) scale(0.5);opacity:0;pointer-events:none;' +
+    'transition:transform 180ms ease-out,opacity 220ms ease-out'
+  hitMarker.innerHTML =
+    '<div style="position:absolute;left:4px;top:4px;width:9px;height:2px;background:#ffcc33;transform:rotate(45deg)"></div>' +
+    '<div style="position:absolute;right:4px;top:4px;width:9px;height:2px;background:#ffcc33;transform:rotate(-45deg)"></div>' +
+    '<div style="position:absolute;left:4px;bottom:4px;width:9px;height:2px;background:#ffcc33;transform:rotate(-45deg)"></div>' +
+    '<div style="position:absolute;right:4px;bottom:4px;width:9px;height:2px;background:#ffcc33;transform:rotate(45deg)"></div>'
+  root.appendChild(hitMarker)
+  let hitMarkerTimer = null
 
   // Gyroscope instrument — a cockpit artificial-horizon ball (pitch, as a
   // vertical sky/ground split) plus a rotating heading marker (yaw). Added
@@ -173,8 +210,12 @@ export function createHud(container) {
       fireBtn.style.background = `conic-gradient(rgba(0,0,0,0.75) ${pct}%, #1a2230 ${pct}%)`
     },
     setBombCooldown(frac) {
+      // frac: 1 = just used (fully masked/dimmed), 0 = ready. The mask is a
+      // dark pie slice that shrinks away clockwise from a full circle.
       const pct = Math.round(frac * 100)
-      bombBtn.style.background = `conic-gradient(rgba(0,0,0,0.75) ${pct}%, #1a2230 ${pct}%)`
+      bombCooldownMask.style.background = `conic-gradient(rgba(0,0,0,0.78) ${pct}%, transparent ${pct}%)`
+      bombIcon.style.filter = frac > 0 ? 'grayscale(1) brightness(0.65)' : 'none'
+      bombIcon.style.opacity = frac > 0 ? '0.6' : '1'
     },
     setTowerCounts(allyAlive, allyTotal, enemyAlive, enemyTotal) {
       towerText.textContent = `\u{1F5FC} Ally ${allyAlive}/${allyTotal}  Enemy ${enemyAlive}/${enemyTotal}`
@@ -197,6 +238,37 @@ export function createHud(container) {
     },
     setGold(amount) {
       goldText.textContent = `\u{1F4B0} ${amount}`
+    },
+    showHitMarker() {
+      clearTimeout(hitMarkerTimer)
+      // Reset to the start state synchronously, then let the next frame
+      // apply the transition target — otherwise the browser coalesces the
+      // "already there" state and skips the transition on repeat hits.
+      hitMarker.style.transition = 'none'
+      hitMarker.style.transform = 'translate(-50%,-50%) scale(0.5)'
+      hitMarker.style.opacity = '0'
+      requestAnimationFrame(() => {
+        hitMarker.style.transition = 'transform 180ms ease-out,opacity 220ms ease-out'
+        hitMarker.style.transform = 'translate(-50%,-50%) scale(1)'
+        hitMarker.style.opacity = '1'
+        hitMarkerTimer = setTimeout(() => {
+          hitMarker.style.opacity = '0'
+        }, 160)
+      })
+    },
+    spawnGoldGain(amount) {
+      const el = document.createElement('div')
+      el.textContent = `+${amount}`
+      el.style.cssText =
+        'position:absolute;top:0;right:0;font-size:13px;font-weight:bold;color:#ffe08a;' +
+        'text-shadow:0 0 3px #000;transition:transform 850ms ease-out,opacity 850ms ease-out;' +
+        'transform:translateY(0);opacity:1'
+      goldPopupLayer.appendChild(el)
+      requestAnimationFrame(() => {
+        el.style.transform = 'translateY(-28px)'
+        el.style.opacity = '0'
+      })
+      setTimeout(() => el.remove(), 900)
     },
     // seconds: null/0 hides it, otherwise shows a big centered number.
     setRespawnCountdown(seconds) {

@@ -88,6 +88,7 @@ wando.mesh.visible = false
 window.__debug = { world, wando, camera, ground, scene }
 
 const hud = createHud(container)
+window.__debug.hud = hud // debugging/automated smoke tests only
 
 const steering = createSteeringController(renderer)
 
@@ -133,6 +134,7 @@ window.addEventListener('keydown', (e) => {
 
 const clock = new THREE.Clock()
 let matchOverShown = false
+let lastGold = 0
 
 // Wando's death sequence (2026-11-25): fall to the ground, camera cuts to
 // an external crash-site view on impact, count down, respawn. Driven here
@@ -177,7 +179,10 @@ function animate() {
   const now = performance.now()
 
   wando.steer = steering.getSteer()
-  if (firing && wando.alive) manualAttack(wando, world, now)
+  if (firing && wando.alive) {
+    const hit = manualAttack(wando, world, now)
+    if (hit) hud.showHitMarker()
+  }
 
   if (!world.matchOver) {
     world.update(dt, now)
@@ -215,6 +220,8 @@ function animate() {
   hud.setBombCooldown(Math.max(0, 1 - bombElapsed / BOMB_COOLDOWN_MS))
   hud.setGyro(wando.yaw, wando.pitch / PITCH_LIMIT)
   hud.setGold(world.gold)
+  if (world.gold > lastGold) hud.spawnGoldGain(world.gold - lastGold)
+  lastGold = world.gold
   hud.setTowerCounts(
     world.towers.filter((t) => t.team === TEAM.ALLY && t.alive).length,
     world.towers.filter((t) => t.team === TEAM.ALLY).length,
