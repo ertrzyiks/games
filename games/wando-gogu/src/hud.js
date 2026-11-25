@@ -85,12 +85,21 @@ export function createHud(container) {
   root.appendChild(fireBtn)
 
   // Bomb — a second special action distinct from Guard Up and manual fire.
+  // Centered (not clustered with ability/fire) since it's the headline
+  // special action; labeled with its '1' key shortcut.
   const bombBtn = document.createElement('button')
   bombBtn.textContent = '\u{1F4A3}'
   bombBtn.style.cssText =
-    'position:absolute;right:188px;bottom:20px;width:70px;height:70px;border-radius:50%;' +
-    'background:#1a2230;border:3px solid #ffa03c;color:#fff;font-size:28px;' +
+    'position:absolute;left:50%;bottom:20px;transform:translateX(-50%);width:70px;height:70px;' +
+    'border-radius:50%;background:#1a2230;border:3px solid #ffa03c;color:#fff;font-size:28px;' +
     'pointer-events:auto;cursor:pointer'
+  const bombKeyLabel = document.createElement('span')
+  bombKeyLabel.textContent = '1'
+  bombKeyLabel.style.cssText =
+    'position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;' +
+    'background:#ffa03c;color:#1a2230;font-size:12px;font-weight:bold;line-height:20px;' +
+    'text-align:center;box-shadow:0 0 2px #000'
+  bombBtn.appendChild(bombKeyLabel)
   root.appendChild(bombBtn)
 
   // Gyroscope instrument — a cockpit artificial-horizon ball (pitch, as a

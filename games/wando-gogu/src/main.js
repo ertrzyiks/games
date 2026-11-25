@@ -128,7 +128,7 @@ function tryDropBomb() {
 }
 hud.bombButton.addEventListener('pointerdown', tryDropBomb)
 window.addEventListener('keydown', (e) => {
-  if (e.key.toLowerCase() === 'b') tryDropBomb()
+  if (e.key === '1' || e.key.toLowerCase() === 'b') tryDropBomb()
 })
 
 const clock = new THREE.Clock()
