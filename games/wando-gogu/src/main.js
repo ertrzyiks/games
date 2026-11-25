@@ -14,6 +14,7 @@ import {
   LANE_LENGTH,
   LANE_WIDTH,
   HERO_ROLES,
+  PITCH_LIMIT,
 } from './config.js'
 
 const container = document.getElementById('game-container')
@@ -132,6 +133,7 @@ function animate() {
   hud.setAbilityCooldown(Math.max(0, 1 - abilityElapsed / wando.ability.cooldownMs))
   const fireElapsed = now - wando.lastAttackAt
   hud.setFireCooldown(Math.max(0, 1 - fireElapsed / wando.attackIntervalMs))
+  hud.setGyro(wando.yaw, wando.pitch / PITCH_LIMIT)
 
   renderer.render(scene, camera)
 }

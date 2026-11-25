@@ -1,4 +1,6 @@
-import { AGGRO_RADIUS } from './config.js'
+import { AGGRO_RADIUS, FIRE_CONE_HALF_ANGLE_DEG } from './config.js'
+
+const FIRE_CONE_MIN_DOT = Math.cos((FIRE_CONE_HALF_ANGLE_DEG * Math.PI) / 180)
 
 // One shared behavior loop for creeps and bot heroes: chase the nearest
 // enemy, attack automatically once in range, else advance — see
@@ -46,14 +48,35 @@ export function attackOnlyStep(unit, world, now) {
 }
 
 // Manual fire for the player's hero — called from main.js's fire button.
-// Returns the target it hit, or null if nothing was in range / on cooldown.
+// Only targets enemies actually ahead of the ship (within a forward cone),
+// not just whatever's globally nearest, so shots always go where you're
+// looking instead of snapping to something behind or beside you.
+// Returns the target it hit, or null if nothing qualified / on cooldown.
 export function manualAttack(unit, world, now) {
   if (!unit.alive || !unit.canAttack(now)) return null
-  const target = world.nearestEnemyInRadius(unit, unit.attackRange)
+  const target = findForwardTarget(unit, world)
   if (!target) return null
   unit.attack(target, now)
   world.effects.triggerAttackEffect(unit, target)
   return target
+}
+
+function findForwardTarget(unit, world) {
+  const forward = unit.getForwardVector()
+  let best = null
+  let bestDist = unit.attackRange
+  for (const other of world.allAlive()) {
+    if (other.team === unit.team || other === unit) continue
+    const dist = unit.distanceTo(other)
+    if (dist > bestDist) continue
+    const toOther = other.position.clone().sub(unit.position)
+    if (toOther.lengthSq() < 1e-6) continue // same spot — no facing to check
+    toOther.normalize()
+    if (forward.dot(toOther) < FIRE_CONE_MIN_DOT) continue
+    best = other
+    bestDist = dist
+  }
+  return best
 }
 
 function moveToward(unit, dest, dt) {

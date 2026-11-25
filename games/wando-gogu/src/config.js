@@ -73,6 +73,11 @@ export const STEER_MAX_RADIUS_PX = 110
 export const STEER_TURN_RATE = 0.9 // rad/sec at full steer deflection
 export const PITCH_LIMIT = 0.6 // radians, ~34 degrees either way
 
+// Manual fire only targets what's actually ahead of the ship (within this
+// half-angle cone of the forward vector), not just whatever's nearest
+// omnidirectionally — see .scratch/wando-gogu-arts/issues/06-controls-camera.md.
+export const FIRE_CONE_HALF_ANGLE_DEG = 35
+
 // Wando is flying a starfighter, not melee-ing on foot — override the
 // Vanguard role's melee range with laser-cannon range so manual fire is both
 // usable while constantly moving forward and visibly a projectile (see

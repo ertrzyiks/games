@@ -50,6 +50,39 @@ export function createHud(container) {
     'pointer-events:auto;cursor:pointer'
   root.appendChild(fireBtn)
 
+  // Gyroscope instrument — a cockpit artificial-horizon ball (pitch, as a
+  // vertical sky/ground split) plus a rotating heading marker (yaw). Added
+  // 2026-11-25 since pitch no longer auto-levels, so the player needs a way
+  // to read their current attitude — see
+  // .scratch/wando-gogu-arts/issues/06-controls-camera.md.
+  const GYRO_SIZE = 84
+  const gyroWrap = document.createElement('div')
+  gyroWrap.style.cssText =
+    `position:absolute;left:20px;bottom:20px;width:${GYRO_SIZE}px;height:${GYRO_SIZE}px;` +
+    'border-radius:50%;overflow:hidden;border:3px solid #cfd8e3;background:#000'
+  root.appendChild(gyroWrap)
+
+  const horizon = document.createElement('div')
+  horizon.style.cssText =
+    'position:absolute;left:-30%;top:-100%;width:160%;height:300%;' +
+    'background:linear-gradient(to bottom, #5ad1ff 0%, #5ad1ff 50%, #3f6b3a 50%, #3f6b3a 100%)'
+  gyroWrap.appendChild(horizon)
+
+  const headingRing = document.createElement('div')
+  headingRing.style.cssText = 'position:absolute;inset:0'
+  const headingMarker = document.createElement('div')
+  headingMarker.style.cssText =
+    'position:absolute;left:50%;top:3px;width:0;height:0;margin-left:-5px;' +
+    'border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:7px solid #ffcc33'
+  headingRing.appendChild(headingMarker)
+  gyroWrap.appendChild(headingRing)
+
+  const nose = document.createElement('div')
+  nose.style.cssText =
+    'position:absolute;left:50%;top:50%;width:30px;height:3px;background:#fff;' +
+    'transform:translate(-50%,-50%);box-shadow:0 0 2px #000'
+  gyroWrap.appendChild(nose)
+
   const overlay = document.createElement('div')
   overlay.style.cssText =
     'position:absolute;inset:0;display:none;align-items:center;justify-content:center;' +
@@ -85,6 +118,14 @@ export function createHud(container) {
     setFireCooldown(frac) {
       const pct = Math.round(frac * 100)
       fireBtn.style.background = `conic-gradient(rgba(0,0,0,0.75) ${pct}%, #1a2230 ${pct}%)`
+    },
+    setGyro(yawRad, pitchFrac) {
+      // pitchFrac: -1..1 (nose down..nose up). Nose up moves the horizon
+      // strip down in the display (you're looking up into more sky).
+      const offsetPx = pitchFrac * GYRO_SIZE * 0.5
+      horizon.style.transform = `translateY(${offsetPx}px)`
+      const yawDeg = (yawRad * 180) / Math.PI
+      headingRing.style.transform = `rotate(${-yawDeg}deg)`
     },
     showMatchOver(won) {
       overlay.style.display = 'flex'
