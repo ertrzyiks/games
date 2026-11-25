@@ -38,9 +38,13 @@ export function createEffectsSystem(scene) {
 
   function spawnProjectileTo(attacker, targetPoint) {
     const mesh = new THREE.Mesh(PROJECTILE_GEOMETRY, PROJECTILE_MATERIAL[attacker.team])
-    const height = attacker.mesh.position.y + 0.5
-    const from = new THREE.Vector3(attacker.position.x, height, attacker.position.z)
-    const to = new THREE.Vector3(targetPoint.x, height, targetPoint.z)
+    // Use each end's own height — forcing both ends flat (a leftover from
+    // when every shot was ground-to-ground) is exactly what made Wando's
+    // shots fire level regardless of her pitch: her endpoint's Y (computed
+    // correctly in ai.js's manualAttack from her actual forward vector) was
+    // being discarded here.
+    const from = new THREE.Vector3(attacker.position.x, attacker.mesh.position.y + 0.5, attacker.position.z)
+    const to = new THREE.Vector3(targetPoint.x, targetPoint.y, targetPoint.z)
     mesh.position.copy(from)
     scene.add(mesh)
     projectiles.push({ mesh, from, to, start: performance.now(), duration: 120 })
