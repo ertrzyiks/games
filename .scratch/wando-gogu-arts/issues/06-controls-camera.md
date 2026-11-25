@@ -45,3 +45,23 @@ The user asked for two changes after playing the first pass, overriding parts of
 - **Camera is now first-person/cockpit**, not a third-person follow cam: it sits just ahead of and
   above Wando's position, looking in Wando's current flight direction. Wando's own mesh is hidden
   (never rendered) since the camera is effectively inside it.
+
+## 2026-11-25 — further revisions: no auto-level, no auto-aim, gyro, rate of fire
+
+More feedback from playing this pass, each overriding a piece of the above:
+
+- **Pitch no longer auto-levels** — pure trim, holds wherever you leave it. A cockpit
+  **gyroscope instrument** was added to the HUD (bottom-left) instead: a sky/ground horizon ball
+  for pitch plus a rotating heading marker for yaw, so attitude stays readable without an
+  auto-correct crutch.
+- **No auto-aim at all** — manual fire is a literal fixed forward-firing gun (like a WWII
+  fighter's), not a lock-on. It always fires dead straight along Wando's exact forward vector on
+  every trigger pull (subject to its own fire-rate cooldown), hit or miss; whether something
+  happens to be in that exact line (within a small tolerance, `FIRE_RAY_TOLERANCE`) only decides
+  whether damage lands, never the shot's direction. A **crosshair** was added at screen center
+  marking exactly where that line points. Holding the fire button fires continuously rather than
+  needing rapid taps. Fire rate increased substantially (`WANDO_ATTACK_INTERVAL_MS`, 150ms) for a
+  machine-gun feel.
+- **Floating HP bars** added over every creep, tower, and bot hero (both teams) — not just
+  Wando's own HUD bar. Projectiles were also shrunk and switched to shared geometry/materials
+  (no per-shot allocation) to stay cheap at a machine-gun fire rate with many units on screen.

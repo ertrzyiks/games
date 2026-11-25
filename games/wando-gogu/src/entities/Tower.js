@@ -1,6 +1,7 @@
 import { Unit } from './Unit.js'
 import { TOWER_STATS } from '../config.js'
 import { createTowerMesh } from '../visuals.js'
+import { attachHealthBar } from '../healthbar.js'
 
 export class Tower extends Unit {
   constructor(team, x, z) {
@@ -16,5 +17,6 @@ export class Tower extends Unit {
       attackIntervalMs: TOWER_STATS.attackIntervalMs,
       mesh,
     })
+    attachHealthBar(this, 3.8)
   }
 }

@@ -11,12 +11,14 @@ import {
   STEER_TURN_RATE,
   PITCH_LIMIT,
   WANDO_ATTACK_RANGE,
+  WANDO_ATTACK_INTERVAL_MS,
   ALTITUDE_MIN,
   ALTITUDE_MAX,
   LANE_HALF,
   LANE_WIDTH,
 } from '../config.js'
 import { createHeroMesh } from '../visuals.js'
+import { attachHealthBar } from '../healthbar.js'
 
 function clamp(v, lo, hi) {
   return Math.min(hi, Math.max(lo, v))
@@ -44,7 +46,14 @@ export class Hero extends Unit {
     })
     this.role = role
     this.isPlayer = isPlayer
-    if (isPlayer) this.attackRange = WANDO_ATTACK_RANGE
+    if (isPlayer) {
+      this.attackRange = WANDO_ATTACK_RANGE
+      this.attackIntervalMs = WANDO_ATTACK_INTERVAL_MS
+    } else {
+      // Wando's own mesh is invisible (first-person cockpit view) — a
+      // floating bar over nothing would look like it belongs to no one.
+      attachHealthBar(this, 1.6)
+    }
     this.spawnPoint = new THREE.Vector3(spawnX, mesh.position.y, spawnZ)
     this.ability = HERO_ABILITY[role]
     this.lastAbilityAt = -Infinity

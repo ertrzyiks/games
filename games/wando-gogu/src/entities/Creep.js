@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import { Unit } from './Unit.js'
 import { CREEP_STATS, BASE_Z, LANE_WIDTH, otherTeam } from '../config.js'
 import { createCreepMesh } from '../visuals.js'
+import { attachHealthBar } from '../healthbar.js'
 
 // Land-only lane unit — see .scratch/wando-gogu-arts/issues/03-creeps.md. Locked
 // to a fixed X offset so a wave stays readable as a line, unlike heroes which
@@ -21,6 +22,7 @@ export class Creep extends Unit {
       mesh,
     })
     this.laneX = spawnX
+    attachHealthBar(this, 0.9)
   }
 
   getAdvanceTarget() {

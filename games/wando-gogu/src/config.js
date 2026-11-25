@@ -73,16 +73,19 @@ export const STEER_MAX_RADIUS_PX = 110
 export const STEER_TURN_RATE = 0.9 // rad/sec at full steer deflection
 export const PITCH_LIMIT = 0.6 // radians, ~34 degrees either way
 
-// Manual fire only targets what's actually ahead of the ship (within this
-// half-angle cone of the forward vector), not just whatever's nearest
-// omnidirectionally — see .scratch/wando-gogu-arts/issues/06-controls-camera.md.
-export const FIRE_CONE_HALF_ANGLE_DEG = 35
+// Manual fire is a straight-ahead raycast, not an angular cone: it hits
+// whatever's within this lateral distance of the exact forward line (a
+// forgiving "reticle width", not pixel-perfect), never something off to the
+// side — see .scratch/wando-gogu-arts/issues/06-controls-camera.md.
+export const FIRE_RAY_TOLERANCE = 1.8
 
 // Wando is flying a starfighter, not melee-ing on foot — override the
 // Vanguard role's melee range with laser-cannon range so manual fire is both
 // usable while constantly moving forward and visibly a projectile (see
 // effects.js: ranged vs. melee attack visuals key off attackRange).
 export const WANDO_ATTACK_RANGE = 20
+// Machine-gun fire rate — overrides the Vanguard role's slow melee cadence.
+export const WANDO_ATTACK_INTERVAL_MS = 150
 export const ALTITUDE_MIN = 1
 export const ALTITUDE_MAX = 28
 

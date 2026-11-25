@@ -8,6 +8,18 @@ export function createHud(container) {
     'position:absolute;inset:0;pointer-events:none;font-family:sans-serif;color:#fff;user-select:none'
   container.appendChild(root)
 
+  // Crosshair — fixed at screen center, marking exactly where manual fire's
+  // straight-ahead raycast points (see ai.js's findForwardTarget).
+  const crosshair = document.createElement('div')
+  crosshair.style.cssText =
+    'position:absolute;left:50%;top:50%;width:24px;height:24px;transform:translate(-50%,-50%)'
+  crosshair.innerHTML =
+    '<div style="position:absolute;left:50%;top:0;width:2px;height:8px;background:#fff;transform:translateX(-50%);box-shadow:0 0 2px #000"></div>' +
+    '<div style="position:absolute;left:50%;bottom:0;width:2px;height:8px;background:#fff;transform:translateX(-50%);box-shadow:0 0 2px #000"></div>' +
+    '<div style="position:absolute;top:50%;left:0;height:2px;width:8px;background:#fff;transform:translateY(-50%);box-shadow:0 0 2px #000"></div>' +
+    '<div style="position:absolute;top:50%;right:0;height:2px;width:8px;background:#fff;transform:translateY(-50%);box-shadow:0 0 2px #000"></div>'
+  root.appendChild(crosshair)
+
   const bars = document.createElement('div')
   bars.style.cssText = 'position:absolute;top:10px;left:10px;right:10px;display:flex;flex-direction:column;gap:6px'
   root.appendChild(bars)

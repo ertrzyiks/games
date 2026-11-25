@@ -1,6 +1,4 @@
-import { AGGRO_RADIUS, FIRE_CONE_HALF_ANGLE_DEG } from './config.js'
-
-const FIRE_CONE_MIN_DOT = Math.cos((FIRE_CONE_HALF_ANGLE_DEG * Math.PI) / 180)
+import { AGGRO_RADIUS, FIRE_RAY_TOLERANCE } from './config.js'
 
 // One shared behavior loop for creeps and bot heroes: chase the nearest
 // enemy, attack automatically once in range, else advance — see
@@ -47,34 +45,44 @@ export function attackOnlyStep(unit, world, now) {
   }
 }
 
-// Manual fire for the player's hero — called from main.js's fire button.
-// Only targets enemies actually ahead of the ship (within a forward cone),
-// not just whatever's globally nearest, so shots always go where you're
-// looking instead of snapping to something behind or beside you.
-// Returns the target it hit, or null if nothing qualified / on cooldown.
+// Manual fire for the player's hero — called from main.js's fire button, a
+// fixed forward-firing gun like a WWII fighter's: no auto-aim, no bending
+// toward a target. It fires dead straight along the exact forward line on
+// every trigger pull (subject to the fire-rate cooldown), hit or miss.
+// Whether something was in the line of fire is a separate hit-detection
+// check (findForwardTarget) that only ever affects damage, never the shot's
+// direction. Returns the target it hit, or null on a miss/cooldown.
 export function manualAttack(unit, world, now) {
   if (!unit.alive || !unit.canAttack(now)) return null
-  const target = findForwardTarget(unit, world)
-  if (!target) return null
-  unit.attack(target, now)
-  world.effects.triggerAttackEffect(unit, target)
-  return target
+  unit.lastAttackAt = now
+
+  const forward = unit.getForwardVector()
+  const hit = findForwardTarget(unit, world)
+  const shotDistance = hit ? hit.forwardDist : unit.attackRange
+  const endpoint = unit.position.clone().addScaledVector(forward, shotDistance)
+  world.effects.triggerStraightShot(unit, endpoint)
+
+  if (!hit) return null
+  hit.target.takeDamage(unit.damage)
+  return hit.target
 }
 
+// Hit detection only (never changes the shot's direction): the nearest
+// enemy within FIRE_RAY_TOLERANCE of the exact forward line, out to
+// attackRange. Returns { target, forwardDist } or null.
 function findForwardTarget(unit, world) {
   const forward = unit.getForwardVector()
   let best = null
-  let bestDist = unit.attackRange
+  let bestForwardDist = unit.attackRange
   for (const other of world.allAlive()) {
     if (other.team === unit.team || other === unit) continue
-    const dist = unit.distanceTo(other)
-    if (dist > bestDist) continue
     const toOther = other.position.clone().sub(unit.position)
-    if (toOther.lengthSq() < 1e-6) continue // same spot — no facing to check
-    toOther.normalize()
-    if (forward.dot(toOther) < FIRE_CONE_MIN_DOT) continue
-    best = other
-    bestDist = dist
+    const forwardDist = toOther.dot(forward) // how far along the ray
+    if (forwardDist <= 0 || forwardDist > bestForwardDist) continue
+    const lateralDist = toOther.addScaledVector(forward, -forwardDist).length() // perpendicular offset
+    if (lateralDist > FIRE_RAY_TOLERANCE) continue
+    best = { target: other, forwardDist }
+    bestForwardDist = forwardDist
   }
   return best
 }

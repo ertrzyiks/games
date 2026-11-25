@@ -6,6 +6,7 @@ import { Stronghold } from './entities/Stronghold.js'
 import { createGround } from './visuals.js'
 import { createSteeringController } from './input.js'
 import { manualAttack } from './ai.js'
+import { updateHealthBars } from './healthbar.js'
 import { createHud } from './hud.js'
 import {
   TEAM,
@@ -94,9 +95,18 @@ hud.abilityButton.addEventListener('pointerdown', () => {
   }
 })
 
+// Holding the button fires continuously (gated by Wando's own fire-rate
+// cooldown below), like a machine gun trigger rather than requiring rapid
+// taps — see .scratch/wando-gogu-arts/issues/06-controls-camera.md.
+let firing = false
 hud.fireButton.addEventListener('pointerdown', () => {
-  const now = performance.now()
-  if (wando.alive) manualAttack(wando, world, now)
+  firing = true
+})
+hud.fireButton.addEventListener('pointerup', () => {
+  firing = false
+})
+hud.fireButton.addEventListener('pointerleave', () => {
+  firing = false
 })
 
 const clock = new THREE.Clock()
@@ -108,6 +118,7 @@ function animate() {
   const now = performance.now()
 
   wando.steer = steering.getSteer()
+  if (firing && wando.alive) manualAttack(wando, world, now)
 
   if (!world.matchOver) {
     world.update(dt, now)
@@ -134,6 +145,8 @@ function animate() {
   const fireElapsed = now - wando.lastAttackAt
   hud.setFireCooldown(Math.max(0, 1 - fireElapsed / wando.attackIntervalMs))
   hud.setGyro(wando.yaw, wando.pitch / PITCH_LIMIT)
+
+  updateHealthBars([...world.towers, ...world.creeps, ...world.heroes.filter((h) => !h.isPlayer)], camera)
 
   renderer.render(scene, camera)
 }
