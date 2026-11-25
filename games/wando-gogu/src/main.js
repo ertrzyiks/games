@@ -16,6 +16,8 @@ import {
   LANE_WIDTH,
   HERO_ROLES,
   PITCH_LIMIT,
+  CRASH_FALL_MS,
+  RESPAWN_MS,
 } from './config.js'
 
 const container = document.getElementById('game-container')
@@ -112,6 +114,43 @@ hud.fireButton.addEventListener('pointerleave', () => {
 const clock = new THREE.Clock()
 let matchOverShown = false
 
+// Wando's death sequence (2026-11-25): fall to the ground, camera cuts to
+// an external crash-site view on impact, count down, respawn. Driven here
+// rather than through Hero's generic respawn timer because it needs the
+// camera and HUD, which only main.js has — see
+// .scratch/wando-gogu-arts/issues/06-controls-camera.md. `crash` is null
+// outside of this sequence.
+let crash = null
+let wasAlive = true
+
+function startCrash(now) {
+  wando.mesh.visible = true
+  wando.mesh.rotation.set(0, wando.yaw, 0)
+  crash = { phase: 'falling', fallStart: now, startY: wando.position.y }
+}
+
+function updateCrash(now, dt) {
+  if (crash.phase === 'falling') {
+    const t = Math.min(1, (now - crash.fallStart) / CRASH_FALL_MS)
+    const eased = t * t
+    const forward = wando.getForwardVector()
+    wando.mesh.position.x += forward.x * wando.speed * (1 - t) * dt
+    wando.mesh.position.z += forward.z * wando.speed * (1 - t) * dt
+    wando.mesh.position.y = crash.startY * (1 - eased)
+    wando.mesh.rotation.x = -eased * 1.1
+    if (t >= 1) {
+      wando.mesh.position.y = 0.3
+      crash.phase = 'grounded'
+      crash.crashPoint = wando.mesh.position.clone()
+      crash.countdownStart = now
+    }
+  } else if (now - crash.countdownStart >= RESPAWN_MS) {
+    wando.respawn(now)
+    wando.mesh.rotation.set(0, 0, 0)
+    crash = null
+  }
+}
+
 function animate() {
   requestAnimationFrame(animate)
   const dt = Math.min(clock.getDelta(), 0.1)
@@ -127,14 +166,22 @@ function animate() {
     hud.showMatchOver(world.winner === TEAM.ALLY)
   }
 
-  wando.mesh.visible = false // stays hidden through death/respawn too
+  if (wasAlive && !wando.alive) startCrash(now)
+  wasAlive = wando.alive
+  if (crash) updateCrash(now, dt)
 
-  if (wando.alive) {
+  if (!crash) wando.mesh.visible = false // normal flight: cockpit view, ship unseen
+
+  if (wando.alive || crash?.phase === 'falling') {
     const forward = wando.getForwardVector()
     const eye = wando.position.clone().addScaledVector(forward, 0.6)
     eye.y += 0.4
     camera.position.copy(eye)
     camera.lookAt(eye.clone().addScaledVector(forward, 10))
+  } else if (crash?.phase === 'grounded') {
+    const viewPos = crash.crashPoint.clone().add(new THREE.Vector3(6, 9, 9))
+    camera.position.copy(viewPos)
+    camera.lookAt(crash.crashPoint)
   }
 
   hud.setWandoHp(wando.hp / wando.maxHp)
@@ -145,6 +192,11 @@ function animate() {
   const fireElapsed = now - wando.lastAttackAt
   hud.setFireCooldown(Math.max(0, 1 - fireElapsed / wando.attackIntervalMs))
   hud.setGyro(wando.yaw, wando.pitch / PITCH_LIMIT)
+  hud.setGold(world.gold)
+  hud.setCrosshairVisible(!crash)
+  hud.setRespawnCountdown(
+    crash?.phase === 'grounded' ? Math.ceil((RESPAWN_MS - (now - crash.countdownStart)) / 1000) : null
+  )
 
   updateHealthBars([...world.towers, ...world.creeps, ...world.heroes.filter((h) => !h.isPlayer)], camera)
 

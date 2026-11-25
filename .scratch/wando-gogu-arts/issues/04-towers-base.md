@@ -32,3 +32,17 @@ wave).
 minimal "tap to start" beat, implementation's call). On win/lose, show a simple overlay
 ("VICTORY"/"DEFEAT") with a restart action that reloads the match from scratch. No persistence
 across matches, per the map's Notes.
+
+## 2026-11-25 — added: tower destruction visual + a gold economy
+
+Two additions from playing this pass:
+
+- **A destroyed tower visually becomes a rubble pile** instead of sitting there dead but
+  unchanged (it already stopped shooting for free, since attack logic already skips `!alive`
+  units — this was purely a missing visual). The original tower mesh (and its health bar) is
+  hidden; a scattered 5-chunk debris group spawns at its position.
+- **A gold economy**: destroying an enemy tower or enemy creep grants the player gold (100 / 10
+  respectively) — `World.gold`, shown in the HUD. Shared/simplified, not per-kill-credit: gold
+  accrues whenever an enemy tower/creep dies, regardless of who landed the killing blow (not
+  strict last-hit MOBA economy) — this is explicitly a placeholder for a later shop, which doesn't
+  exist yet; nothing spends gold currently.

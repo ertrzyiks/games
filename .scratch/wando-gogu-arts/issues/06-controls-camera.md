@@ -65,3 +65,19 @@ More feedback from playing this pass, each overriding a piece of the above:
 - **Floating HP bars** added over every creep, tower, and bot hero (both teams) — not just
   Wando's own HUD bar. Projectiles were also shrunk and switched to shared geometry/materials
   (no per-shot allocation) to stay cheap at a machine-gun fire rate with many units on screen.
+- **A fixed bug**: shots were firing level regardless of pitch — the projectile renderer forced
+  both ends of every shot to the attacker's own height, discarding the endpoint's actual computed
+  Y entirely. Diving/climbing now visibly angles the shot.
+
+## 2026-11-25 — added: a death/respawn sequence for the player
+
+Previously the player's hero just used the same instant-blink respawn as every bot hero, with the
+screen frozen for the ~5s respawn timer (and the cockpit-hides-the-ship rule meant there was no
+crash visual at all). Now, on Wando's death: her mesh becomes visible again and falls/tilts toward
+the ground over `CRASH_FALL_MS` (900ms) while the camera stays in the first-person cockpit view
+(watching the ground rush up); at the moment of impact the camera cuts to a fixed external view
+positioned above and back from the crash site, looking at it, and a 5-second countdown
+(`RESPAWN_MS`) displays before she respawns at full HP back at her spawn point. The player's hero
+is deliberately excluded from `World`'s generic hero-auto-respawn timer — this sequence is driven
+entirely from `main.js`, since it needs the camera and HUD that only main.js has access to. Bot
+heroes are unaffected, still an instant blink.

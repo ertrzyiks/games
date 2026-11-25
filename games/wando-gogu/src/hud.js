@@ -45,6 +45,21 @@ export function createHud(container) {
   const allyBaseFill = makeBar('Ally Base', '#3a7bd5')
   const enemyBaseFill = makeBar('Enemy Base', '#d5473a')
 
+  // Gold — a placeholder economy for a later shop, see
+  // .scratch/wando-gogu-arts/issues/04-towers-base.md.
+  const goldText = document.createElement('div')
+  goldText.style.cssText =
+    'position:absolute;top:10px;right:10px;font-size:14px;font-weight:bold;color:#ffcc33;' +
+    'text-shadow:0 0 3px #000'
+  root.appendChild(goldText)
+
+  // Respawn countdown — shown only while Wando's crash sequence is grounded.
+  const countdown = document.createElement('div')
+  countdown.style.cssText =
+    'position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);display:none;' +
+    'font-size:64px;font-weight:bold;color:#fff;text-shadow:0 0 10px #000'
+  root.appendChild(countdown)
+
   const abilityBtn = document.createElement('button')
   abilityBtn.textContent = ''
   abilityBtn.style.cssText =
@@ -143,6 +158,21 @@ export function createHud(container) {
       overlay.style.display = 'flex'
       overlayText.textContent = won ? 'VICTORY' : 'DEFEAT'
       overlayText.style.color = won ? '#5ad1ff' : '#ff5a5a'
+    },
+    setCrosshairVisible(visible) {
+      crosshair.style.display = visible ? 'block' : 'none'
+    },
+    setGold(amount) {
+      goldText.textContent = `\u{1F4B0} ${amount}`
+    },
+    // seconds: null/0 hides it, otherwise shows a big centered number.
+    setRespawnCountdown(seconds) {
+      if (!seconds) {
+        countdown.style.display = 'none'
+        return
+      }
+      countdown.style.display = 'block'
+      countdown.textContent = String(seconds)
     },
   }
 }

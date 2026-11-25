@@ -96,3 +96,14 @@ export const CREEP_SPAWN_STAGGER_MS = 600
 
 export const TOWER_STATS = { hp: 700, damage: 24, attackRange: 14, attackIntervalMs: 700 }
 export const BASE_STATS = { hp: 1400, damage: 18, attackRange: 10, attackIntervalMs: 700 }
+
+// Economy — gold for destroying enemy structures/units. A placeholder for a
+// later shop; no spending exists yet, this just accrues.
+export const GOLD_FOR_CREEP_KILL = 10
+export const GOLD_FOR_TOWER_KILL = 100
+
+// Wando's death sequence: fall to the ground, camera cuts to an external
+// crash-site view on impact, then a countdown before respawning. Reuses
+// RESPAWN_MS (5000ms) as the post-impact countdown so it's literally a
+// 5-second count, matching the ask.
+export const CRASH_FALL_MS = 900

@@ -49,7 +49,12 @@ export class Unit {
     }
   }
 
+  // Subclasses override this for a visual death state (e.g. Tower's rubble
+  // pile). `onDeath` is a separate, optional callback assigned externally
+  // (World.js uses it for gold) so World doesn't need subclass-specific
+  // knowledge and subclasses don't need a World reference.
   die() {
     this.alive = false
+    this.onDeath?.(this)
   }
 }

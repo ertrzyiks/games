@@ -57,6 +57,29 @@ export function createBaseMesh(team) {
   return mesh
 }
 
+const RUBBLE_COLORS = [0x6b5d52, 0x554940, 0x7a6a5c, 0x4a4039]
+
+// A destroyed tower's replacement visual — a scattered pile of chunks
+// instead of a clean geometric shape, so "destroyed" reads unmistakably
+// different from "damaged." Built fresh per call (towers are few — at most
+// 4 in a match — so this doesn't need the shared-geometry treatment the
+// much-more-numerous projectiles and health bars get).
+export function createRubbleMesh() {
+  const group = new THREE.Group()
+  for (let i = 0; i < 5; i++) {
+    const size = 0.5 + Math.random() * 0.7
+    const geometry = new THREE.BoxGeometry(size, size * 0.6, size)
+    const material = new THREE.MeshStandardMaterial({
+      color: RUBBLE_COLORS[i % RUBBLE_COLORS.length],
+    })
+    const chunk = new THREE.Mesh(geometry, material)
+    chunk.position.set((Math.random() - 0.5) * 2.2, size * 0.3, (Math.random() - 0.5) * 2.2)
+    chunk.rotation.y = Math.random() * Math.PI
+    group.add(chunk)
+  }
+  return group
+}
+
 export function createGround(laneLength, laneWidth) {
   // Generous margin beyond Hero.flyForward's movement clamp (±laneWidth*3,
   // ±laneHalf*1.1) so the camera — offset slightly ahead of the player's
