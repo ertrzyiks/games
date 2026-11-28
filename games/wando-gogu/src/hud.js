@@ -22,12 +22,13 @@ export function createHud(container) {
 
   // Battle-state strip: both bases and all four towers laid out like an
   // unrolled lane — [ally base][ally tower near-base][ally tower near-mid]
-  // -- [enemy tower near-mid][enemy tower near-base][enemy base] — so the
-  // gap between the two flex groups itself reads as the lane's midpoint,
-  // with a thin divider line reinforcing it.
+  // -- [enemy tower near-mid][enemy tower near-base][enemy base] — as one
+  // compact unit centered on screen (not stretched edge-to-edge), with a
+  // thin divider line marking the lane's midpoint between the two groups.
   const topStrip = document.createElement('div')
   topStrip.style.cssText =
-    'position:absolute;top:10px;left:10px;right:10px;display:flex;align-items:center;justify-content:space-between'
+    'position:absolute;top:10px;left:50%;transform:translateX(-50%);display:flex;align-items:center;' +
+    'justify-content:center;gap:20px'
   root.appendChild(topStrip)
 
   const midDivider = document.createElement('div')
@@ -36,17 +37,17 @@ export function createHud(container) {
   topStrip.appendChild(midDivider)
 
   const allyGroup = document.createElement('div')
-  allyGroup.style.cssText = 'display:flex;align-items:center;gap:4px'
+  allyGroup.style.cssText = 'display:flex;align-items:center;gap:6px'
   topStrip.appendChild(allyGroup)
 
   const enemyGroup = document.createElement('div')
-  enemyGroup.style.cssText = 'display:flex;align-items:center;gap:4px'
+  enemyGroup.style.cssText = 'display:flex;align-items:center;gap:6px'
   topStrip.appendChild(enemyGroup)
 
   function makeBaseBar(color) {
     const track = document.createElement('div')
     track.style.cssText =
-      'width:64px;height:10px;background:rgba(0,0,0,0.4);border-radius:5px;overflow:hidden;flex:none'
+      'width:86px;height:14px;background:rgba(0,0,0,0.4);border-radius:7px;overflow:hidden;flex:none'
     const fill = document.createElement('div')
     fill.style.cssText = `height:100%;background:${color};width:100%`
     track.appendChild(fill)
@@ -56,7 +57,7 @@ export function createHud(container) {
   function makeTowerIcon(color) {
     const track = document.createElement('div')
     track.style.cssText =
-      'position:relative;width:13px;height:22px;background:rgba(0,0,0,0.4);border-radius:3px;' +
+      'position:relative;width:18px;height:30px;background:rgba(0,0,0,0.4);border-radius:4px;' +
       'overflow:hidden;flex:none'
     const fill = document.createElement('div')
     fill.style.cssText = `position:absolute;left:0;right:0;bottom:0;background:${color};height:100%;` +
