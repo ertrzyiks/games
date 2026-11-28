@@ -121,12 +121,18 @@ export const CREEP_WAVE_INTERVAL_MS = 10000
 export const CREEP_SPAWN_STAGGER_MS = 500
 
 // Towers telegraph before firing (TOWER_AIM_MS) so a shot is dodgeable, not
-// instant — see .scratch/wando-gogu-arts/issues/04-towers-base.md. Slower,
-// harder-hitting than before: attackIntervalMs is the minimum time between
-// the *start* of one aim phase and the next, so the real cadence is roughly
-// TOWER_AIM_MS plus an idle gap, not back-to-back shots.
+// instant — see .scratch/wando-gogu-arts/issues/04-towers-base.md.
+// attackIntervalMs is Unit.canAttack's normal cooldown gate, checked against
+// lastAttackAt (set at the moment of firing, i.e. right after the aim phase
+// ends) before a tower may start a *new* aim phase — so the real shot-to-
+// shot cadence is TOWER_AIM_MS + attackIntervalMs, not attackIntervalMs
+// alone. Lowered from 3800 to 2300 (cadence 5800ms -> 4300ms) so towers
+// re-engage noticeably sooner after firing — staying in range unsupported
+// is genuinely dangerous, pushing the player to use creep waves as cover
+// (the tower targets the nearest enemy, so standing amid your own creeps
+// usually means they draw its attention instead of you).
 export const TOWER_AIM_MS = 2000
-export const TOWER_STATS = { hp: 700, damage: 70, attackRange: 14, attackIntervalMs: 3800 }
+export const TOWER_STATS = { hp: 700, damage: 70, attackRange: 14, attackIntervalMs: 2300 }
 export const BASE_STATS = { hp: 1400, damage: 18, attackRange: 10, attackIntervalMs: 700 }
 
 // Economy — gold for destroying enemy structures/units. A placeholder for a

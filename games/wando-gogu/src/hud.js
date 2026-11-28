@@ -20,6 +20,15 @@ export function createHud(container) {
     '<div style="position:absolute;top:50%;right:0;height:2px;width:8px;background:#fff;transform:translateY(-50%);box-shadow:0 0 2px #000"></div>'
   root.appendChild(crosshair)
 
+  // "Under fire" edge warning — an inset box-shadow glows red around the
+  // screen's border only (not a full-screen tint) while a tower's
+  // telegraph (see ai.js's towerStep) is locked onto Wando specifically.
+  const targetedWarning = document.createElement('div')
+  targetedWarning.style.cssText =
+    'position:absolute;inset:0;opacity:0;transition:opacity 200ms;' +
+    'box-shadow:inset 0 0 70px 18px rgba(255,20,20,0.85)'
+  root.appendChild(targetedWarning)
+
   // Battle-state strip: both bases and all four towers laid out like an
   // unrolled lane — [ally base][ally tower near-base][ally tower near-mid]
   // -- [enemy tower near-mid][enemy tower near-base][enemy base] — as one
@@ -327,6 +336,9 @@ export function createHud(container) {
     },
     setCrosshairVisible(visible) {
       crosshair.style.display = visible ? 'block' : 'none'
+    },
+    setTargetedWarning(isTargeted) {
+      targetedWarning.style.opacity = isTargeted ? '1' : '0'
     },
     setGold(amount) {
       goldText.textContent = `\u{1F4B0} ${amount}`

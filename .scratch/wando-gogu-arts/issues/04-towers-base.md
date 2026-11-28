@@ -70,3 +70,20 @@ Two additions from playing this pass:
   `setTowerStates` takes each side's fractions already in left-to-right display order; main.js
   reverses the enemy array since towers are stored `[nearBase, nearMid]` but displayed mid-first on
   that side, to meet the ally side's mid-first-from-center order in the middle.
+- The strip was later re-centered as one compact unit (was stretched edge-to-edge with the two
+  team groups pinned to the screen corners) and sized up for legibility.
+
+## 2026-11-28 — faster towers, an "under fire" screen warning
+
+- **Towers re-engage sooner after firing**: `TOWER_STATS.attackIntervalMs` 3800 → 2300. The real
+  shot-to-shot cadence is `TOWER_AIM_MS + attackIntervalMs` (not `attackIntervalMs` alone — see the
+  comment in `config.js`, corrected alongside this change since it previously described the wrong
+  relationship), so this drops the cadence from 5800ms to 4300ms, a verified ~26% speed-up.
+  Deliberately raises the cost of lingering in a tower's range unsupported, since the goal is to
+  push the player toward using their own creep waves as cover — a tower always targets the nearest
+  enemy, so standing amid a wave usually means the creeps draw its attention instead of Wando.
+- **A new "under fire" HUD warning**: a soft red glow around the screen's edge only (an inset
+  `box-shadow`, not a full-screen tint) fades in whenever any tower's telegraph (`tower.aimTarget`)
+  is locked onto Wando specifically, and fades back out once that's no longer true — giving a clear,
+  peripheral signal that she's the one about to be hit, distinct from the aim-line telegraph itself
+  (which points at a target, not necessarily visible in frame).

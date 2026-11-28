@@ -265,6 +265,7 @@ function animate() {
     [...enemyTowers].reverse().map((t) => (t.alive ? t.hp / t.maxHp : 0))
   )
   hud.setCrosshairVisible(!crash)
+  hud.setTargetedWarning(world.towers.some((t) => t.aimTarget === wando))
   hud.setRespawnCountdown(
     crash?.phase === 'grounded' ? Math.ceil((RESPAWN_MS - (now - crash.countdownStart)) / 1000) : null
   )
