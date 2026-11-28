@@ -12,7 +12,11 @@ export const TEAM_COLOR = {
 
 // Lane runs along Z. Ally base at +Z, enemy base at -Z. Creeps/heroes advance
 // toward negative Z if ally, positive Z if enemy.
-export const LANE_LENGTH = 140
+// 2026-11-28: lengthened (140 -> 220) specifically to spread the towers
+// further apart — everything else downstream (ground size, hero movement
+// clamp, creep spawn points) derives proportionally from these constants,
+// so lengthening the lane is the one change needed.
+export const LANE_LENGTH = 220
 export const LANE_HALF = LANE_LENGTH / 2
 export const LANE_WIDTH = 16
 
@@ -23,8 +27,8 @@ export const BASE_Z = {
 
 // Two towers per side, spaced along their half of the lane.
 export const TOWER_Z = {
-  [TEAM.ALLY]: [LANE_HALF - 25, LANE_HALF - 55],
-  [TEAM.ENEMY]: [-LANE_HALF + 25, -LANE_HALF + 55],
+  [TEAM.ALLY]: [LANE_HALF - 40, LANE_HALF - 85],
+  [TEAM.ENEMY]: [-LANE_HALF + 40, -LANE_HALF + 85],
 }
 
 export const ADVANCE_DIR = {
