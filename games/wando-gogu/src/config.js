@@ -101,6 +101,10 @@ export const WANDO_STREAM_OFFSET = 1.1
 // Faster than the generic Vanguard bot speed — she's the player's ship, not
 // a ground-based mirror-match hero.
 export const WANDO_SPEED = 10
+// Flying into any enemy unit, creep, tower, or base destroys the ship
+// outright — a real collision, not just the normal attack-range damage
+// trade every other unit resolves at range. See ai.js's aiStep.
+export const WANDO_COLLISION_RADIUS = 2.2
 export const ALTITUDE_MIN = 1
 export const ALTITUDE_MAX = 28
 

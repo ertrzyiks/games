@@ -155,3 +155,14 @@ three corrections, in order:
   X-wing silhouette), not dead-center, while hit-detection still rides the camera-ray cheat
   (offset the same way, just from the camera's ray instead of the ship's position) so each stream
   independently stays exactly where its half of the crosshair-area points.
+
+## 2026-11-28 — added: physical collision destroys the ship
+
+Previously flying into an enemy unit or tower had no special consequence beyond whatever damage it
+happened to deal at its own normal attack range/cadence — colliding wasn't actually "a collision,"
+Wando just sat inside its attack range like any other target. Now, each frame
+(`ai.js`'s `aiStep`), if any enemy unit/creep/tower/base is within `WANDO_COLLISION_RADIUS` (2.2
+units) of her, she takes damage equal to her own current HP (an instant kill, same shield-absorption
+rule as any other damage — an active Guard Up/Fortify-style shield still mitigates it, just not
+necessarily fully) and the normal death/crash sequence takes over from there, same as being shot
+down. Ally units never trigger this — only enemies.

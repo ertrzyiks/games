@@ -11,6 +11,7 @@ import {
   TURBO_DURATION_MS,
   TURBO_COOLDOWN_MS,
   WANDO_STREAM_OFFSET,
+  WANDO_COLLISION_RADIUS,
   otherTeam,
 } from './config.js'
 
@@ -26,6 +27,14 @@ export function aiStep(unit, world, now, dt) {
   if (!unit.alive) return
 
   if (unit.kind === 'hero' && unit.isPlayer) {
+    // A real collision destroys the ship outright, not just the normal
+    // attack-range damage trade every other unit resolves at range — see
+    // .scratch/wando-gogu-arts/issues/06-controls-camera.md.
+    const collided = world.nearestEnemyInRadius(unit, WANDO_COLLISION_RADIUS)
+    if (collided) {
+      unit.takeDamage(unit.hp, collided)
+      return
+    }
     unit.flyForward(dt, now)
     return
   }
