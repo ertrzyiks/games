@@ -7,11 +7,16 @@ import { TEAM, ROCKET_SPEED } from './config.js'
 // kind of per-frame GC churn that causes stutter. Every projectile reuses
 // the same tiny geometry and one of two team-colored materials; only
 // position/scale are ever per-instance.
-const PROJECTILE_GEOMETRY = new THREE.SphereGeometry(0.09, 5, 4)
+// A short glowing rod, not a sphere, oriented along its travel direction —
+// reads as a blaster bolt rather than a bullet. MeshBasicMaterial is unlit
+// (ignores scene lighting), which already gives it a flat, glowing-against
+// the-lit-scene look typical of a blaster shot.
+const PROJECTILE_GEOMETRY = new THREE.CylinderGeometry(0.045, 0.045, 0.38, 6)
 const PROJECTILE_MATERIAL = {
-  [TEAM.ALLY]: new THREE.MeshBasicMaterial({ color: 0xbfe6ff }),
-  [TEAM.ENEMY]: new THREE.MeshBasicMaterial({ color: 0xffcdbf }),
+  [TEAM.ALLY]: new THREE.MeshBasicMaterial({ color: 0x5ad1ff }),
+  [TEAM.ENEMY]: new THREE.MeshBasicMaterial({ color: 0xff4433 }),
 }
+const UP = new THREE.Vector3(0, 1, 0)
 
 // A cone, not a sphere — oriented to point along its travel direction so it
 // visibly reads as a fired projectile, not a dropped object. Bigger and
@@ -59,6 +64,10 @@ export function createEffectsSystem(scene) {
     const fromSource = fromOverride || attacker.position
     const from = new THREE.Vector3(fromSource.x, attacker.mesh.position.y + 0.5, fromSource.z)
     const to = new THREE.Vector3(targetPoint.x, targetPoint.y, targetPoint.z)
+    const direction = to.clone().sub(from)
+    if (direction.lengthSq() > 1e-6) {
+      mesh.quaternion.setFromUnitVectors(UP, direction.normalize())
+    }
     mesh.position.copy(from)
     scene.add(mesh)
     projectiles.push({ mesh, from, to, start: performance.now(), duration: 120 })

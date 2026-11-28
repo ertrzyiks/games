@@ -113,9 +113,12 @@ export const ALTITUDE_MIN = 1
 export const ALTITUDE_MAX = 28
 
 export const CREEP_STATS = { hp: 55, damage: 9, attackRange: 2, attackIntervalMs: 1000, speed: 4.5 }
-export const CREEP_WAVE_SIZE = 3
-export const CREEP_WAVE_INTERVAL_MS = 15000
-export const CREEP_SPAWN_STAGGER_MS = 600
+// 2026-11-28: bigger, more frequent waves ("more mobs") — doubled wave size
+// and a shorter interval between waves, now that the longer lane (see
+// LANE_LENGTH) has more room to fill.
+export const CREEP_WAVE_SIZE = 6
+export const CREEP_WAVE_INTERVAL_MS = 10000
+export const CREEP_SPAWN_STAGGER_MS = 500
 
 // Towers telegraph before firing (TOWER_AIM_MS) so a shot is dodgeable, not
 // instant — see .scratch/wando-gogu-arts/issues/04-towers-base.md. Slower,

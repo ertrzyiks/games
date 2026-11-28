@@ -33,6 +33,58 @@ export function createHeroMesh(role, team) {
   return mesh
 }
 
+// Wando's own ship — distinct from the generic Vanguard box every other
+// hero (including bot Vanguards) uses: a sci-fi starfighter silhouette
+// (X-wing-like fuselage + four S-foil wings in an X configuration), since
+// she's specifically flown/viewed in third-person, not just a generic
+// ground-based hero. Built along local -Z (the shared forward convention —
+// see Hero.getForwardVector/mesh.lookAt) so it noses correctly once
+// oriented each frame.
+export function createPlayerShipMesh(team) {
+  const hullMaterial = new THREE.MeshStandardMaterial({ color: TEAM_COLOR[team] })
+  const accentMaterial = new THREE.MeshStandardMaterial({ color: 0xd8dde3 })
+  const cockpitMaterial = new THREE.MeshStandardMaterial({ color: 0x1c2026 })
+
+  const group = new THREE.Group()
+
+  const body = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.28, 1.6, 8), hullMaterial)
+  body.rotation.x = -Math.PI / 2
+  group.add(body)
+
+  const nose = new THREE.Mesh(new THREE.ConeGeometry(0.22, 0.6, 8), accentMaterial)
+  nose.rotation.x = -Math.PI / 2
+  nose.position.z = -1.1
+  group.add(nose)
+
+  const cockpit = new THREE.Mesh(new THREE.SphereGeometry(0.2, 8, 6), cockpitMaterial)
+  cockpit.position.set(0, 0.18, -0.2)
+  group.add(cockpit)
+
+  // Four S-foil wings in an X configuration, mounted toward the rear —
+  // reads clearly from the trailing third-person chase camera, which
+  // looks nearly straight down the ship's own forward axis.
+  const wingGeometry = new THREE.BoxGeometry(1.7, 0.07, 0.55)
+  ;[45, 135, 225, 315].forEach((deg) => {
+    const wing = new THREE.Mesh(wingGeometry, hullMaterial)
+    wing.position.z = 0.25
+    wing.rotation.z = THREE.MathUtils.degToRad(deg)
+    group.add(wing)
+  })
+
+  // Wingtip cannons — also visually matches where the twin-stream gun
+  // actually fires from (see ai.js's manualAttack / WANDO_STREAM_OFFSET).
+  const cannonGeometry = new THREE.CylinderGeometry(0.04, 0.04, 0.8, 6)
+  ;[-1, 1].forEach((side) => {
+    const cannon = new THREE.Mesh(cannonGeometry, accentMaterial)
+    cannon.rotation.x = -Math.PI / 2
+    cannon.position.set(side * 1.1, 0, -0.2)
+    group.add(cannon)
+  })
+
+  group.position.y = 1
+  return group
+}
+
 export function createCreepMesh(team) {
   const material = new THREE.MeshStandardMaterial({ color: TEAM_COLOR[team] })
   const geometry = new THREE.BoxGeometry(0.9, 0.9, 0.9)

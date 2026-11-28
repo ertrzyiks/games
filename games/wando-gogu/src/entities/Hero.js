@@ -20,7 +20,7 @@ import {
   LANE_WIDTH,
   TURBO_SPEED_MULTIPLIER,
 } from '../config.js'
-import { createHeroMesh } from '../visuals.js'
+import { createHeroMesh, createPlayerShipMesh } from '../visuals.js'
 import { attachHealthBar } from '../healthbar.js'
 
 function clamp(v, lo, hi) {
@@ -34,7 +34,7 @@ function clamp(v, lo, hi) {
 export class Hero extends Unit {
   constructor(role, team, spawnX, spawnZ, { isPlayer = false } = {}) {
     const stats = HERO_STATS[role]
-    const mesh = createHeroMesh(role, team)
+    const mesh = isPlayer ? createPlayerShipMesh(team) : createHeroMesh(role, team)
     mesh.position.x = spawnX
     mesh.position.z = spawnZ
     super({

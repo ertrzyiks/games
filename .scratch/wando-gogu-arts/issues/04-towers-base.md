@@ -58,3 +58,15 @@ Two additions from playing this pass:
   left range) can retry immediately, no penalty.
 - **Tower progress is now shown in the HUD** — a small "🗼 Ally x/y  Enemy x/y" readout of towers
   still standing per side.
+
+## 2026-11-28 — bigger waves, top-strip HUD replaces the text readout
+
+- **More mobs**: `CREEP_WAVE_SIZE` 3 → 6 and `CREEP_WAVE_INTERVAL_MS` 15s → 10s, since the lane is
+  now longer (see `LANE_LENGTH`) and had room to spare.
+- **The tower-count text readout was replaced** with a visual top-of-screen strip laid out like an
+  unrolled lane: `[ally base bar][ally tower near-base][ally tower near-mid] | [enemy tower
+  near-mid][enemy tower near-base][enemy base bar]`, each tower a small vertical-fill icon (full
+  color when healthy, dims to gray when destroyed) instead of a plain fraction. `hud.js`'s
+  `setTowerStates` takes each side's fractions already in left-to-right display order; main.js
+  reverses the enemy array since towers are stored `[nearBase, nearMid]` but displayed mid-first on
+  that side, to meet the ally side's mid-first-from-center order in the middle.

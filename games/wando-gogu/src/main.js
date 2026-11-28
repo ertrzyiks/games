@@ -254,11 +254,15 @@ function animate() {
   hud.setGold(world.gold)
   if (world.gold > lastGold) hud.spawnGoldGain(world.gold - lastGold)
   lastGold = world.gold
-  hud.setTowerCounts(
-    world.towers.filter((t) => t.team === TEAM.ALLY && t.alive).length,
-    world.towers.filter((t) => t.team === TEAM.ALLY).length,
-    world.towers.filter((t) => t.team === TEAM.ENEMY && t.alive).length,
-    world.towers.filter((t) => t.team === TEAM.ENEMY).length
+  // TOWER_Z lists each side [nearBase, nearMid], and towers are created in
+  // that same order, so the filtered arrays already come out [nearBase,
+  // nearMid] for ally. Enemy is displayed mid-first (mirroring ally outward
+  // from the shared midpoint), hence the reverse.
+  const allyTowers = world.towers.filter((t) => t.team === TEAM.ALLY)
+  const enemyTowers = world.towers.filter((t) => t.team === TEAM.ENEMY)
+  hud.setTowerStates(
+    allyTowers.map((t) => (t.alive ? t.hp / t.maxHp : 0)),
+    [...enemyTowers].reverse().map((t) => (t.alive ? t.hp / t.maxHp : 0))
   )
   hud.setCrosshairVisible(!crash)
   hud.setRespawnCountdown(

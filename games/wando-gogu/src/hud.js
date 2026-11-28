@@ -20,51 +20,98 @@ export function createHud(container) {
     '<div style="position:absolute;top:50%;right:0;height:2px;width:8px;background:#fff;transform:translateY(-50%);box-shadow:0 0 2px #000"></div>'
   root.appendChild(crosshair)
 
-  const bars = document.createElement('div')
-  bars.style.cssText = 'position:absolute;top:10px;left:10px;right:10px;display:flex;flex-direction:column;gap:6px'
-  root.appendChild(bars)
+  // Battle-state strip: both bases and all four towers laid out like an
+  // unrolled lane — [ally base][ally tower near-base][ally tower near-mid]
+  // -- [enemy tower near-mid][enemy tower near-base][enemy base] — so the
+  // gap between the two flex groups itself reads as the lane's midpoint,
+  // with a thin divider line reinforcing it.
+  const topStrip = document.createElement('div')
+  topStrip.style.cssText =
+    'position:absolute;top:10px;left:10px;right:10px;display:flex;align-items:center;justify-content:space-between'
+  root.appendChild(topStrip)
 
-  function makeBar(label, color) {
-    const wrap = document.createElement('div')
-    wrap.style.cssText = 'display:flex;align-items:center;gap:6px;font-size:12px'
-    const text = document.createElement('span')
-    text.textContent = label
-    text.style.cssText = 'width:70px;flex:none'
+  const midDivider = document.createElement('div')
+  midDivider.style.cssText =
+    'position:absolute;left:50%;top:-2px;bottom:-2px;width:1px;background:rgba(255,255,255,0.3);transform:translateX(-50%)'
+  topStrip.appendChild(midDivider)
+
+  const allyGroup = document.createElement('div')
+  allyGroup.style.cssText = 'display:flex;align-items:center;gap:4px'
+  topStrip.appendChild(allyGroup)
+
+  const enemyGroup = document.createElement('div')
+  enemyGroup.style.cssText = 'display:flex;align-items:center;gap:4px'
+  topStrip.appendChild(enemyGroup)
+
+  function makeBaseBar(color) {
     const track = document.createElement('div')
-    track.style.cssText = 'flex:1;height:10px;background:rgba(0,0,0,0.4);border-radius:6px;overflow:hidden;max-width:160px'
+    track.style.cssText =
+      'width:64px;height:10px;background:rgba(0,0,0,0.4);border-radius:5px;overflow:hidden;flex:none'
     const fill = document.createElement('div')
     fill.style.cssText = `height:100%;background:${color};width:100%`
     track.appendChild(fill)
-    wrap.appendChild(text)
-    wrap.appendChild(track)
-    bars.appendChild(wrap)
-    return fill
+    return { el: track, fill }
   }
 
-  const wandoFill = makeBar('Wando', '#5ad1ff')
-  const allyBaseFill = makeBar('Ally Base', '#3a7bd5')
-  const enemyBaseFill = makeBar('Enemy Base', '#d5473a')
+  function makeTowerIcon(color) {
+    const track = document.createElement('div')
+    track.style.cssText =
+      'position:relative;width:13px;height:22px;background:rgba(0,0,0,0.4);border-radius:3px;' +
+      'overflow:hidden;flex:none'
+    const fill = document.createElement('div')
+    fill.style.cssText = `position:absolute;left:0;right:0;bottom:0;background:${color};height:100%;` +
+      'transition:height 150ms,background 150ms'
+    track.appendChild(fill)
+    return { el: track, fill, color }
+  }
+
+  const allyBase = makeBaseBar('#3a7bd5')
+  const allyTowerNearBase = makeTowerIcon('#3a7bd5')
+  const allyTowerNearMid = makeTowerIcon('#3a7bd5')
+  allyGroup.appendChild(allyBase.el)
+  allyGroup.appendChild(allyTowerNearBase.el)
+  allyGroup.appendChild(allyTowerNearMid.el)
+
+  const enemyTowerNearMid = makeTowerIcon('#d5473a')
+  const enemyTowerNearBase = makeTowerIcon('#d5473a')
+  const enemyBase = makeBaseBar('#d5473a')
+  enemyGroup.appendChild(enemyTowerNearMid.el)
+  enemyGroup.appendChild(enemyTowerNearBase.el)
+  enemyGroup.appendChild(enemyBase.el)
+
+  function setTowerIcon(icon, frac) {
+    icon.fill.style.height = `${Math.max(0, frac) * 100}%`
+    icon.fill.style.background = frac > 0 ? icon.color : '#2a2a2a'
+  }
+
+  // Wando's own HP and gold sit just below the strip, on opposite sides.
+  const wandoWrap = document.createElement('div')
+  wandoWrap.style.cssText = 'position:absolute;top:32px;left:10px;display:flex;align-items:center;gap:6px'
+  root.appendChild(wandoWrap)
+  const wandoLabel = document.createElement('span')
+  wandoLabel.textContent = 'Wando'
+  wandoLabel.style.cssText = 'font-size:11px'
+  const wandoTrack = document.createElement('div')
+  wandoTrack.style.cssText = 'width:70px;height:8px;background:rgba(0,0,0,0.4);border-radius:4px;overflow:hidden'
+  const wandoFill = document.createElement('div')
+  wandoFill.style.cssText = 'height:100%;background:#5ad1ff;width:100%'
+  wandoTrack.appendChild(wandoFill)
+  wandoWrap.appendChild(wandoLabel)
+  wandoWrap.appendChild(wandoTrack)
 
   // Gold — a placeholder economy for a later shop, see
   // .scratch/wando-gogu-arts/issues/04-towers-base.md.
   const goldText = document.createElement('div')
   goldText.style.cssText =
-    'position:absolute;top:10px;right:10px;font-size:14px;font-weight:bold;color:#ffcc33;' +
+    'position:absolute;top:32px;right:10px;font-size:13px;font-weight:bold;color:#ffcc33;' +
     'text-shadow:0 0 3px #000'
   root.appendChild(goldText)
 
   // Floating "+N" gold-gain popups spawn here and animate themselves away —
   // see spawnGoldGain below.
   const goldPopupLayer = document.createElement('div')
-  goldPopupLayer.style.cssText = 'position:absolute;top:10px;right:10px'
+  goldPopupLayer.style.cssText = 'position:absolute;top:32px;right:10px'
   root.appendChild(goldPopupLayer)
-
-  // Tower progress — how many of each side's towers still stand.
-  const towerText = document.createElement('div')
-  towerText.style.cssText =
-    'position:absolute;top:30px;right:10px;font-size:12px;color:#fff;text-shadow:0 0 3px #000;' +
-    'text-align:right'
-  root.appendChild(towerText)
 
   // Respawn countdown — shown only while Wando's crash sequence is grounded.
   const countdown = document.createElement('div')
@@ -97,10 +144,18 @@ export function createHud(container) {
   // the button must NOT have overflow:hidden — the mask already clips
   // itself to a circle via its own border-radius, no clipping container
   // needed, and one very nearly clipped the badge off entirely before.
-  function makeActionButton({ xCss, icon, borderColor, keyLabel }) {
+  // Both live together in a centered flex row (bottom-center) rather than
+  // each being individually absolute-positioned, so they stay a visually
+  // paired unit regardless of viewport width.
+  const specialActionsRow = document.createElement('div')
+  specialActionsRow.style.cssText =
+    'position:absolute;left:50%;bottom:20px;transform:translateX(-50%);display:flex;gap:10px'
+  root.appendChild(specialActionsRow)
+
+  function makeActionButton({ icon, borderColor, keyLabel }) {
     const btn = document.createElement('button')
     btn.style.cssText =
-      `position:absolute;${xCss};bottom:20px;width:70px;height:70px;border-radius:50%;` +
+      `position:relative;width:70px;height:70px;border-radius:50%;` +
       `background:#1a2230;border:3px solid ${borderColor};color:#fff;pointer-events:auto;cursor:pointer`
 
     const iconEl = document.createElement('span')
@@ -124,7 +179,7 @@ export function createHud(container) {
       'text-align:center;box-shadow:0 0 2px #000'
     btn.appendChild(label)
 
-    root.appendChild(btn)
+    specialActionsRow.appendChild(btn)
 
     return {
       button: btn,
@@ -137,21 +192,17 @@ export function createHud(container) {
     }
   }
 
-  // Rocket — centered (not clustered with ability/fire) since it's the
-  // headline special action. Fires forward like the gun (see
-  // ai.js's fireRocket) rather than the original straight-down bomb, which
-  // fell behind Wando as she kept flying and was never actually seen.
+  // Rocket — fires forward like the gun (see ai.js's fireRocket) rather
+  // than the original straight-down bomb, which fell behind Wando as she
+  // kept flying and was never actually seen.
   const rocket = makeActionButton({
-    xCss: 'left:50%;transform:translateX(-50%)',
     icon: '\u{1F680}',
     borderColor: '#ffa03c',
     keyLabel: '1',
   })
 
-  // Turbo — a temporary speed boost, the other special action. Placed
-  // symmetrically to fire/ability but on the left, next to the gyro.
+  // Turbo — a temporary speed boost, the other special action.
   const turbo = makeActionButton({
-    xCss: 'left:104px',
     icon: '⚡',
     borderColor: '#7cffb2',
     keyLabel: '2',
@@ -229,10 +280,10 @@ export function createHud(container) {
       wandoFill.style.width = `${Math.max(0, frac) * 100}%`
     },
     setAllyBaseHp(frac) {
-      allyBaseFill.style.width = `${Math.max(0, frac) * 100}%`
+      allyBase.fill.style.width = `${Math.max(0, frac) * 100}%`
     },
     setEnemyBaseHp(frac) {
-      enemyBaseFill.style.width = `${Math.max(0, frac) * 100}%`
+      enemyBase.fill.style.width = `${Math.max(0, frac) * 100}%`
     },
     setAbilityCooldown(frac) {
       // frac: 1 = just used (fully on cooldown), 0 = ready.
@@ -250,8 +301,15 @@ export function createHud(container) {
     setTurboCooldown(frac) {
       turbo.setCooldown(frac)
     },
-    setTowerCounts(allyAlive, allyTotal, enemyAlive, enemyTotal) {
-      towerText.textContent = `\u{1F5FC} Ally ${allyAlive}/${allyTotal}  Enemy ${enemyAlive}/${enemyTotal}`
+    // allyFracs: [nearBaseFrac, nearMidFrac]. enemyFracsMidFirst:
+    // [nearMidFrac, nearBaseFrac] — already in the left-to-right display
+    // order for the enemy group, which mirrors the ally group outward from
+    // the shared midpoint.
+    setTowerStates(allyFracs, enemyFracsMidFirst) {
+      setTowerIcon(allyTowerNearBase, allyFracs[0])
+      setTowerIcon(allyTowerNearMid, allyFracs[1])
+      setTowerIcon(enemyTowerNearMid, enemyFracsMidFirst[0])
+      setTowerIcon(enemyTowerNearBase, enemyFracsMidFirst[1])
     },
     setGyro(yawRad, pitchFrac) {
       // pitchFrac: -1..1 (nose down..nose up). Nose up moves the horizon
